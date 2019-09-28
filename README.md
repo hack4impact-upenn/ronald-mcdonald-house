@@ -1,58 +1,12 @@
-# flask-base
-[![Circle CI](https://circleci.com/gh/hack4impact/flask-base.svg?style=svg)](https://circleci.com/gh/hack4impact/flask-base) 
-[![Code Climate](https://codeclimate.com/github/hack4impact/flask-base/badges/gpa.svg)](https://codeclimate.com/github/hack4impact/flask-base/coverage)
-[![Issue Count](https://codeclimate.com/github/hack4impact/flask-base/badges/issue_count.svg)](https://codeclimate.com/github/hack4impact/flask-base) ![python3.x](https://img.shields.io/badge/python-3.x-brightgreen.svg)  ![python2.x](https://img.shields.io/badge/python-2.x-yellow.svg)
-
-![flask-base](readme_media/logo.png)
-
-A Flask application template with the boilerplate code already done for you.
-
-
-**Documentation available at [http://hack4impact.github.io/flask-base](http://hack4impact.github.io/flask-base).**
-
-## What's included?
-
-* Blueprints
-* User and permissions management
-* Flask-SQLAlchemy for databases
-* Flask-WTF for forms
-* Flask-Assets for asset management and SCSS compilation
-* Flask-Mail for sending emails
-* gzip compression
-* Redis Queue for handling asynchronous tasks
-* ZXCVBN password strength checker
-* CKEditor for editing pages
-
-## Demos
-
-Home Page:
-
-![home](readme_media/home.gif "home")
-
-Registering User:
-
-![registering](readme_media/register.gif "register")
-
-Admin Editing Page:
-
-![edit page](readme_media/editpage.gif "editpage")
-
-Admin Editing Users:
-
-![edit user](readme_media/edituser.gif "edituser")
-
+# Philadelphia Ronald McDonald House Project (Fall 2019)
 
 ## Setting up
-
-##### Create your own repository from this Template
-
-Navigate to the [main project page](https://github.com/hack4impact/flask-base) and click the big, green "Use this template" button at the top right of the page. Give your new repository a name and save it.
 
 ##### Clone the repository 
 
 ```
-$ git clone https://github.com/YOUR_USERNAME/REPO_NAME.git
-$ cd REPO_NAME
+$ git clone https://github.com/hack4impact/ronald-mcdonald-house.git
+$ cd ronald-mcdonald-house
 ```
 
 ##### Initialize a virtual environment
@@ -108,7 +62,7 @@ Other useful variables include:
 
 | Variable        | Default   | Discussion  |
 | --------------- |-------------| -----|
-| `ADMIN_EMAIL`   | `flask-base-admin@example.com` | email for your first admin account |
+| `ADMIN_EMAIL`   | `admin@rmcd.com` | email for your first admin account |
 | `ADMIN_PASSWORD`| `password`                     | password for your first admin account |
 | `DATABASE_URL`  | `data-dev.sqlite`              | Database URL. Can be Postgres, sqlite, etc. |
 | `REDISTOGO_URL` | `http://localhost:6379`        | [Redis To Go](https://redistogo.com) URL or any redis server url |
@@ -174,7 +128,7 @@ $ python manage.py recreate_db
 $ python manage.py setup_dev
 ```
 
-Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables. If not specified, they are both `flask-base-admin@example.com` and `password` respectively.
+Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables. If not specified, they are both `admin@rmcd.com` and `password` respectively.
 
 ##### [Optional] Add fake data to the database
 
