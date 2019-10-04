@@ -4,23 +4,23 @@
 
 ##### Clone the repository 
 
-```
-$ git clone https://github.com/hack4impact/ronald-mcdonald-house.git
-$ cd ronald-mcdonald-house
+```sh
+git clone https://github.com/hack4impact/ronald-mcdonald-house.git
+cd ronald-mcdonald-house
 ```
 
 ##### Initialize a virtual environment
 
 Windows:
-```
-$ python3 -m venv venv
-$ venv\Scripts\activate.bat
+```sh
+python3 -m venv venv
+venv\Scripts\activate.bat
 ```
 
 Unix/MacOS:
-```
-$ python3 -m venv venv
-$ source venv/bin/activate
+```sh
+python3 -m venv venv
+source venv/bin/activate
 ```
 Learn more in [the documentation](https://docs.python.org/3/library/venv.html#creating-virtual-environments).
 
@@ -28,8 +28,8 @@ Note: if you are using a python before 3.3, it doesn't come with venv. Install [
 
 ##### (If you're on a Mac) Make sure xcode tools are installed
 
-```
-$ xcode-select --install
+```sh
+xcode-select --install
 ```
 
 ##### Add Environment Variables
@@ -72,8 +72,8 @@ Other useful variables include:
 
 ##### Install the dependencies
 
-```
-$ pip install -r requirements.txt
+```sh
+pip install -r requirements.txt
 ```
 
 ##### Other dependencies for running locally
@@ -83,64 +83,64 @@ You need [Redis](http://redis.io/), and [Sass](http://sass-lang.com/). Chances a
 
 **Sass:**
 
-```
-$ gem install sass
+```sh
+gem install sass
 ```
 
 **Redis:**
 
 _Mac (using [homebrew](http://brew.sh/)):_
 
-```
-$ brew install redis
+```sh
+brew install redis
 ```
 
 _Linux:_
 
-```
-$ sudo apt-get install redis-server
+```sh
+sudo apt-get install redis-server
 ```
 
 You will also need to install **PostgresQL**
 
 _Mac (using homebrew):_
 
-```
+```sh
 brew install postgresql
 ```
 
 _Linux (based on this [issue](https://github.com/hack4impact/flask-base/issues/96)):_
 
-```
+```sh
 sudo apt-get install libpq-dev
 ```
 
 
 ##### Create the database
 
-```
-$ python manage.py recreate_db
+```sh
+python manage.py recreate_db
 ```
 
 ##### Other setup (e.g. creating roles in database)
 
-```
-$ python manage.py setup_dev
+```sh
+python manage.py setup_dev
 ```
 
 Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables. If not specified, they are both `admin@rmcd.com` and `password` respectively.
 
 ##### [Optional] Add fake data to the database
 
-```
-$ python manage.py add_fake_data
+```sh
+python manage.py add_fake_data
 ```
 
 ## Running the app
 
-```
-$ source env/bin/activate
-$ honcho start -e config.env -f Local
+```sh
+source env/bin/activate
+honcho start -e config.env -f Local
 ```
 
 For Windows users having issues with binding to a redis port locally, refer to [this issue](https://github.com/hack4impact/flask-base/issues/132).
