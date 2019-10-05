@@ -62,7 +62,7 @@ Other useful variables include:
 
 | Variable        | Default   | Discussion  |
 | --------------- |-------------| -----|
-| `ADMIN_EMAIL`   | `admin@rmcd.com` | email for your first admin account |
+| `ADMIN_EMAIL`   | `admin@prmh.org` | email for your first admin account |
 | `ADMIN_PASSWORD`| `password`                     | password for your first admin account |
 | `DATABASE_URL`  | `data-dev.sqlite`              | Database URL. Can be Postgres, sqlite, etc. |
 | `REDISTOGO_URL` | `http://localhost:6379`        | [Redis To Go](https://redistogo.com) URL or any redis server url |
@@ -128,7 +128,7 @@ python manage.py recreate_db
 python manage.py setup_dev
 ```
 
-Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables. If not specified, they are both `admin@rmcd.com` and `password` respectively.
+Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables. If not specified, they are both `admin@prmh.org` and `password` respectively.
 
 ##### [Optional] Add fake data to the database
 

@@ -77,4 +77,7 @@ def create_app(config):
     from .admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/admin')
 
+    from .room_request import room_request as room_request_blueprint
+    app.register_blueprint(room_request_blueprint, url_prefix='/room-request')
+
     return app
