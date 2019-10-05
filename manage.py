@@ -56,6 +56,7 @@ def add_fake_data(number_users):
     Adds fake data to the database.
     """
     User.generate_fake(count=number_users)
+    # generate fake room requests
 
 
 @manager.command

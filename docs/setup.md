@@ -43,7 +43,7 @@ SECRET_KEY=SuperRandomStringToBeUsedForEncryption
 
 Other Key value pairs:
 
-* `ADMIN_EMAIL`: set to the default email for your first admin account (default is `admin@rmcd.com`)
+* `ADMIN_EMAIL`: set to the default email for your first admin account (default is `admin@prmh.org`)
 * `ADMIN_PASSWORD`: set to the default password for your first admin account (default is `password`)
 * `DATABASE_URL`: set to a postgresql database url (default is `data-dev.sqlite`)
 * `REDISTOGO_URL`: set to Redis To Go URL or any redis server url (default is `http://localhost:6379`)
@@ -109,7 +109,7 @@ $ python manage.py recreate_db
 $ python manage.py setup_dev
 ```
 
-Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables. If not specified, they are both `admin@rmcd.com` and `password` respectively.
+Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables. If not specified, they are both `admin@prmh.org` and `password` respectively.
 
 ## [Optional] Add fake data to the database
 
