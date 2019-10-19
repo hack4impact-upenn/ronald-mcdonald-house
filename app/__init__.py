@@ -36,7 +36,8 @@ def create_app(config):
     app.config.from_object(Config[config_name])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     #Connected to Azure database
-    param_string = "DRIVER=\{SQLServer\};SERVER={};DATABASE={};UID={};PWD={}".format(
+    param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
+    "{SQL Server}",
     os.getenv('AZURE_SERVER'),
     os.getenv('AZURE_DATABASE'),
     os.getenv('AZURE_USERNAME'),
