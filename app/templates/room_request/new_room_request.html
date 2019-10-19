@@ -3,5 +3,157 @@
 
 
 {% block content %}
-    <!-- TODO -->
+    <div class="ui stackable centered grid container">
+        <div class="twelve wide column">
+            <h2 class="ui header">
+                Room Request Form
+            </h2>
+
+            {% set flashes = {
+                'error':   get_flashed_messages(category_filter=['form-error']),
+                'warning': get_flashed_messages(category_filter=['form-check-email']),
+                'info':    get_flashed_messages(category_filter=['form-info']),
+                'success': get_flashed_messages(category_filter=['form-success'])
+            } %}
+
+            {{ f.begin_form(form, flashes) }}
+                <h3> Personal Information of Requester</h2>
+                <div class="two fields">
+                    {{ f.render_form_field(form.first_name) }}
+                    {{ f.render_form_field(form.last_name) }}
+                </div>
+                
+                {{ f.render_form_field(form.rel_to_patient) }}
+
+                {{ f.render_form_field(form.street_address) }}
+                {{ f.render_form_field(form.apt_st_address) }}
+                <div class="two fields">
+                {{ f.render_form_field(form.city) }}
+                {{ f.render_form_field(form.state) }}
+                </div>
+                <div class="two fields">
+                    {{ f.render_form_field(form.zipcode) }}
+                    {{ f.render_form_field(form.country) }}
+                </div>
+
+                <div class="two fields">
+                    {{ f.render_form_field(form.phone_number) }}
+                    {{ f.render_form_field(form.alt_phone_number) }}
+                </div>
+                
+                <div class="two fields">
+                    {{ f.render_form_field(form.email) }}
+                    {{ f.render_form_field(form.phone_number) }}
+                </div>
+
+                {{ f.render_form_field(form.email) }}
+
+                <div class="two fields">
+                    {{ f.render_form_field(form.primary_language) }}
+                    {{ f.render_form_field(form.secondary_language) }}
+                </div>
+
+                {{ f.render_form_field(form.stayed_before) }}
+
+                <br/>
+                <h3>Patient Information</h3>
+
+                {{ f.render_form_field(form.patient_full_name) }}
+                <div class="two fields">
+                    {{ f.render_form_field(form.patient_dob) }}
+                    {{ f.render_form_field(form.patient_gender) }}
+                </div>
+
+                {{ f.render_form_field(form.hospital) }}
+                {{ f.render_form_field(form.hospital_dep) }}
+                {{ f.render_form_field(form.description) }}
+
+                <div class="two fields">
+                    {{ f.render_form_field(form.diagnosis) }}
+                    {{ f.render_form_field(form.first_appt_date) }}
+                </div>
+                
+                <div class="two fields">
+                    {{ f.render_form_field(form.check_in_date) }}
+                    {{ f.render_form_field(form.check_out_date) }}
+                </div>
+
+                <div class="two fields">
+                    {{ f.render_form_field(form.treating_dr) }}
+                    {{ f.render_form_field(form.dr_phone_number) }}
+                </div>
+
+                <div class="two fields">
+                    {{ f.render_form_field(form.hospital_social_worker) }}
+                    {{ f.render_form_field(form.sw_phone_number) }}
+                </div>
+
+                {{ f.render_form_field(form.in_or_out_patient) }}
+                {{ f.render_form_field(form.staying_prior_to_admission) }}
+                {{ f.render_form_field(form.vaccinated) }}
+                {{ f.render_form_field(form.comments) }}
+
+                <h3>Room Occupancy</h3>
+                <p>Guest 1</p>
+                <div class="two fields">
+                    {{ f.render_form_field(form.guest1_name) }}
+                    {{ f.render_form_field(form.guest1_dob) }}
+                </div>
+                {{ f.render_form_field(form.guest1_rel_to_patient) }}
+                {{ f.render_form_field(form.guest1_email) }}
+                {{ f.render_form_field(form.guest1_guardian) }}
+
+                <p>Guest 2</p>
+                <div class="two fields">
+                    {{ f.render_form_field(form.guest2_name) }}
+                    {{ f.render_form_field(form.guest2_dob) }}
+                </div>
+                {{ f.render_form_field(form.guest2_rel_to_patient) }}
+                {{ f.render_form_field(form.guest2_email) }}
+                {{ f.render_form_field(form.guest2_guardian) }}
+
+                <p>Guest 3</p>
+                <div class="two fields">
+                    {{ f.render_form_field(form.guest3_name) }}
+                    {{ f.render_form_field(form.guest3_dob) }}
+                </div>
+                {{ f.render_form_field(form.guest3_rel_to_patient) }}
+                {{ f.render_form_field(form.guest3_email) }}
+                {{ f.render_form_field(form.guest3_guardian) }}
+
+                <p>Guest 4</p>
+                <div class="two fields">
+                    {{ f.render_form_field(form.guest4_name) }}
+                    {{ f.render_form_field(form.guest4_dob) }}
+                </div>
+                {{ f.render_form_field(form.guest4_rel_to_patient) }}
+                {{ f.render_form_field(form.guest4_email) }}
+                {{ f.render_form_field(form.guest4_guardian) }}
+
+                <p>Guest 5</p>
+                <div class="two fields">
+                    {{ f.render_form_field(form.guest5_name) }}
+                    {{ f.render_form_field(form.guest5_dob) }}
+                </div>
+                {{ f.render_form_field(form.guest5_rel_to_patient) }}
+                {{ f.render_form_field(form.guest5_email) }}
+                {{ f.render_form_field(form.guest5_guardian) }}
+
+                <h3>Special Needs</h3>
+                {{ f.render_form_field(form.wheelchair_access) }}
+                {{ f.render_form_field(form.full_bathroom) }}
+                {{ f.render_form_field(form.pack_n_play) }}
+
+                {{ f.form_message(flashes['error'], header='Something went wrong.', class='error') }}
+                {{ f.form_message(flashes['warning'], header='Check the email.', class='warning') }}
+                {{ f.form_message(flashes['info'], header='Information', class='info') }}
+                {{ f.form_message(flashes['success'], header='Success!', class='success') }}
+
+                {% for field in form | selectattr('type', 'equalto', 'SubmitField') %}
+                    {{ f.render_form_field(field) }}
+                {% endfor %}
+
+            {{ f.end_form() }}
+        </div>
+    </div>
 {% endblock %}
