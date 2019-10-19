@@ -9,6 +9,8 @@ from flask_rq import RQ
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 
+import urllib.parse
+
 from app.assets import app_css, app_js, vendor_css, vendor_js
 from config import config as Config
 
@@ -25,15 +27,23 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'account.login'
 
 
+
 def create_app(config):
     app = Flask(__name__)
     config_name = config
-
     if not isinstance(config, str):
         config_name = os.getenv('FLASK_CONFIG', 'default')
-
     app.config.from_object(Config[config_name])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    #Connected to Azure database
+    param_string = "DRIVER=\{SQLServer\};SERVER={};DATABASE={};UID={};PWD={}".format(
+    os.getenv('AZURE_SERVER'),
+    os.getenv('AZURE_DATABASE'),
+    os.getenv('AZURE_USERNAME'),
+    os.getenv('AZURE_PASS'))
+    params = urllib.parse.quote_plus(param_string)
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
+    app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
     # not using sqlalchemy event system, hence disabling it
 
     Config[config_name].init_app(app)

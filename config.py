@@ -17,6 +17,7 @@ if os.path.exists('config.env'):
         var = line.strip().split('=')
         if len(var) == 2:
             os.environ[var[0]] = var[1].replace("\"", "")
+                
 
 
 class Config:
@@ -37,11 +38,15 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
-
     # Analytics
     GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID', '')
     SEGMENT_API_KEY = os.environ.get('SEGMENT_API_KEY', '')
 
+    # Azure Database Login
+    AZURE_SERVER = os.environ.get('AZURE_SERVER')
+    AZURE_DATABASE = os.environ.get('AZURE_DATABASE')
+    AZURE_USERNAME = os.environ.get('AZURE_USERNAME')
+    AZURE_PASS = os.environ.get('AZURE_PASS')
     # Admin account
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'password')
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@prmh.org')
