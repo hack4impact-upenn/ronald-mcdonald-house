@@ -1,6 +1,5 @@
 from .. import db
-from sqlalchemy import Column, Integer, Boolean
-import datetime
+from sqlalchemy import Column, Integer, Boolean, DateTime
 
 class RoomRequest(db.Model):
     __tablename__ = "room_request"
@@ -52,6 +51,16 @@ class RoomRequest(db.Model):
 
     def __repr__(self):
         return ('<Room Request \n'
+                f'id: {self.id}\n'
+                f'First Name: {self.first_name}\n'
+                f'Last Name: {self.last_name}\n'
+                f'Patient Full Name: {self.patient_full_name}\n>')
+
+    def __str__(self):
+        return self.__repr__()
+
+    def print_info(self):
+        return ('<Room Request \n'
                 f'Created At: {self.created_at}\n'
                 f'First Name: {self.first_name}\n'
                 f'Last Name: {self.last_name}\n'
@@ -92,5 +101,24 @@ class RoomRequest(db.Model):
                 f'Full Bathroom: {self.full_bathroom}\n'
                 f'Pack n Play: {self.pack_n_play}\n>')
 
-    def __str__(self):
-        return self.__repr__()
+        def generate_fake(count=5, **kwargs):
+            """Generate fake room requests for testing."""
+            from sqlalchemy.exc import IntegrityError
+            from random import seed, choice
+            from faker import Faker
+
+            fake = Faker()
+
+            seed()
+            for i in range(count):
+                rr = RoomRequest(
+                        first_name = fake.first_name(),
+                        last_name = fake.last_name(),
+                        email = fake.email(),
+                        patient_full_name = fake.full_name(),
+                        **kwargs)
+                db.session.add(rr)
+                try:
+                    db.session.commit()
+                except IntegrityError:
+                    db.session.rollback()
