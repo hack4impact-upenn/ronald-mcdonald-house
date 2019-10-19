@@ -7,7 +7,7 @@ class RoomRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime())
 
-    // Requester Personal Information
+    # Requester Personal Information
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
     relationship_to_patient = db.Column(db.String(100))
@@ -24,19 +24,17 @@ class RoomRequest(db.Model):
     secondary_language = db.Column(db.String(100))
     previous_stay = db.Column(db.Boolean())
 
-    // Patient Information
+    # Patient Information
     patient_full_name = db.Column(db.String(200))
-    patient_dob_month = db.Column(db.Integer())
-    patient_dob_day = db.Column(db.Integer())
-    patient_dob_year = db.Column(db.Integer())
+    patient_dob = db.Column(db.Date)
     patient_gender = db.Column(db.String(15))
     patient_hospital = db.Column(db.String(1000))
     patient_hospital_department = db.Column(db.String(1000))
     patient_treatment_description = db.Column(db.String(1000))
     patient_diagnosis = db.Column(db.String(1000))
-    patient_first_appt_date = db.Column(db.String(100))
-    patient_check_in = db.Column(db.DateTime())
-    patient_check_out = db.Column(db.DateTime())
+    patient_first_appt_date = db.Column(dd.Date)
+    patient_check_in = db.Column(db.Date)
+    patient_check_out = db.Column(db.Date)
     patient_treating_doctor = db.Column(db.String(100))
     patient_doctors_phone = db.Column(db.String(64))
     patient_social_worker = db.Column(db.String(100))
@@ -44,10 +42,9 @@ class RoomRequest(db.Model):
     inpatient = db.Column(db.Boolean())
     inpatient_prior = db.Column(db.Boolean())
     vaccinated = db.Column(db.Boolean())
-    not_vaccinated_reason = db.Column(db.String(1000))
     comments = db.Column(db.Column(db.String(5000)))
 
-    // Room Request
+    # Room Request
     room_occupancy = db.relationship('Guest')
     wheelchair_access = db.Column(db.Boolean())
     full_bathroom = db.Column(db.Boolean())
@@ -72,9 +69,7 @@ class RoomRequest(db.Model):
                 f'Secondary Language: {self.secondary_language}\n'
                 f'Previous Stay: {self.previous_stay}\n'
                 f'Patient Full Name: {self.patient_full_name}\n'
-                f'Patient DOB Month: {self.patient_dob_month}\n'
-                f'Patient DOB Day: {self.patient_dob_day}\n'
-                f'Patient DOB Year: {self.patient_dob_year}\n'
+                f'Patient DOB: {self.patient_dob}\n'
                 f'Patient Gender: {self.patient_gender}\n'
                 f'Patient Hospital: {self.patient_hospital}\n'
                 f'Patient Hospital Department: {self.patient_hospital_department}\n'

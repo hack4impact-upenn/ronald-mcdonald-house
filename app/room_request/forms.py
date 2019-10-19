@@ -49,7 +49,7 @@ class RoomRequestForm(FlaskForm):
         'Brief Description of Treatment', validators=[InputRequired(), Length(1, 256)])
     diagnosis = StringField(
         'Diagnosis', validators=[InputRequired(), Length(1, 256)])
-    first_apt_date = DateField(
+    first_appt_date = DateField(
         'Date of First Appointment During Requested Stay', validators=[InputRequired()])
     check_in_date = DateField(
         'Check In', validators=[InputRequired()])
