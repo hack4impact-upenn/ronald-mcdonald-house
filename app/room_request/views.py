@@ -3,14 +3,14 @@ from flask import (
 )
 
 from .forms import RoomRequestForm
-from . import room_request
+from ..models import RoomRequest
 
 room_request = Blueprint('room_request', __name__)
 
 # TODO dashboard at route /
 
 # TODO create form at route /new
-@room_request.route('/new')
+@room_request.route('/new', methods=['GET', 'POST'])
 def new():
     """Room Request page."""
     form = RoomRequestForm()
@@ -59,4 +59,4 @@ def new():
         db.session.add(room_request)
         db.session.commit()
         flash('Successfully submitted form', 'form-success')
-    return render_template('room_request/new.html', form=form)
+    return render_template('room_request/new_room_request.html', form=form)

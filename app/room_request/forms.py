@@ -1,4 +1,11 @@
 from flask_wtf import FlaskForm
+from wtforms import ValidationError
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from wtforms.fields import (PasswordField, StringField, SubmitField,
+                            IntegerField, BooleanField, FormField, TextAreaField,
+                            HiddenField)
+from wtforms.fields.html5 import EmailField, TelField, DateField
+from wtforms.validators import Email, EqualTo, InputRequired, Length, NumberRange, optional
 
 
 class RoomRequestForm(FlaskForm):
@@ -58,11 +65,11 @@ class RoomRequestForm(FlaskForm):
     treating_dr = StringField(
         'Treating Doctor', validators=[InputRequired(), Length(1, 128)])
     dr_phone_number = TelField(
-        "Doctor's Phone Number", validators=[InputRequired()])
+        "Doctor's Phone Number")
     hospital_social_worker = StringField(
-        'Hospital Social Worker', validators=[InputRequired(), Length(1, 128)])
+        'Hospital Social Worker', validators=[Length(1, 128)])
     sw_phone_number = TelField(
-        "Hospital Social Worker's Phone Number", validators=[InputRequired()])
+        "Hospital Social Worker's Phone Number")
     in_or_out_patient = StringField(
         'Inpatient/Outpatient', validators=[InputRequired(), Length(1, 128)])
     staying_prior_to_admission = BooleanField(

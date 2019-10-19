@@ -32,7 +32,7 @@ class RoomRequest(db.Model):
     patient_hospital_department = db.Column(db.String(1000))
     patient_treatment_description = db.Column(db.String(1000))
     patient_diagnosis = db.Column(db.String(1000))
-    patient_first_appt_date = db.Column(dd.Date)
+    patient_first_appt_date = db.Column(db.Date)
     patient_check_in = db.Column(db.Date)
     patient_check_out = db.Column(db.Date)
     patient_treating_doctor = db.Column(db.String(100))
@@ -42,10 +42,10 @@ class RoomRequest(db.Model):
     inpatient = db.Column(db.Boolean())
     inpatient_prior = db.Column(db.Boolean())
     vaccinated = db.Column(db.Boolean())
-    comments = db.Column(db.Column(db.String(5000)))
+    comments = db.Column(db.String(5000))
 
     # Room Request
-    room_occupancy = db.relationship('Guest')
+    #room_occupancy = db.relationship('Guest')
     wheelchair_access = db.Column(db.Boolean())
     full_bathroom = db.Column(db.Boolean())
     pack_n_play = db.Column(db.Boolean())
@@ -87,7 +87,7 @@ class RoomRequest(db.Model):
                 f'Vaccinated: {self.vaccinated}\n'
                 f'Not Vaccinated Reason: {self.not_vaccinated_reason}\n'
                 f'Comments: {self.comments}\n'
-                f'Room Occupancy: {self.room_occupancy}\n'
+                #f'Room Occupancy: {self.room_occupancy}\n'
                 f'Wheelchair Access: {self.wheelchair_access}\n'
                 f'Full Bathroom: {self.full_bathroom}\n'
                 f'Pack n Play: {self.pack_n_play}\n>')
@@ -96,7 +96,6 @@ class RoomRequest(db.Model):
         return self.__repr__()
 
 
-
-class Guest(db.Model):
-    # TODO
-    pass
+#class Guest(db.Model):
+#    # TODO
+#    pass
