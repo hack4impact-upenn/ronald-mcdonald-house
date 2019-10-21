@@ -16,8 +16,8 @@ class RoomRequest(db.Model):
     state = db.Column(db.String(64))
     zip_code = db.Column(db.String(15))
     country = db.Column(db.String(64))
-    primary_phone = db.Column(db.String(15))
-    secondary_phone = db.Column(db.String(15))
+    primary_phone = db.Column(db.String(50))
+    secondary_phone = db.Column(db.String(50))
     email = db.Column(db.String(1000))
     primary_language = db.Column(db.String(100))
     secondary_language = db.Column(db.String(100))
@@ -101,56 +101,57 @@ class RoomRequest(db.Model):
                 f'Full Bathroom: {self.full_bathroom}\n'
                 f'Pack n Play: {self.pack_n_play}\n>')
 
-        def generate_fake(count=5, **kwargs):
-            """Generate fake room requests for testing."""
-            from sqlalchemy.exc import IntegrityError
-            from random import seed, choice
-            from faker import Faker
+    @staticmethod
+    def generate_fake(count=5, **kwargs):
+        """Generate fake room requests for testing."""
+        from sqlalchemy.exc import IntegrityError
+        from random import seed, choice
+        from faker import Faker
 
-            fake = Faker()
+        fake = Faker()
 
-            seed()
-            for i in range(count):
-                rr = RoomRequest(
-                        first_name = fake.first_name(),
-                        last_name = fake.last_name(),
-                        relationship_to_patient = choice(["Father", "Mother", "Parent"]),
-                        address_line_one = fake.street_address(),
-                        address_line_two = fake.secondary_address(),
-                        city = fake.city(),
-                        state = fake.state(),
-                        zip_code = fake.zipcode(),
-                        country = fake.country(),
-                        primary_phone = fake.phone_number(),
-                        secondary_phone = fake.phone_number(),
-                        email = fake.email(),
-                        primary_language = choice(["English", "Spanish"]),
-                        secondary_language = choice(["English", "Spanish", "Japanese", "ASL"]),
-                        previous_stay = fake.boolean(),
-                        patient_full_name = fake.name(),
-                        patient_dob = fake.past_date(),
-                        patient_gender = choice(["Male", "Female", "Non Binary"]),
-                        patient_hospital = choice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]),
-                        patient_hospital_department = choice(["Pediatrics","Oncology","General"]),
-                        patient_treatment_description = fake.paragraph(),
-                        patient_diagnosis = fake.sentence(),
-                        patient_first_appt_date = fake.future_date(),
-                        patient_check_in = fake.date_between_dates(date_start=patient_first_appt_date),
-                        patient_check_out = fake.date_between_dates(date_start=patient_check_in),
-                        patient_treating_doctor = db.Column(db.String(100)),
-                        patient_doctors_phone = fake.phone_number(),
-                        patient_social_worker = fake.name(),
-                        patient_social_worker_phone = fake.phone_number(),
-                        inpatient = fake.boolean(),
-                        inpatient_prior = fake.boolean(),
-                        vaccinated = fake.boolean(),
-                        comments = fake.paragraph(),
-                        wheelchair_access = fake.boolean(),
-                        full_bathroom = fake.boolean(),
-                        pack_n_play = fake.boolean(),
-                        **kwargs)
-                db.session.add(rr)
-                try:
-                    db.session.commit()
-                except IntegrityError:
-                    db.session.rollback()
+        seed()
+        for i in range(count):
+            rr = RoomRequest(
+                    first_name = fake.first_name(),
+                    last_name = fake.last_name(),
+                    relationship_to_patient = choice(["Father", "Mother", "Parent"]),
+                    address_line_one = fake.street_address(),
+                    address_line_two = fake.secondary_address(),
+                    city = fake.city(),
+                    state = fake.state(),
+                    zip_code = fake.zipcode(),
+                    country = fake.country(),
+                    primary_phone = fake.phone_number(),
+                    secondary_phone = fake.phone_number(),
+                    email = fake.email(),
+                    primary_language = choice(["English", "Spanish"]),
+                    secondary_language = choice(["English", "Spanish", "Japanese", "ASL"]),
+                    previous_stay = fake.boolean(),
+                    patient_full_name = fake.name(),
+                    patient_dob = fake.past_date(),
+                    patient_gender = choice(["Male", "Female", "Non Binary"]),
+                    patient_hospital = choice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]),
+                    patient_hospital_department = choice(["Pediatrics","Oncology","General"]),
+                    patient_treatment_description = fake.word(),
+                    patient_diagnosis = fake.word(),
+                    patient_first_appt_date = fake.future_date(),
+                    patient_check_in = fake.future_date(),
+                    patient_check_out = fake.future_date(),
+                    patient_treating_doctor = fake.name(),
+                    patient_doctors_phone = fake.phone_number(),
+                    patient_social_worker = fake.name(),
+                    patient_social_worker_phone = fake.phone_number(),
+                    inpatient = fake.boolean(),
+                    inpatient_prior = fake.boolean(),
+                    vaccinated = fake.boolean(),
+                    comments = fake.sentence(),
+                    wheelchair_access = fake.boolean(),
+                    full_bathroom = fake.boolean(),
+                    pack_n_play = fake.boolean(),
+                    **kwargs)
+            db.session.add(rr)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
