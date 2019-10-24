@@ -35,15 +35,18 @@ def create_app(config):
         config_name = os.getenv('FLASK_CONFIG', 'default')
     app.config.from_object(Config[config_name])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    #Connected to Azure database
-    param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
-    os.getenv('SQL_SERVER') or "{SQL Server}",
-    os.getenv('AZURE_SERVER'),
-    os.getenv('AZURE_DATABASE'),
-    os.getenv('AZURE_USERNAME'),
-    os.getenv('AZURE_PASS'))
-    params = urllib.parse.quote_plus(param_string)
-    app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
+
+    # Connected to Azure database
+    if os.getenv('SHOULD_USE_AZURE'):
+        param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
+        os.getenv('SQL_SERVER') or "{SQL Server}",
+        os.getenv('AZURE_SERVER'),
+        os.getenv('AZURE_DATABASE'),
+        os.getenv('AZURE_USERNAME'),
+        os.getenv('AZURE_PASS'))
+        params = urllib.parse.quote_plus(param_string)
+        app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
+
     app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
     # not using sqlalchemy event system, hence disabling it
 
