@@ -5,6 +5,8 @@ from flask import (
 
 from .forms import RoomRequestForm
 from ..models import RoomRequest
+from app import db
+from app.models import EditableHTML, Role, User
 
 room_request = Blueprint('room_request', __name__)
 
@@ -68,9 +70,26 @@ def viewID(form_id):
     user_found = "false"
     name = ""
     try:
-        user = RoomRequest.query.get(form_id)
+        user = User.query.get(form_id)
+        print("User found")
         name = str(user.first_name) + " " + str(user.last_name)
         user_found = "true"
         return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
     except: 
         return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
+
+@room_request.route('/<int:form_id>/transfer', methods=['GET', 'POST'])
+def transfer(form_id, user):
+    param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
+            os.getenv('SQL_SERVER') or "{SQL Server}",
+            os.getenv('AZURE_SERVER'),
+            os.getenv('AZURE_DATABASE'),
+            os.getenv('AZURE_USERNAME'),
+            os.getenv('AZURE_PASS'))
+    params = urllib.parse.quote_plus(param_string)    
+    engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
+    engine.connect()
+    try:
+        engine.execute(users.insert(), user)
+    except:
+        print("Help")
