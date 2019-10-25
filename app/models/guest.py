@@ -3,8 +3,9 @@ from sqlalchemy import Column, Integer, Boolean
 
 
 class Guest(db.Model):
-    _tablename_ = "guest"
+    _tablename_ = "guests"
     id = db.Column(db.Integer, primary_key=True)
+    #room_id = db.Column(db.Integer, db.ForeignKey('room_request.id'), nullable=True)
     
     # Guest Information
     # Requester Personal Information
@@ -51,3 +52,9 @@ class Guest(db.Model):
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
+
+        rooms = room_request.query.all()
+        for guest in Guest.query.all()
+            guest.room_request = random.choice(rooms)
+            db.session.add(guest)
+        db.session.commit()
