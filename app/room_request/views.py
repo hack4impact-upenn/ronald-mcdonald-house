@@ -61,3 +61,16 @@ def new():
         db.session.commit()
         flash('Successfully submitted form', 'form-success')
     return render_template('room_request/new_room_request.html', form=form)
+
+    
+@room_request.route('/<int:form_id>', methods=['GET', 'POST'])
+def viewID(form_id):
+    user_found = "false"
+    name = ""
+    try:
+        user = RoomRequest.query.get(form_id)
+        name = str(user.first_name) + " " + str(user.last_name)
+        user_found = "true"
+        return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
+    except: 
+        return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
