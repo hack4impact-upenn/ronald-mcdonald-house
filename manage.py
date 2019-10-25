@@ -57,7 +57,6 @@ def add_fake_data(number_users):
     """
     User.generate_fake(count=number_users)
     RoomRequest.generate_fake()
-    Guest.generate_fake()
 
 @manager.command
 def setup_dev():
