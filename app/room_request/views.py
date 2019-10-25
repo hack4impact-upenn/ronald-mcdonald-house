@@ -90,3 +90,15 @@ def delete_room_request(room_request_id):
         db.session.commit()
         flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.')
     return redirect('/room-request/')
+    
+@room_request.route('/<int:form_id>', methods=['GET', 'POST'])
+def viewID(form_id):
+    user_found = "false"
+    name = ""
+    try:
+        user = RoomRequest.query.get(form_id)
+        name = str(user.first_name) + " " + str(user.last_name)
+        user_found = "true"
+        return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
+    except: 
+        return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)

@@ -1,0 +1,8 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <div class="ui text container">
+        
+      <h1> {% if  user_found  == "true" %} Hello {{ name }}, your form ID is {{ id }} {% else %} Form ID Invalid {% endif %} </h1>
+    </div>
+{% endblock %}
