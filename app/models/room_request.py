@@ -94,8 +94,3 @@ class RoomRequest(db.Model):
 
     def __str__(self):
         return self.__repr__()
-
-
-#class Guest(db.Model):
-#    # TODO
-#    pass
