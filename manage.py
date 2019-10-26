@@ -58,6 +58,19 @@ def add_fake_data(number_users):
     User.generate_fake(count=number_users)
     RoomRequest.generate_fake()
 
+@app.route('delete/<int:id>')
+def delete(id):
+    room_request_to_delete = Room_Request.get_or_404(id)
+
+    try:
+        db.session.delete(room_request_to_delete)
+        db.session.commit()
+        return redirect('/')
+
+    except:
+        return 'There was a problem deleting this room request'
+
+
 @manager.command
 def setup_dev():
     """Runs the set-up needed for local development."""
