@@ -7,6 +7,8 @@ from flask import (
 import os
 import urllib
 import sqlalchemy
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from .forms import RoomRequestForm
 from ..models import RoomRequest
@@ -85,8 +87,9 @@ def viewID(form_id):
 
 @room_request.route('/<int:form_id>/transfer', methods=['GET', 'POST'])
 def transfer(form_id):
-    name = "success"
+    transfered = False
     form_id = form_id
+    e = ""
     param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
             os.getenv('SQL_SERVER') or "{SQL Server}",
             os.getenv('AZURE_SERVER'),
@@ -95,13 +98,22 @@ def transfer(form_id):
             os.getenv('AZURE_PASS'))
     params = urllib.parse.quote_plus(param_string)    
     engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
-    engine.connect()
+    Session = sessionmaker(bind=engine)
+    session1 = Session()
     try:
         user = User.query.get(form_id)
-        engine.execute(users.insert(), user)
-        flash('User {} successfully transfered'.format(form_id))
+        print(type(user))
+        #try:
+        local_object = session1.merge(user)
+        session1.add(local_object)
+        #session1.add(user)
+        session1.commit()
+        transfered = True
+        #except:
+            #session.rollback()
     except Exception as e:
         print(e)
-        flash('User {} successfully transfered'.format(form_id))
+        print("failed")
+        #flash('User {} successfully transfered'.format(str(e)))
 
-    return render_template('room_request/id.html', id = form_id, name = name, user_found = True)
+    return render_template('room_request/transfer.html', id = form_id, transfered = transfered)
