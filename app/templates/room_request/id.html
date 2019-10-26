@@ -3,8 +3,7 @@
 {% block content %}
     <div class="ui text container">
       <h1> {% if  user_found  == "true" %} Form Name: {{ name }}, Form ID is {{ id }} {% else %} Form ID Invalid {% endif %} </h1>
-      <a href="{{ url_for('room_request.transfer', form_id = id )}}"> <button> Transfer </button>  </a>
-     
-      </a>
+      <a href="{{ url_for('room_request.transfer', form_id = id)}}">
+        <button> Transfer </button>  </a>
     </div>
 {% endblock %}

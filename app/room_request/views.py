@@ -1,7 +1,12 @@
 from flask import (
     Blueprint,
-    render_template
+    render_template,
+    flash
 )
+
+import os
+import urllib
+import sqlalchemy
 
 from .forms import RoomRequestForm
 from ..models import RoomRequest
@@ -79,7 +84,9 @@ def viewID(form_id):
         return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
 
 @room_request.route('/<int:form_id>/transfer', methods=['GET', 'POST'])
-def transfer(form_id, user):
+def transfer(form_id):
+    name = "success"
+    form_id = form_id
     param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
             os.getenv('SQL_SERVER') or "{SQL Server}",
             os.getenv('AZURE_SERVER'),
@@ -90,6 +97,11 @@ def transfer(form_id, user):
     engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
     engine.connect()
     try:
+        user = User.query.get(form_id)
         engine.execute(users.insert(), user)
-    except:
-        print("Help")
+        flash('User {} successfully transfered'.format(form_id))
+    except Exception as e:
+        print(e)
+        flash('User {} successfully transfered'.format(form_id))
+
+    return render_template('room_request/id.html', id = form_id, name = name, user_found = True)
