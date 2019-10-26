@@ -13,7 +13,7 @@ from sqlalchemy.orm import sessionmaker
 from .forms import RoomRequestForm
 from ..models import RoomRequest
 from app import db
-from app.models import EditableHTML, Role, User
+from app.models import EditableHTML, Role, RoomRequest
 
 room_request = Blueprint('room_request', __name__)
 
@@ -74,13 +74,13 @@ def new():
     
 @room_request.route('/<int:form_id>', methods=['GET', 'POST'])
 def viewID(form_id):
-    user_found = "false"
+    user_found = False
     name = ""
     try:
-        user = User.query.get(form_id)
+        user = RoomRequest.query.get(form_id)
         print("User found")
         name = str(user.first_name) + " " + str(user.last_name)
-        user_found = "true"
+        user_found = True
         return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
     except: 
         return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
@@ -89,7 +89,6 @@ def viewID(form_id):
 def transfer(form_id):
     transfered = False
     form_id = form_id
-    e = ""
     param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
             os.getenv('SQL_SERVER') or "{SQL Server}",
             os.getenv('AZURE_SERVER'),
@@ -101,19 +100,19 @@ def transfer(form_id):
     Session = sessionmaker(bind=engine)
     session1 = Session()
     try:
-        user = User.query.get(form_id)
+        user = RoomRequest.query.get(form_id)
         print(type(user))
-        #try:
-        local_object = session1.merge(user)
-        session1.add(local_object)
-        #session1.add(user)
-        session1.commit()
-        transfered = True
-        #except:
-            #session.rollback()
+        try:
+            local_object = session1.merge(user)
+            session1.add(local_object)
+            session1.commit()
+            transfered = True
+            return render_template('room_request/transfer.html', id = form_id, transfered = transfered)
+        except Exception as e:
+            session1.rollback()
+            return render_template('room_request/transfer.html', id = form_id, transfered = transfered, error = e)
     except Exception as e:
         print(e)
-        print("failed")
+        return render_template('room_request/transfer.html', id = form_id, transfered = transfered, error = e)
         #flash('User {} successfully transfered'.format(str(e)))
-
-    return render_template('room_request/transfer.html', id = form_id, transfered = transfered)
+    
