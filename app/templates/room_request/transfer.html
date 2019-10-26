@@ -1,0 +1,7 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <div class="ui text container">
+      <h1> {% if  transfered %} Form ID is {{ id }} has been transfered {% else %} Error {{ error }} {% endif %} </h1>
+    </div>
+{% endblock %}
