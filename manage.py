@@ -42,7 +42,6 @@ def recreate_db():
     db.create_all()
     db.session.commit()
 
-
 @manager.option(
     '-n',
     '--number-users',
@@ -55,11 +54,27 @@ def add_fake_data(number_users):
     Adds fake data to the database.
     """
     User.generate_fake(count=number_users)
-    RoomRequest.generate_fake()
+    RoomRequest.generate_fake()    
+
+@manager.option(
+    '-n',
+    '--id',
+    type=int,
+    help='id of the user you want to delete',
+    dest='id')
+    # something with routing here??
+    # @app.route(/room-request/<id>/delete)
+    # ^ probably replace app with something else?
+
+def delete(id):
+    """
+    Deletes user from database.
+    """
+    RoomRequest.delete(id)
 
 @manager.command
 def setup_dev():
-    """Runs the set-up needed for local development."""
+    """ the set-up needed for local development."""
     setup_general()
 
 
