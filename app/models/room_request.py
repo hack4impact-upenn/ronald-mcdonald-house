@@ -157,3 +157,19 @@ class RoomRequest(db.Model):
                 Guest.generate_fake(request)
             except IntegrityError:
                 db.session.rollback()
+
+    @staticmethod
+    def delete(id):
+        room_request_to_delete = RoomRequest.query.get(id)
+
+        if room_request_to_delete == None:
+            print(f"No user in database with id {id}.")
+
+        else:
+            try:
+                db.session.delete(room_request_to_delete)
+                db.session.commit()
+                return redirect('/')
+
+            except:
+                return 'There was an error deleting this room request.'

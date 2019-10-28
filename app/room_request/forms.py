@@ -7,7 +7,6 @@ from wtforms.fields import (PasswordField, StringField, SubmitField,
 from wtforms.fields.html5 import EmailField, TelField, DateField
 from wtforms.validators import Email, EqualTo, InputRequired, Length, NumberRange, optional
 
-
 class RoomRequestForm(FlaskForm):
     #personal information of requester
     first_name = StringField(
@@ -136,3 +135,7 @@ class RoomRequestForm(FlaskForm):
     pack_n_play = BooleanField("Pack 'N' Play")
     
     submit = SubmitField('Create')
+
+class RoomRequestEditForm(FlaskForm):
+    def __init__(self, RoomRequestForm):
+        
