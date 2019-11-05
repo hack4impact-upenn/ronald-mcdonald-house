@@ -196,3 +196,12 @@ def update_editor_contents():
     db.session.commit()
 
     return 'OK', 200
+
+@admin.route('/update_email_confirmation')
+@login_required
+@admin_required
+def update_email_confirmation():
+    """Update the email confirmation upon room request submission."""
+    editable_html_obj = EditableHTML.get_editable_html('room_request_email')
+    return render_template(
+        'room_request/confirmation_email.html', editable_html_obj=editable_html_obj)
