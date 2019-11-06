@@ -26,7 +26,8 @@ class RoomRequest(db.Model):
     previous_stay = db.Column(db.Boolean())
 
     # Patient Information
-    patient_full_name = db.Column(db.String(200))
+    patient_first = db.Column(db.String(100))
+    patient_last = db.Column(db.String(100))
     patient_dob = db.Column(db.Date)
     patient_gender = db.Column(db.String(15))
     patient_hospital = db.Column(db.String(1000))
@@ -56,7 +57,8 @@ class RoomRequest(db.Model):
                 f'id: {self.id}\n'
                 f'First Name: {self.first_name}\n'
                 f'Last Name: {self.last_name}\n'
-                f'Patient Full Name: {self.patient_full_name}\n>')
+                f'Patient First Name: {self.patient_first_name}\n>'
+                f'Patient Last Name: {self.patient_last_name}\n>')
 
     def __str__(self):
         return self.__repr__()
@@ -79,7 +81,8 @@ class RoomRequest(db.Model):
                 f'Primary Language: {self.primary_language}\n'
                 f'Secondary Language: {self.secondary_language}\n'
                 f'Previous Stay: {self.previous_stay}\n'
-                f'Patient Full Name: {self.patient_full_name}\n'
+                f'Patient First Name: {self.patient_first_name}\n'
+                f'Patient Last Name: {self.patient_last_name}\n'
                 f'Patient DOB: {self.patient_dob}\n'
                 f'Patient Gender: {self.patient_gender}\n'
                 f'Patient Hospital: {self.patient_hospital}\n'
@@ -129,7 +132,8 @@ class RoomRequest(db.Model):
                 primary_language = choice(["English", "Spanish"]),
                 secondary_language = choice(["English", "Spanish", "Japanese", "ASL"]),
                 previous_stay = fake.boolean(),
-                patient_full_name = fake.name(),
+                patient_first_name = fake.name(),
+                patient_last_name = fake.name(),
                 patient_dob = fake.past_date(),
                 patient_gender = choice(["Male", "Female", "Non Binary"]),
                 patient_hospital = choice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]),

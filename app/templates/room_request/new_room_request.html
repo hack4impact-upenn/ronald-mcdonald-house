@@ -57,7 +57,8 @@
                 <br/>
                 <h3>Patient Information</h3>
 
-                {{ f.render_form_field(form.patient_full_name) }}
+                {{ f.render_form_field(form.patient_first_name) }}
+                {{ f.render_form_field(form.patient_last_name) }}
                 <div class="two fields">
                     {{ f.render_form_field(form.patient_dob) }}
                     {{ f.render_form_field(form.patient_gender) }}
@@ -200,8 +201,9 @@
                 $('#email').val(faker.internet.email());
                 $('#primary_language').val(randomChoice(['English', 'Spanish', 'Chinese']));
                 $('#secondary_language').val(randomChoice(['', 'Spanish', 'Chinese']));
-                $('#stayed_before').prop('checked', randomChoice([true, false]))
-                $('#patient_full_name').val(faker.name.findName());
+                $('#stayed_before').prop('checked', randomChoice([true, false]));
+                $('#patient_first_name').val(faker.name.firstName());
+                $('#patient_last_name').val(faker.name.lastName());
                 $('#patient_dob').val(randomPastDate());
                 $('#patient_gender').val(randomChoice(['Male', 'Female', 'Non-Binary']));
                 $('#hospital').val(randomChoice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]));

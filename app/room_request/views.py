@@ -4,15 +4,16 @@ from flask import (
     redirect,
     render_template,
 )
-from flask_login import login_required
+from flask_login import current_user, login_required
 from app import db
 
 import os
 import urllib
 import sqlalchemy
-from sqlalchemy import create_engine
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import sessionmaker
 
+from ..decorators import admin_required
 from .forms import RoomRequestForm
 from app.models import EditableHTML, RoomRequest, User, Role
 
@@ -24,6 +25,19 @@ def manage():
     """View all room requests."""
     room_requests = RoomRequest.query.all()
     return render_template('room_request/manage.html', room_requests=room_requests)
+
+
+@login_required
+@room_request.route('/<int:rr_id>/related', methods=['GET', 'POST'])
+def duplicate_room_requests(rr_id):
+    rr = RoomRequest.query.filter_by(id = rr_id).first();
+    if rr is None:
+        abort(404)
+    if request.method == 'GET':
+        roomrequests = RoomRequest.query.filter_by(patient_last = rr.patient_last).filter_by(or_(
+        primary_phone = rr.primary_phone, email = rr.email )).all();
+    return render_template('room_request/duplicate_room_requests.html', roomrequests = roomrequests)
+
 
 @login_required
 @room_request.route('/new', methods=['GET', 'POST'])
@@ -48,8 +62,8 @@ def new():
             primary_language = form.primary_language.data,
             secondary_language = form.secondary_language.data,
             previous_stay = form.stayed_before.data,
-
-            patient_full_name = form.patient_full_name.data,
+            patient_first_name = form.patient_first_name.data,
+            patient_last_name = form.patient_last_name.data,
             patient_dob = form.patient_dob.data,
             patient_gender = form.patient_gender.data,
             patient_hospital = form.hospital.data,
@@ -83,8 +97,7 @@ def new():
             template='room_request/confirmation_email',
             roomreq=room_request)
         flash('Successfully submitted form', 'form-success')
-    return render_template('room_request/new_room_request.html', form=form,
-    editable_html_obj=editable_html_obj)
+    return render_template('room_request/new_room_request.html', form=form, editable_html_obj=editable_html_obj)
 
 
 @login_required
@@ -136,3 +149,4 @@ def transfer(id):
         print(e)
         return render_template('room_request/transfer.html', id=id, transfered=transfered, error=e)
     
+    return render_template('room_request/new_room_request.html', form=form)
