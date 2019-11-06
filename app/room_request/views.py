@@ -4,7 +4,7 @@ from flask import (
 )
 
 from .forms import RoomRequestForm
-from ..models import RoomRequest
+from app.models import RoomRequest, EditableHTML
 
 room_request = Blueprint('room_request', __name__)
 
@@ -14,6 +14,7 @@ room_request = Blueprint('room_request', __name__)
 @room_request.route('/new', methods=['GET', 'POST'])
 def new():
     """Room Request page."""
+    editable_html_obj = EditableHTML.get_editable_html('room_request')
     form = RoomRequestForm()
     if form.validate_on_submit():
         room_request = RoomRequest(
@@ -60,4 +61,5 @@ def new():
         db.session.add(room_request)
         db.session.commit()
         flash('Successfully submitted form', 'form-success')
-    return render_template('room_request/new_room_request.html', form=form)
+    return render_template('room_request/new_room_request.html', form=form,
+    editable_html_obj=editable_html_obj)
