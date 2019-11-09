@@ -1,0 +1,184 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <div class="ui stackable grid container">
+        <div class="sixteen wide tablet twelve wide computer centered column">
+            <a class="ui basic compact button" href="{{ url_for('admin.index') }}">
+                <i class="caret left icon"></i>
+                Back to dashboard
+            </a>
+            <h2 class="ui header">
+                Registered Users
+                <div class="sub header">
+                    View and manage all room requests.
+                </div>
+            </h2>
+
+            <div class="ui menu">
+                <div id="select-role" class="ui dropdown item">
+                    <div class="text">
+                        All account types
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" data-value="">All account types</div>
+                        {% for r in roles %}
+                            <div class="item" data-value="{{ r.name }}">{{ r.name }}s</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="ui right search item">
+                    <div class="ui transparent icon input">
+                        <input id="search-users" type="text" placeholder="Search users…">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
+            </div>
+
+            {# Use overflow-x: scroll so that mobile views don't freak out
+             # when the table is too wide #}
+            <div style="overflow-x: auto;">
+                <table class="ui searchable sortable unstackable selectable celled table">
+                    <thead> 
+                        <tr>
+                            <th rowspan="2">Authenticate</th>
+                            <th rowspan="2">First Name (User)</th>
+                            <th rowspan="2" class="sorted ascending">Last Name (User)</th>
+                            <th rowspan="2">Email Address</th>
+                            <th rowspan="2">Account Type</th>
+                            <th rowspan="2">Relationship to Patient</th>
+                            <th rowspan="2">Full Address</th> 
+                            <th rowspan="2">Primary Phone</th>
+                            <th rowspan="2">Secondary Phone</th>
+                            <th rowspan="2">Primary Language</th>
+                            <th rowspan="2">Secondary Language</th>
+                            <th rowspan="2">Requested Before?</th>
+
+                            <!--Patient Information-->
+                            <th colspan="18">Patient Information</th>
+                        </tr>
+                        <tr>
+                            <th>Patient Full Name</th>
+                            <th>Patient Birthday</th>
+                            <th>Patient Gender</th>
+                            <th>Hospital in Philadelphia</th>
+                            <th>Hospital Department</th>
+                            <th>Treatment Description</th>
+                            <th>Diagnosis</th>
+                            <th>Date of First Appointment</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Treating Doctor</th>
+                            <th>Doctor Phone Number</th>
+                            <th>Hospital Social Worker</th>
+                            <th>Hospital Social Worker Phone Number</th>
+                            <th>Inpatient/Outpatient</th>
+                            <th>Inpatient Stay?</th>
+                            <th>Vaccinated?</th>
+                            <th>Additional Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for u in users | sort(attribute='last_name') %}
+                    <!--modal-->
+                    <div class="ui modal">
+                        <div class="header">Confirm Deletion Request</div>
+                        <div class="content">
+                            <p>Do you want to delete this entry?</p>
+                        </div>
+                        <div class="actions">
+                            <div class="ui red approve button" onclick="delete({{ u.id }})">Confirm</div>
+                            <div class="ui cancel button">Cancel</div>
+                        </div>
+                    </div>
+                        <tr>
+                            <td>
+                                <button class="ui red button" id="push">Delete</button>
+                            </td>
+                            <td>{{ u.first_name }}</td>
+                            <td>{{ u.last_name }}</td>
+                            <td>{{ u.email }}</td>
+                            <td class="user role">{{ u.role.name }}</td>
+                            <td>{{ u.relationship_to_patient }}</td>
+                            <td>{{ u.full_address }}</td>
+                            <td>{{ u.primary_phone }}</td>
+                            <td>{{ u.secondary_phone }}</td>
+                            <td>{{ u.primary_language }}</td>
+                            <td>{{ u.secondary_language }}</td>
+                            <td class="negative">{{ u.requested_before }}</td>
+                            <td>{{ u.patient_full_name }}</td>
+                            <td>{{ u.patient_birthday }}</td>
+                            <td>{{ u.patient_gender }}</td>
+                            <td>{{ u.hospital_in_philadelphia }}</td>
+                            <td>{{ u.hospital_department }}</td>
+                            <td>{{ u.treatment_description }}</td>
+                            <td>{{ u.diagnosis }}</td>
+                            <td>{{ u.first_appt_date }}</td>
+                            <td>{{ u.check_in }}</td>
+                            <td>{{ u.check_out }}</td>
+                            <td>{{ u.treating_doctor }}</td>
+                            <td>{{ u.doctor_phone_number }}</td>
+                            <td>{{ u.hospital_social_worker }}</td>
+                            <td>{{ u.hospital_social_worker_phone }}</td>
+                            <td>{{ u.inoutpatient }}</td>
+                            <td class="negative">{{ u.stay }}</td>
+                            <td class="negative">{{ u.vaccinated }}</td>
+                            <td>{{ u.additional_comments }}</td>
+                            
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!--post request-->
+    <script>
+        // Make a DELETE request to the following URL
+        function deleteUser(user_id) {
+            $.ajax({
+                url: `/room-request/${user_id}/delete`,
+                type: 'DELETE',
+                success: function(response) {
+                // Print the response in the browser console
+                console.log(response)
+                // Refresh the page
+                document.location.reload()
+                },
+            })
+        }
+    </script>
+
+    <script type="text/javascript">
+        $('#push').click(function(){
+            $('.ui.modal' + id).modal('show')
+        });
+        ;
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#search-users').keyup(function () {
+                var searchText = $(this).val();
+                if (searchText.length > 0) {
+                    $('tbody td:icontains(' + searchText + ')').addClass('positive');
+                    $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
+                    $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
+                    $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
+                } else {
+                    $('td.positive').removeClass('positive');
+                    $('tr.hidden').removeClass('hidden').show();
+                }
+            });
+
+            $('#select-role').dropdown({
+                onChange: function (value, text, $selectedItem) {
+                    $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
+                    $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
+                }
+            });
+        });
+    </script>
+    
+{% endblock %}
