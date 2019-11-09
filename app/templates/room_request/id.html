@@ -1,9 +1,81 @@
 {% extends 'layouts/base.html' %}
+{% import 'macros/form_macros.html' as f %}
 
 {% block content %}
     <div class="ui text container">
       <h1> {% if  user_found %} Form Name: {{ name }}, Form ID is {{ id }} {% else %} Form ID Invalid {% endif %} </h1>
-      <a href="{{ url_for('room_request.transfer', form_id = id)}}">
-        <button> Transfer </button>  </a>
+      
+      {% set flashes = {
+        'post': get_flashed_messages(category_filter=['form-post']),
+        'transfer': get_flashed_messages(category_filter=['form-transfer'])
+    } %}
+      
+        {% if user_found %}
+        <form action="{{ url_for('room_request.transfer', form_id = id)}}" method="POST">
+            {{ f.begin_form(transfer, flashes) }}
+            {{ f.render_form_field(transfer.transfer) }}
+            {{ f.end_form() }}
+            </form>
+
+        {{ f.begin_form(form, flashes) }}
+        {{ f.render_form_field(form.body) }}
+        {{ f.render_form_field(form.submit) }}
+        {{ f.end_form()}}
     </div>
+   
+    <div class="ui stackable grid container">
+      <div class="sixteen wide tablet twelve wide computer centered column">
+          <h2 class="ui header">
+              Comments
+          </h2>
+          <div class="ui menu">
+              <div class="ui search item">
+                  <div class="ui transparent icon input">
+                      <input id="search-users" type="text" placeholder="Search comments">
+                      <i class="search icon"></i>
+                  </div>
+              </div>
+          </div>
+
+          {# Use overflow-x: scroll so that mobile views don't freak out
+           # when the table is too wide #}
+          <div>
+              <table class="ui searchable sortable unstackable selectable celled table">
+                 <tbody>
+                    {% for u in comments %}
+                    <tr>
+                        <td class="user role">{{ u.commenter }}</td>
+                        <td>{{ u.text }}</td>
+                        <td> {{ u.created_date.strftime('%d-%m-%Y') }} at  {{ u.created_date.strftime('%I:%M:%S') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+  <script type="text/javascript">
+    $(document).ready(function () {
+        $('#search-users').keyup(function () {
+            var searchText = $(this).val();
+            if (searchText.length > 0) {
+                $('tbody td:icontains(' + searchText + ')').addClass('positive');
+                $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
+                $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
+                $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
+            } else {
+                $('td.positive').removeClass('positive');
+                $('tr.hidden').removeClass('hidden').show();
+            }
+        });
+
+        $('#select-role').dropdown({
+            onChange: function (value, text, $selectedItem) {
+                $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
+                $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
+            }
+        });
+    });
+</script>
+{% else %}  {% endif %} 
 {% endblock %}

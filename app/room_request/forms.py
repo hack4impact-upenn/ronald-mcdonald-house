@@ -136,3 +136,11 @@ class RoomRequestForm(FlaskForm):
     pack_n_play = BooleanField("Pack 'N' Play")
     
     submit = SubmitField('Create')
+
+
+class ActivityForm(FlaskForm):
+    body = StringField("Body", validators=[InputRequired()])
+    submit = SubmitField("Post")
+
+class TransferForm(FlaskForm):
+    transfer = SubmitField("Transfer")

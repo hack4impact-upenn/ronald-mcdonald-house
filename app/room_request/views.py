@@ -1,17 +1,21 @@
 from flask import (
     Blueprint,
     render_template,
-    flash
+    flash,
+    request,
+    redirect,
+    url_for
 )
 
 import os
+import datetime
 import urllib
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from .forms import RoomRequestForm
-from ..models import RoomRequest
+from flask_login import current_user
+from .forms import RoomRequestForm, ActivityForm, TransferForm
+from ..models import RoomRequest, Activity, User
 from app import db
 from app.models import EditableHTML, Role, RoomRequest
 
@@ -71,22 +75,43 @@ def new():
         flash('Successfully submitted form', 'form-success')
     return render_template('room_request/new_room_request.html', form=form)
 
-    
+
 @room_request.route('/<int:form_id>', methods=['GET', 'POST'])
 def viewID(form_id):
+    form = ActivityForm()
+    trasnferf = TransferForm()
     user_found = False
+    comments = Activity.query.filter_by(room_request_id = form_id)
     name = ""
     try:
-        user = RoomRequest.query.get(form_id)
+        request_ob = RoomRequest.query.get(form_id)
         print("User found")
-        name = str(user.first_name) + " " + str(user.last_name)
+        name = str(request_ob.first_name) + " " + str(request_ob.last_name)
         user_found = True
-        return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
     except: 
-        return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found)
-
+        user_found = False
+    if form.validate_on_submit():
+            activity = Activity(
+                text=form.body.data,
+                commenter = current_user.first_name,
+                user_id = current_user.id,
+                room_request_id = request_ob.id
+                )
+            db.session.add(activity)
+            db.session.commit()
+            flash("Your comment has been added to the post", 'form-post')
+            form.body.data = ''
+            return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found,
+                                                    transfer= trasnferf, form = form, comments = comments)
+    if trasnferf.validate_on_submit():
+       flash("Succesfully Trasnfered!")
+       return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found,
+                                                    transfer= trasnferf, form = form, comments = comments)
+    return render_template('room_request/id.html', id = form_id, name = name, user_found = user_found,
+                                                    transfer= trasnferf, form = form, comments = comments)
 @room_request.route('/<int:form_id>/transfer', methods=['GET', 'POST'])
 def transfer(form_id):
+    form = TransferForm
     transfered = False
     form_id = form_id
     param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
@@ -101,18 +126,17 @@ def transfer(form_id):
     session1 = Session()
     try:
         user = RoomRequest.query.get(form_id)
-        print(type(user))
+        name = str(user.first_name) + " " + str(user.last_name)
         try:
             local_object = session1.merge(user)
             session1.add(local_object)
             session1.commit()
             transfered = True
-            return render_template('room_request/transfer.html', id = form_id, transfered = transfered)
+            flash("Room Request Transfered!", 'form-transfer')
+            return redirect(url_for('room_request.viewID', form_id = form_id))
         except Exception as e:
             session1.rollback()
             return render_template('room_request/transfer.html', id = form_id, transfered = transfered, error = e)
     except Exception as e:
         print(e)
         return render_template('room_request/transfer.html', id = form_id, transfered = transfered, error = e)
-        #flash('User {} successfully transfered'.format(str(e)))
-    
