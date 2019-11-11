@@ -7,7 +7,6 @@ from wtforms.fields import (PasswordField, StringField, SubmitField,
 from wtforms.fields.html5 import EmailField, TelField, DateField
 from wtforms.validators import Email, EqualTo, InputRequired, Length, NumberRange, optional
 
-
 class RoomRequestForm(FlaskForm):
     #personal information of requester
     first_name = StringField(
