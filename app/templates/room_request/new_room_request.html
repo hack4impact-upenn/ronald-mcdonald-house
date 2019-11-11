@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% import 'macros/form_macros.html' as f %}
-
+{% import 'macros/page_macros.html' as page %}
 
 {% block content %}
     <div class="ui stackable centered grid container">
@@ -8,6 +8,10 @@
             <h2 class="ui header">
                 Request a Room Form
             </h2>
+
+            {{ page.render_inline_editor(editable_html_obj, current_user) }}
+
+            <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
 
             {% set flashes = {
                 'error':   get_flashed_messages(category_filter=['form-error']),
@@ -22,7 +26,7 @@
                     {{ f.render_form_field(form.first_name) }}
                     {{ f.render_form_field(form.last_name) }}
                 </div>
-                
+
                 {{ f.render_form_field(form.rel_to_patient) }}
 
                 {{ f.render_form_field(form.street_address) }}
@@ -67,7 +71,7 @@
                     {{ f.render_form_field(form.diagnosis) }}
                     {{ f.render_form_field(form.first_appt_date) }}
                 </div>
-                
+
                 <div class="two fields">
                     {{ f.render_form_field(form.check_in_date) }}
                     {{ f.render_form_field(form.check_out_date) }}
@@ -143,7 +147,7 @@
                 {{ f.form_message(flashes['warning'], header='Check the email.', class='warning') }}
                 {{ f.form_message(flashes['info'], header='Information', class='info') }}
                 {{ f.form_message(flashes['success'], header='Success!', class='success') }}
-                
+
                 <p>
                     <div id="populate-room-request-form" class="ui button">
                         Populate form with fake data
