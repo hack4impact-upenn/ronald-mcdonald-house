@@ -85,6 +85,11 @@ def invite_user():
     return render_template('admin/new_user.html', form=form)
 
 
+@admin.route('/room-request-form', methods=['GET'])
+def manage():
+    room_requests = RoomRequest.query.all()
+    return render_template('room_request/manage.html', room_requests=room_requests)
+
 @admin.route('/users')
 @login_required
 @admin_required
@@ -196,3 +201,12 @@ def update_editor_contents():
     db.session.commit()
 
     return 'OK', 200
+
+@admin.route('/update_email_confirmation')
+@login_required
+@admin_required
+def update_email_confirmation():
+    """Update the email confirmation upon room request submission."""
+    editable_html_obj = EditableHTML.get_editable_html('room_request_email')
+    return render_template(
+        'room_request/confirmation_email.html', editable_html_obj=editable_html_obj)

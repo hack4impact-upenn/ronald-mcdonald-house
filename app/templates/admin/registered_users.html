@@ -10,7 +10,7 @@
             <h2 class="ui header">
                 Registered Users
                 <div class="sub header">
-                    View and manage currently registered users.
+                    View and manage registered users.
                 </div>
             </h2>
 
@@ -37,20 +37,19 @@
 
             {# Use overflow-x: scroll so that mobile views don't freak out
              # when the table is too wide #}
-            <div style="overflow-x: scroll;">
+            <div style="overflow-x: auto;">
                 <table class="ui searchable sortable unstackable selectable celled table">
-                    <thead>
+                    <thead> 
                         <tr>
-                            <th>First name</th>
-                            <th class="sorted ascending">Last name</th>
-                            <th>Email address</th>
-                            <th>Account type</th>
+                            <th rowspan="2">First Name</th>
+                            <th rowspan="2" class="sorted ascending">Last Name</th>
+                            <th rowspan="2">Email Address</th>
+                            <th rowspan="2">Account Type</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for u in users | sort(attribute='last_name') %}
                         <tr onclick="window.location.href = '{{ url_for('admin.user_info', user_id=u.id) }}';">
-
                             <td>{{ u.first_name }}</td>
                             <td>{{ u.last_name }}</td>
                             <td>{{ u.email }}</td>
@@ -86,4 +85,5 @@
             });
         });
     </script>
+    
 {% endblock %}

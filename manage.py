@@ -32,7 +32,6 @@ def test():
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
 
-
 @manager.command
 def recreate_db():
     """
@@ -42,7 +41,6 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
-
 
 @manager.option(
     '-n',
@@ -56,7 +54,7 @@ def add_fake_data(number_users):
     Adds fake data to the database.
     """
     User.generate_fake(count=number_users)
-    RoomRequest.generate_fake()
+    RoomRequest.generate_fake()    
 
 @manager.command
 def setup_dev():
