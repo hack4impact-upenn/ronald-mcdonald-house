@@ -7,7 +7,6 @@ from flask import (
 from flask_login import login_required
 from app import db
 
-from flask_login import login_required
 from .forms import RoomRequestForm
 from ..models import RoomRequest
 
@@ -67,6 +66,15 @@ def new():
         )
         db.session.add(room_request)
         db.session.commit()
+
+        from app.email import send_email
+        from flask_rq import get_queue
+        get_queue().enqueue(
+            send_email,
+            recipient=room_request.email,
+            subject='PRMH Room Request Submitted',
+            template='room_request/confirmation_email',
+            roomreq=room_request)
         flash('Successfully submitted form', 'form-success')
     return render_template('room_request/new_room_request.html', form=form)
 
