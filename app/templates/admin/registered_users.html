@@ -10,7 +10,7 @@
             <h2 class="ui header">
                 Registered Users
                 <div class="sub header">
-                    View and manage all room requests.
+                    View and manage registered users.
                 </div>
             </h2>
 
@@ -41,91 +41,19 @@
                 <table class="ui searchable sortable unstackable selectable celled table">
                     <thead> 
                         <tr>
-                            <th rowspan="2">Authenticate</th>
-                            <th rowspan="2">First Name (User)</th>
-                            <th rowspan="2" class="sorted ascending">Last Name (User)</th>
+                            <th rowspan="2">First Name</th>
+                            <th rowspan="2" class="sorted ascending">Last Name</th>
                             <th rowspan="2">Email Address</th>
                             <th rowspan="2">Account Type</th>
-                            <th rowspan="2">Relationship to Patient</th>
-                            <th rowspan="2">Full Address</th> 
-                            <th rowspan="2">Primary Phone</th>
-                            <th rowspan="2">Secondary Phone</th>
-                            <th rowspan="2">Primary Language</th>
-                            <th rowspan="2">Secondary Language</th>
-                            <th rowspan="2">Requested Before?</th>
-
-                            <!--Patient Information-->
-                            <th colspan="18">Patient Information</th>
-                        </tr>
-                        <tr>
-                            <th>Patient Full Name</th>
-                            <th>Patient Birthday</th>
-                            <th>Patient Gender</th>
-                            <th>Hospital in Philadelphia</th>
-                            <th>Hospital Department</th>
-                            <th>Treatment Description</th>
-                            <th>Diagnosis</th>
-                            <th>Date of First Appointment</th>
-                            <th>Check In</th>
-                            <th>Check Out</th>
-                            <th>Treating Doctor</th>
-                            <th>Doctor Phone Number</th>
-                            <th>Hospital Social Worker</th>
-                            <th>Hospital Social Worker Phone Number</th>
-                            <th>Impatient/Outpatient</th>
-                            <th>Impatient Stay?</th>
-                            <th>Vaccinated?</th>
-                            <th>Additional Comments</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for u in users | sort(attribute='last_name') %}
-                    <!--modal-->
-                    <div class="ui modal">
-                        <div class="header">Confirm Deletion Request</div>
-                        <div class="content">
-                            <p>Do you want to delete this entry?</p>
-                        </div>
-                        <div class="actions">
-                            <div class="ui red approve button" onclick="delete({{ u.id }})">Confirm</div>
-                            <div class="ui cancel button">Cancel</div>
-                        </div>
-                    </div>
-                    <!--onclick="window.location.href = '{{ url_for('admin.user_info', user_id=u.id) }}';"-->
-                        <tr>
-                            <td>
-                                <button class="ui red button" id="push">Delete</button>
-                            </td>
+                        <tr onclick="window.location.href = '{{ url_for('admin.user_info', user_id=u.id) }}';">
                             <td>{{ u.first_name }}</td>
                             <td>{{ u.last_name }}</td>
                             <td>{{ u.email }}</td>
                             <td class="user role">{{ u.role.name }}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="negative"></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="negative"></td>
-                            <td class="negative"></td>
-                            <td></td>
-                            
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -133,30 +61,6 @@
             </div>
         </div>
     </div>
-
-    <!--post request-->
-    <script>
-        // Make a DELETE request to the following URL
-        function deleteUser(user_id) {
-            $.ajax({
-                url: `/room-request/${user_id}/delete`,
-                type: 'DELETE',
-                success: function(response) {
-                // Print the response in the browser console
-                console.log(response)
-                // Refresh the page
-                document.location.reload()
-                },
-            })
-        }
-    </script>
-
-    <script type="text/javascript">
-        $('#push').click(function(){
-            $('.ui.modal' + id).modal('show')
-        });
-        ;
-    </script>
 
     <script type="text/javascript">
         $(document).ready(function () {
