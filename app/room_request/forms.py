@@ -135,7 +135,3 @@ class RoomRequestForm(FlaskForm):
     pack_n_play = BooleanField("Pack 'N' Play")
     
     submit = SubmitField('Create')
-
-class RoomRequestEditForm(FlaskForm):
-    def __init__(self, RoomRequestForm):
-        

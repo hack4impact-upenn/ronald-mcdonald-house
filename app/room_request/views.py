@@ -1,7 +1,11 @@
 from flask import (
     Blueprint,
-    render_template
+    flash,
+    redirect,
+    render_template,
 )
+from flask_login import login_required
+from app import db
 
 from .forms import RoomRequestForm
 from ..models import RoomRequest
@@ -11,6 +15,7 @@ room_request = Blueprint('room_request', __name__)
 # TODO dashboard at route /
 
 # TODO create form at route /new
+@login_required
 @room_request.route('/new', methods=['GET', 'POST'])
 def new():
     """Room Request page."""
@@ -61,3 +66,14 @@ def new():
         db.session.commit()
         flash('Successfully submitted form', 'form-success')
     return render_template('room_request/new_room_request.html', form=form)
+
+@room_request.route('<int:room_request_id>/delete', methods=['POST'])
+@login_required
+def delete_room_request(room_request_id):
+    """Request deletion of a user's account."""
+    room_request = RoomRequest.query.filter_by(id=room_request_id).first()
+    if room_request:
+        db.session.delete(room_request)
+        db.session.commit()
+        flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.')
+    return redirect('/room-request/')
