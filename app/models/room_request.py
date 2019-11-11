@@ -1,9 +1,10 @@
 from .. import db
-from sqlalchemy import Column, Integer, Boolean
-import datetime
+from .guest import Guest
+from sqlalchemy import Column, Integer, Boolean, DateTime
 
 class RoomRequest(db.Model):
-    __tablename__ = "room_request"
+    __tablename__ = "room_requests"
+
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime())
 
@@ -17,8 +18,8 @@ class RoomRequest(db.Model):
     state = db.Column(db.String(64))
     zip_code = db.Column(db.String(15))
     country = db.Column(db.String(64))
-    primary_phone = db.Column(db.String(15))
-    secondary_phone = db.Column(db.String(15))
+    primary_phone = db.Column(db.String(50))
+    secondary_phone = db.Column(db.String(50))
     email = db.Column(db.String(1000))
     primary_language = db.Column(db.String(100))
     secondary_language = db.Column(db.String(100))
@@ -45,12 +46,22 @@ class RoomRequest(db.Model):
     comments = db.Column(db.String(5000))
 
     # Room Request
-    #room_occupancy = db.relationship('Guest')
+    guests = db.relationship('Guest', backref='room_request')
     wheelchair_access = db.Column(db.Boolean())
     full_bathroom = db.Column(db.Boolean())
     pack_n_play = db.Column(db.Boolean())
 
     def __repr__(self):
+        return ('<Room Request \n'
+                f'id: {self.id}\n'
+                f'First Name: {self.first_name}\n'
+                f'Last Name: {self.last_name}\n'
+                f'Patient Full Name: {self.patient_full_name}\n>')
+
+    def __str__(self):
+        return self.__repr__()
+
+    def print_info(self):
         return ('<Room Request \n'
                 f'Created At: {self.created_at}\n'
                 f'First Name: {self.first_name}\n'
@@ -92,10 +103,68 @@ class RoomRequest(db.Model):
                 f'Full Bathroom: {self.full_bathroom}\n'
                 f'Pack n Play: {self.pack_n_play}\n>')
 
-    def __str__(self):
-        return self.__repr__()
+    @staticmethod
+    def generate_fake(count=5, **kwargs):
+        """Generate fake room requests for testing."""
+        from sqlalchemy.exc import IntegrityError
+        from faker import Faker
+        from random import seed, choice
 
+        fake = Faker()
+        seed()
+        for _ in range(count):
+            request = RoomRequest(
+                first_name = fake.first_name(),
+                last_name = fake.last_name(),
+                relationship_to_patient = choice(["Father", "Mother", "Parent"]),
+                address_line_one = fake.street_address(),
+                address_line_two = fake.secondary_address(),
+                city = fake.city(),
+                state = fake.state(),
+                zip_code = fake.zipcode(),
+                country = fake.country(),
+                primary_phone = fake.phone_number(),
+                secondary_phone = fake.phone_number(),
+                email = fake.email(),
+                primary_language = choice(["English", "Spanish"]),
+                secondary_language = choice(["English", "Spanish", "Japanese", "ASL"]),
+                previous_stay = fake.boolean(),
+                patient_full_name = fake.name(),
+                patient_dob = fake.past_date(),
+                patient_gender = choice(["Male", "Female", "Non Binary"]),
+                patient_hospital = choice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]),
+                patient_hospital_department = choice(["Pediatrics","Oncology","General"]),
+                patient_treatment_description = fake.word(),
+                patient_diagnosis = fake.word(),
+                patient_first_appt_date = fake.future_date(),
+                patient_check_in = fake.future_date(),
+                patient_check_out = fake.future_date(),
+                patient_treating_doctor = fake.name(),
+                patient_doctors_phone = fake.phone_number(),
+                patient_social_worker = fake.name(),
+                patient_social_worker_phone = fake.phone_number(),
+                inpatient = fake.boolean(),
+                inpatient_prior = fake.boolean(),
+                vaccinated = fake.boolean(),
+                comments = fake.sentence(),
+                wheelchair_access = fake.boolean(),
+                full_bathroom = fake.boolean(),
+                pack_n_play = fake.boolean(),
+                **kwargs)
+            db.session.add(request)
+            try:
+                db.session.commit()
+                Guest.generate_fake(request)
+            except IntegrityError:
+                db.session.rollback()
 
-#class Guest(db.Model):
-#    # TODO
-#    pass
+    @staticmethod
+    def delete(id):
+        room_request_to_delete = RoomRequest.query.get(id)
+        if room_request_to_delete == None:
+            print(f"No user in database with id {id}.")
+        else:
+            try:
+                db.session.delete(room_request_to_delete)
+                db.session.commit()
+                return redirect('/')

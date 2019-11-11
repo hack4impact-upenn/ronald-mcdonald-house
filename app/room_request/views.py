@@ -1,15 +1,25 @@
 from flask import (
     Blueprint,
+    flash,
+    redirect,
+    render_template,
 )
+from flask_login import login_required
+from app import db
 
 from .forms import RoomRequestForm
 from ..models import RoomRequest
 
 room_request = Blueprint('room_request', __name__)
 
-# TODO dashboard at route /
+@login_required
+@room_request.route('/', methods=['GET', 'POST'])
+def manage():
+    """View all room requests."""
+    room_requests = RoomRequest.query.all()
+    return render_template('room_request/manage.html', room_requests=room_requests)
 
-# TODO create form at route /new
+@login_required
 @room_request.route('/new', methods=['GET', 'POST'])
 def new():
     """Room Request page."""
@@ -50,8 +60,6 @@ def new():
             inpatient_prior = form.staying_prior_to_admission.data,
             vaccinated = form.vaccinated.data,
             comments = form.comments.data,
-
-            #waiting for guest model stuff to upload guests from form
             wheelchair_access = form.wheelchair_access.data,
             full_bathroom = form.full_bathroom.data,
             pack_n_play = form.pack_n_play.data
@@ -69,3 +77,14 @@ def new():
             roomreq=room_request)
         flash('Successfully submitted form', 'form-success')
     return render_template('room_request/new_room_request.html', form=form)
+
+@login_required
+@room_request.route('<int:room_request_id>/delete', methods=['POST'])
+def delete_room_request(room_request_id):
+    """Request deletion of a user's account."""
+    room_request = RoomRequest.query.filter_by(id=room_request_id).first()
+    if room_request:
+        db.session.delete(room_request)
+        db.session.commit()
+        flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.')
+    return redirect('/room-request/')

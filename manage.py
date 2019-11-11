@@ -8,7 +8,7 @@ from redis import Redis
 from rq import Connection, Queue, Worker
 
 from app import create_app, db
-from app.models import Role, User
+from app.models import Role, User, Guest, RoomRequest
 from config import Config
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -32,7 +32,6 @@ def test():
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
 
-
 @manager.command
 def recreate_db():
     """
@@ -42,7 +41,6 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
-
 
 @manager.option(
     '-n',
@@ -56,8 +54,7 @@ def add_fake_data(number_users):
     Adds fake data to the database.
     """
     User.generate_fake(count=number_users)
-    # generate fake room requests
-
+    RoomRequest.generate_fake()    
 
 @manager.command
 def setup_dev():
