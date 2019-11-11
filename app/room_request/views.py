@@ -3,14 +3,19 @@ from flask import (
     render_template
 )
 
+from flask_login import login_required
 from .forms import RoomRequestForm
 from ..models import RoomRequest
 
 room_request = Blueprint('room_request', __name__)
 
-# TODO dashboard at route /
+@login_required
+@room_request.route('/', methods=['GET', 'POST'])
+def manage():
+    """View all room requests."""
+    room_requests = RoomRequest.query.all()
+    return render_template('room_request/manage.html', room_requests=room_requests)
 
-# TODO create form at route /new
 @room_request.route('/new', methods=['GET', 'POST'])
 def new():
     """Room Request page."""
@@ -51,8 +56,6 @@ def new():
             inpatient_prior = form.staying_prior_to_admission.data,
             vaccinated = form.vaccinated.data,
             comments = form.comments.data,
-
-            #waiting for guest model stuff to upload guests from form
             wheelchair_access = form.wheelchair_access.data,
             full_bathroom = form.full_bathroom.data,
             pack_n_play = form.pack_n_play.data

@@ -85,6 +85,11 @@ def invite_user():
     return render_template('admin/new_user.html', form=form)
 
 
+@admin.route('/room-request-form', methods=['GET'])
+def manage():
+    room_requests = RoomRequest.query.all()
+    return render_template('room_request/manage.html', room_requests=room_requests)
+
 @admin.route('/users')
 @login_required
 @admin_required
