@@ -1,18 +1,20 @@
 from flask import (
     Blueprint,
+    abort,
     flash,
     redirect,
     render_template,
 )
-from flask_login import login_required
+from flask_login import current_user, login_required
 from app import db
 
 import os
 import urllib
 import sqlalchemy
-from sqlalchemy import create_engine
+from sqlalchemy import not_, or_
 from sqlalchemy.orm import sessionmaker
 
+from ..decorators import admin_required
 from .forms import RoomRequestForm
 from app.models import EditableHTML, RoomRequest, User, Role
 
@@ -48,8 +50,8 @@ def new():
             primary_language = form.primary_language.data,
             secondary_language = form.secondary_language.data,
             previous_stay = form.stayed_before.data,
-
-            patient_full_name = form.patient_full_name.data,
+            patient_first_name = form.patient_first_name.data,
+            patient_last_name = form.patient_last_name.data,
             patient_dob = form.patient_dob.data,
             patient_gender = form.patient_gender.data,
             patient_hospital = form.hospital.data,
@@ -83,8 +85,7 @@ def new():
             template='room_request/confirmation_email',
             roomreq=room_request)
         flash('Successfully submitted form', 'form-success')
-    return render_template('room_request/new_room_request.html', form=form,
-    editable_html_obj=editable_html_obj)
+    return render_template('room_request/new_room_request.html', form=form, editable_html_obj=editable_html_obj)
 
 
 @login_required
@@ -136,3 +137,24 @@ def transfer(id):
         print(e)
         return render_template('room_request/transfer.html', id=id, transfered=transfered, error=e)
     
+    return render_template('room_request/new_room_request.html', form=form)
+
+
+@login_required
+@room_request.route('/<int:id>/duplicates', methods=['GET', 'POST'])
+def duplicate_room_requests(id):
+    room_request = RoomRequest.query.get(id)
+    if room_request is None:
+        return abort(404)
+    # Duplicate room request must have:
+    # (1) The same patient name
+    # (2) A matching phone number or email for the requester
+    duplicate_room_requests = RoomRequest.query \
+        .filter_by(patient_first_name=room_request.patient_first_name, patient_last_name=room_request.patient_last_name) \
+        .filter(or_(
+            RoomRequest.primary_phone == room_request.primary_phone,
+            RoomRequest.email == room_request.email,
+        )) \
+        .filter(RoomRequest.id != room_request.id) \
+        .all();
+    return render_template('room_request/duplicates.html', duplicate_room_requests=duplicate_room_requests)
