@@ -26,8 +26,8 @@ class RoomRequest(db.Model):
     previous_stay = db.Column(db.Boolean())
 
     # Patient Information
-    patient_first = db.Column(db.String(100))
-    patient_last = db.Column(db.String(100))
+    patient_first_name = db.Column(db.String(100))
+    patient_last_name = db.Column(db.String(100))
     patient_dob = db.Column(db.Date)
     patient_gender = db.Column(db.String(15))
     patient_hospital = db.Column(db.String(1000))
@@ -132,8 +132,8 @@ class RoomRequest(db.Model):
                 primary_language = choice(["English", "Spanish"]),
                 secondary_language = choice(["English", "Spanish", "Japanese", "ASL"]),
                 previous_stay = fake.boolean(),
-                patient_first_name = fake.name(),
-                patient_last_name = fake.name(),
+                patient_first_name = fake.first_name(),
+                patient_last_name = fake.last_name(),
                 patient_dob = fake.past_date(),
                 patient_gender = choice(["Male", "Female", "Non Binary"]),
                 patient_hospital = choice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]),

@@ -1,0 +1,41 @@
+{% extends 'layouts/base.html' %}
+{% import 'macros/form_macros.html' as f %}
+
+
+{% block content %}
+    <div class="ui stackable centered grid container">
+        <div class="twelve wide column">
+            <h2 class="ui header">
+                Duplicate Room Requests
+            </h2>
+
+            {% set flashes = {
+                'error':   get_flashed_messages(category_filter=['form-error']),
+                'warning': get_flashed_messages(category_filter=['form-check-email']),
+                'info':    get_flashed_messages(category_filter=['form-info']),
+                'success': get_flashed_messages(category_filter=['form-success'])
+            } %}
+
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>Patient First Name</th>
+                        <th>Patient Last Name</th>
+                        <th>Requester Phone Number</th>
+                        <th>Requester Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in duplicate_room_requests %}
+                    <tr>
+                        <td>{{ r.patient_first_name }}</td>
+                        <td>{{ r.patient_last_name }}</td>
+                        <td>{{ r.primary_phone }}</td>
+                        <td>{{ r.email }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

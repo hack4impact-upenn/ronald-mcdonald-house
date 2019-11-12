@@ -36,9 +36,10 @@
                             <th rowspan="2">Secondary Language</th>
                             <th rowspan="2">Requested Before?</th>
                             <!--Patient Information-->
-                            <th colspan="21">Patient Information</th>
+                            <th colspan="22">Patient Information</th>
                         <tr>
-                            <th>Patient Full Name</th>
+                            <th>Patient First Name</th>
+                            <th>Patient Last Name</th>
                             <th>Patient Birthday</th>
                             <th>Patient Gender</th>
                             <th>Hospital in Philadelphia</th>
@@ -89,7 +90,8 @@
                         <td>{{ r.primary_language }}</td>
                         <td>{{ r.secondary_language }}</td>
                         <td>{{ r.previous_stay }}</td>
-                        <td class="collapsing">{{ r.patient_full_name }}</td>
+                        <td class="collapsing">{{ r.patient_first_name }}</td>
+                        <td class="collapsing">{{ r.patient_last_name }}</td>
                         <td>{{ r.patient_dob }}</td>
                         <td>{{ r.patient_gender }}</td>
                         <td class="collapsing">{{ r.patient_hospital }}</td>

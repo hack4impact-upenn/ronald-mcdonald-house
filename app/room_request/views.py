@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    abort,
     flash,
     redirect,
     render_template,
@@ -10,7 +11,7 @@ from app import db
 import os
 import urllib
 import sqlalchemy
-from sqlalchemy import and_, or_
+from sqlalchemy import not_, or_
 from sqlalchemy.orm import sessionmaker
 
 from ..decorators import admin_required
@@ -25,19 +26,6 @@ def manage():
     """View all room requests."""
     room_requests = RoomRequest.query.all()
     return render_template('room_request/manage.html', room_requests=room_requests)
-
-
-@login_required
-@room_request.route('/<int:rr_id>/related', methods=['GET', 'POST'])
-def duplicate_room_requests(rr_id):
-    rr = RoomRequest.query.filter_by(id = rr_id).first();
-    if rr is None:
-        abort(404)
-    if request.method == 'GET':
-        roomrequests = RoomRequest.query.filter_by(patient_last = rr.patient_last).filter_by(or_(
-        primary_phone = rr.primary_phone, email = rr.email )).all();
-    return render_template('room_request/duplicate_room_requests.html', roomrequests = roomrequests)
-
 
 @login_required
 @room_request.route('/new', methods=['GET', 'POST'])
@@ -150,3 +138,23 @@ def transfer(id):
         return render_template('room_request/transfer.html', id=id, transfered=transfered, error=e)
     
     return render_template('room_request/new_room_request.html', form=form)
+
+
+@login_required
+@room_request.route('/<int:id>/duplicates', methods=['GET', 'POST'])
+def duplicate_room_requests(id):
+    room_request = RoomRequest.query.get(id)
+    if room_request is None:
+        return abort(404)
+    # Duplicate room request must have:
+    # (1) The same patient name
+    # (2) A matching phone number or email for the requester
+    duplicate_room_requests = RoomRequest.query \
+        .filter_by(patient_first_name=room_request.patient_first_name, patient_last_name=room_request.patient_last_name) \
+        .filter(or_(
+            RoomRequest.primary_phone == room_request.primary_phone,
+            RoomRequest.email == room_request.email,
+        )) \
+        .filter(RoomRequest.id != room_request.id) \
+        .all();
+    return render_template('room_request/duplicates.html', duplicate_room_requests=duplicate_room_requests)
