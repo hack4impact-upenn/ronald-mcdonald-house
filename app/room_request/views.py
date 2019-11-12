@@ -1,32 +1,40 @@
 from flask import (
     Blueprint,
-    render_template,
     flash,
-    request,
     redirect,
-    url_for
+    render_template,
+    request,
+    url_for,
 )
+from flask_login import current_user, login_required
 
 import os
 import datetime
 import urllib
+
 import sqlalchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, not_, or_
 from sqlalchemy.orm import sessionmaker
-from flask_login import current_user
-from .forms import RoomRequestForm, ActivityForm, TransferForm
-from ..models import RoomRequest, Activity, User
+
 from app import db
-from app.models import EditableHTML, Role, RoomRequest
+from app.models import Activity, EditableHTML, Role, RoomRequest, User
+from ..decorators import admin_required
+from .forms import RoomRequestForm, ActivityForm, TransferForm
 
 room_request = Blueprint('room_request', __name__)
 
-# TODO dashboard at route /
+@login_required
+@room_request.route('/', methods=['GET', 'POST'])
+def manage():
+    """View all room requests."""
+    room_requests = RoomRequest.query.all()
+    return render_template('room_request/manage.html', room_requests=room_requests)
 
-# TODO create form at route /new
+@login_required
 @room_request.route('/new', methods=['GET', 'POST'])
 def new():
     """Room Request page."""
+    editable_html_obj = EditableHTML.get_editable_html('room_request')
     form = RoomRequestForm()
     if form.validate_on_submit():
         room_request = RoomRequest(
@@ -45,8 +53,8 @@ def new():
             primary_language = form.primary_language.data,
             secondary_language = form.secondary_language.data,
             previous_stay = form.stayed_before.data,
-
-            patient_full_name = form.patient_full_name.data,
+            patient_first_name = form.patient_first_name.data,
+            patient_last_name = form.patient_last_name.data,
             patient_dob = form.patient_dob.data,
             patient_gender = form.patient_gender.data,
             patient_hospital = form.hospital.data,
@@ -64,16 +72,35 @@ def new():
             inpatient_prior = form.staying_prior_to_admission.data,
             vaccinated = form.vaccinated.data,
             comments = form.comments.data,
-
-            #waiting for guest model stuff to upload guests from form
             wheelchair_access = form.wheelchair_access.data,
             full_bathroom = form.full_bathroom.data,
             pack_n_play = form.pack_n_play.data
         )
         db.session.add(room_request)
         db.session.commit()
+
+        from app.email import send_email
+        from flask_rq import get_queue
+        get_queue().enqueue(
+            send_email,
+            recipient=room_request.email,
+            subject='PRMH Room Request Submitted',
+            template='room_request/confirmation_email',
+            roomreq=room_request)
         flash('Successfully submitted form', 'form-success')
-    return render_template('room_request/new_room_request.html', form=form)
+        return render_template('room_request/new_room_request.html', form=form, editable_html_obj=editable_html_obj)
+
+
+@login_required
+@room_request.route('<int:room_request_id>/delete', methods=['POST'])
+def delete_room_request(room_request_id):
+    """Request deletion of a user's account."""
+    room_request = RoomRequest.query.filter_by(id=room_request_id).first()
+    if room_request:
+        db.session.delete(room_request)
+        db.session.commit()
+        flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.')
+    return redirect('/room-request/')
 
 
 @room_request.route('/<int:form_id>', methods=['GET', 'POST'])
@@ -140,3 +167,24 @@ def transfer(form_id):
     except Exception as e:
         print(e)
         return render_template('room_request/transfer.html', id = form_id, transfered = transfered, error = e)
+
+
+@login_required
+@room_request.route('/<int:id>/duplicates', methods=['GET', 'POST'])
+def duplicate_room_requests(id):
+    room_request = RoomRequest.query.get(id)
+    if room_request is None:
+        return abort(404)
+    # Duplicate room request must have:
+    # (1) The same patient name
+    # (2) A matching phone number or email for the requester
+    duplicate_room_requests = RoomRequest.query \
+        .filter_by(patient_first_name=room_request.patient_first_name, patient_last_name=room_request.patient_last_name) \
+        .filter(or_(
+            RoomRequest.primary_phone == room_request.primary_phone,
+            RoomRequest.email == room_request.email,
+        )) \
+        .filter(RoomRequest.id != room_request.id) \
+        .all();
+    return render_template('room_request/duplicates.html', duplicate_room_requests=duplicate_room_requests)
+

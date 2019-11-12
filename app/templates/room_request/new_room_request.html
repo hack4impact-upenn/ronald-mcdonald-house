@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% import 'macros/form_macros.html' as f %}
-
+{% import 'macros/page_macros.html' as page %}
 
 {% block content %}
     <div class="ui stackable centered grid container">
@@ -8,6 +8,10 @@
             <h2 class="ui header">
                 Request a Room Form
             </h2>
+
+            {{ page.render_inline_editor(editable_html_obj, current_user) }}
+
+            <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
 
             {% set flashes = {
                 'error':   get_flashed_messages(category_filter=['form-error']),
@@ -22,7 +26,7 @@
                     {{ f.render_form_field(form.first_name) }}
                     {{ f.render_form_field(form.last_name) }}
                 </div>
-                
+
                 {{ f.render_form_field(form.rel_to_patient) }}
 
                 {{ f.render_form_field(form.street_address) }}
@@ -53,7 +57,8 @@
                 <br/>
                 <h3>Patient Information</h3>
 
-                {{ f.render_form_field(form.patient_full_name) }}
+                {{ f.render_form_field(form.patient_first_name) }}
+                {{ f.render_form_field(form.patient_last_name) }}
                 <div class="two fields">
                     {{ f.render_form_field(form.patient_dob) }}
                     {{ f.render_form_field(form.patient_gender) }}
@@ -67,7 +72,7 @@
                     {{ f.render_form_field(form.diagnosis) }}
                     {{ f.render_form_field(form.first_appt_date) }}
                 </div>
-                
+
                 <div class="two fields">
                     {{ f.render_form_field(form.check_in_date) }}
                     {{ f.render_form_field(form.check_out_date) }}
@@ -143,7 +148,7 @@
                 {{ f.form_message(flashes['warning'], header='Check the email.', class='warning') }}
                 {{ f.form_message(flashes['info'], header='Information', class='info') }}
                 {{ f.form_message(flashes['success'], header='Success!', class='success') }}
-                
+
                 <p>
                     <div id="populate-room-request-form" class="ui button">
                         Populate form with fake data
@@ -196,8 +201,9 @@
                 $('#email').val(faker.internet.email());
                 $('#primary_language').val(randomChoice(['English', 'Spanish', 'Chinese']));
                 $('#secondary_language').val(randomChoice(['', 'Spanish', 'Chinese']));
-                $('#stayed_before').prop('checked', randomChoice([true, false]))
-                $('#patient_full_name').val(faker.name.findName());
+                $('#stayed_before').prop('checked', randomChoice([true, false]));
+                $('#patient_first_name').val(faker.name.firstName());
+                $('#patient_last_name').val(faker.name.lastName());
                 $('#patient_dob').val(randomPastDate());
                 $('#patient_gender').val(randomChoice(['Male', 'Female', 'Non-Binary']));
                 $('#hospital').val(randomChoice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]));
