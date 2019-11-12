@@ -160,11 +160,12 @@ class RoomRequest(db.Model):
 
     @staticmethod
     def delete(id):
-        room_request_to_delete = RoomRequest.query.get(id)
-        if room_request_to_delete == None:
-            print(f"No user in database with id {id}.")
+        room_request = RoomRequest.query.get(id)
+        if room_request is None:
+            print(f"No room request in database with id {id}.")
         else:
             try:
-                db.session.delete(room_request_to_delete)
+                db.session.delete(room_request)
                 db.session.commit()
-                return redirect('/')
+            except IntegrityError:
+                db.session.rollback()
