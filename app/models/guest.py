@@ -13,7 +13,7 @@ class Guest(db.Model):
     relationship_to_patient = db.Column(db.String(100))
     email = db.Column(db.String(200))
     guardian = db.Column(db.Boolean())
-    guest_dob = db.Column(db.Date)
+    dob = db.Column(db.Date)
 
     # Room Request
     room_request_id = db.Column(db.Integer, db.ForeignKey('room_requests.id'))
@@ -28,7 +28,7 @@ class Guest(db.Model):
             f'Relationship to Patient: {self.relationship_to_patient}\n'
             f'Email: {self.email}\n'
             f'Guardian: {self.guardian}\n'
-            f'Guest DOB: {self.guest_dob}\n')
+            f'Guest DOB: {self.dob}\n')
 
     def __str__(self):
         return self.__repr__()
@@ -48,10 +48,9 @@ class Guest(db.Model):
                 last_name=fake.last_name(),
                 relationship_to_patient=choice(["Mother", "Father", "Spouse"]),
                 email=fake.email(),
-                guardian=True,
-                guest_dob=fake.date_between(start_date="-30y", end_date="today"),
+                guardian=choice([True, False]),
+                dob=fake.date_between(start_date="-30y", end_date="today"),
                 room_request=room_request)
-            print(guest)
             db.session.add(guest)
         try:
             db.session.commit()

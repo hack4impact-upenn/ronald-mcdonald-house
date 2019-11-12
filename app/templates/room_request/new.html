@@ -1,0 +1,19 @@
+{% extends 'layouts/base.html' %}
+{% import 'room_request/macros.html' as room_request_macros %}
+{% import 'macros/page_macros.html' as page %}
+
+{% block content %}
+    <div class="ui stackable centered grid container">
+        <div class="twelve wide column">
+            <h2 class="ui header">
+                Request a Room Form
+            </h2>
+
+            {{ page.render_inline_editor(editable_html_obj, current_user) }}
+
+            <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+
+            {{ room_request_macros.render_form(form) }}
+        </div>
+    </div>
+{% endblock %}
