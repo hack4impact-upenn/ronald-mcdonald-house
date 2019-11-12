@@ -20,10 +20,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from .forms import RoomRequestForm, ActivityForm, TransferForm
-from .helpers import get_room_request_from_form get_form_from_room_request
+from .helpers import get_room_request_from_form, get_form_from_room_request
 from ..decorators import admin_required
 from ..email import send_email
-from ..models import Activity, EditableHTML, RoomRequest, User, Role
+from ..models import Activity, EditableHTML, RoomRequest, Guest, User, Role
 
 room_request = Blueprint('room_request', __name__)
 
@@ -137,11 +137,10 @@ def new():
                 subject='PRMH Room Request Submitted',
                 template='room_request/confirmation_email',
                 roomreq=room_request)
-            flash('Successfully saved changes.', 'form-success')
+            flash('Successfully submitted form', 'form-success')
         except IntegrityError:
             db.session.rollback()
             flash('Unable to save changes. Please try again.', 'form-error')
-        flash('Successfully submitted form', 'form-success')
     return render_template('room_request/new.html', form=form, editable_html_obj=editable_html_obj)
     
 

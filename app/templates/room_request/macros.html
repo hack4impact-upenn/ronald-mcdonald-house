@@ -50,7 +50,7 @@
     </div>
 
     {{ f.render_form_field(form.hospital) }}
-    {{ f.render_form_field(form.hospital_dep) }}
+    {{ f.render_form_field(form.hospital_department) }}
     {{ f.render_form_field(form.description) }}
 
     <div class="two fields">
@@ -64,8 +64,8 @@
     </div>
 
     <div class="two fields">
-        {{ f.render_form_field(form.treating_dr) }}
-        {{ f.render_form_field(form.dr_phone_number) }}
+        {{ f.render_form_field(form.treating_doctor) }}
+        {{ f.render_form_field(form.doctor_phone_number) }}
     </div>
 
     <div class="two fields">
@@ -190,14 +190,14 @@
                 $('#patient_dob').val(randomPastDate());
                 $('#patient_gender').val(randomChoice(['Male', 'Female', 'Non-Binary']));
                 $('#hospital').val(randomChoice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]));
-                $('#hospital_dep').val(randomChoice(["Pediatrics","Oncology","General"]));
+                $('#hospital_department').val(randomChoice(["Pediatrics","Oncology","General"]));
                 $('#description').val(faker.lorem.paragraph());
                 $('#diagnosis').val(faker.lorem.words());
                 $('#first_appt_date').val(randomPastDate());
                 $('#check_in_date').val(randomPastDate());
                 $('#check_out_date').val(randomPastDate());
-                $('#treating_dr').val(faker.name.findName());
-                $('#dr_phone_number').val(faker.phone.phoneNumber());
+                $('#treating_doctor').val(faker.name.findName());
+                $('#doctor_phone_number').val(faker.phone.phoneNumber());
                 $('#hospital_social_worker').val(faker.name.findName());
                 $('#sw_phone_number').val(faker.phone.phoneNumber());
                 $('#in_or_out_patient').val(randomChoice(['Inpatient', 'Outpatient']));
