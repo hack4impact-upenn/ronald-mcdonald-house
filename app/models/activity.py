@@ -21,13 +21,14 @@ class Activity(db.Model):
         return self.__repr__()
 
     def print_info(self):
-        print('<Activity: \n'
+        print('<Activity:\n'
               f'created_at: {self.created_at}'
               f'text: {text}'
               f'user_id: {self.user_id}'
               f'user_name: {self.user.first_name} {self.user.last_name}'
-              f'room_request_id: {self.room_request_id}')
+              f'room_request_id: {self.room_request_id}\n>')
     
+    @staticmethod
     def generate_fake(room_request, **kwargs):
         """Generates fake activity for the given room request for testing."""
         from sqlalchemy.exc import IntegrityError
