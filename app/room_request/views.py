@@ -7,8 +7,14 @@ from flask import (
 from flask_login import login_required
 from app import db
 
+import os
+import urllib
+import sqlalchemy
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 from .forms import RoomRequestForm
-from app.models import RoomRequest, EditableHTML
+from app.models import EditableHTML, RoomRequest, User, Role
 
 room_request = Blueprint('room_request', __name__)
 
@@ -80,6 +86,7 @@ def new():
     return render_template('room_request/new_room_request.html', form=form,
     editable_html_obj=editable_html_obj)
 
+
 @login_required
 @room_request.route('<int:room_request_id>/delete', methods=['POST'])
 def delete_room_request(room_request_id):
@@ -90,3 +97,42 @@ def delete_room_request(room_request_id):
         db.session.commit()
         flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.')
     return redirect('/room-request/')
+    
+
+@login_required
+@room_request.route('/<int:id>', methods=['GET', 'POST'])
+def viewID(id):
+    room_request = RoomRequest.query.get(id)
+    name = f'{room_request.first_name} {room_request.last_name}' if room_request else ''
+    return render_template('room_request/id.html', id=id, name=name)
+
+
+@login_required
+@room_request.route('/<int:id>/transfer', methods=['GET', 'POST'])
+def transfer(id):
+    transfered = False
+    param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
+            os.getenv('SQL_SERVER') or "{SQL Server}",
+            os.getenv('AZURE_SERVER'),
+            os.getenv('AZURE_DATABASE'),
+            os.getenv('AZURE_USERNAME'),
+            os.getenv('AZURE_PASS'))
+    params = urllib.parse.quote_plus(param_string)    
+    engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
+    Session = sessionmaker(bind=engine)
+    session1 = Session()
+    try:
+        user = RoomRequest.query.get(id)
+        try:
+            local_object = session1.merge(user)
+            session1.add(local_object)
+            session1.commit()
+            transfered = True
+            return render_template('room_request/transfer.html', id=id, transfered=transfered)
+        except Exception as e:
+            session1.rollback()
+            return render_template('room_request/transfer.html', id=id, transfered=transfered, error=e)
+    except Exception as e:
+        print(e)
+        return render_template('room_request/transfer.html', id=id, transfered=transfered, error=e)
+    

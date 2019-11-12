@@ -1,0 +1,9 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <div class="ui text container">
+      <h1>Name: {{ name }}, Form ID is {{ id }}</h1>
+      <a href="{{ url_for('room_request.transfer', id=id) }}">
+        <button> Transfer </button>  </a>
+    </div>
+{% endblock %}
