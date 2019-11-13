@@ -2,80 +2,71 @@
 {% import 'macros/form_macros.html' as f %}
 
 {% block content %}
-    <div class="ui text container">
-      <h1> {% if  user_found %} Form Name: {{ name }}, Form ID is {{ id }} {% else %} Form ID Invalid {% endif %} </h1>
-      
-      {% set flashes = {
-        'post': get_flashed_messages(category_filter=['form-post']),
-        'transfer': get_flashed_messages(category_filter=['form-transfer'])
-    } %}
-      
-        {% if user_found %}
-        <form action="{{ url_for('room_request.transfer', form_id = id)}}" method="POST">
-            {{ f.begin_form(transfer, flashes) }}
-            {{ f.render_form_field(transfer.transfer) }}
+<div class="ui stackable grid container">
+    <div class="sixteen wide tablet twelve wide computer centered column">
+    
+        <h1>Name: {{ room_request.first_name }} {{ room_request.last_name }}</h1>
+        <h1>Form ID: {{ id }}</h1>
+    
+        {% set flashes = {
+            'post': get_flashed_messages(category_filter=['form-post']),
+            'transfer': get_flashed_messages(category_filter=['form-transfer'])
+        } %}
+    
+        <form action="{{ url_for('room_request.transfer', id=id) }}" method="POST">
+            {{ f.begin_form(transfer_form, flashes) }}
+            {{ f.render_form_field(transfer_form.transfer) }}
             {{ f.end_form() }}
-            </form>
+        </form>
 
-        {{ f.begin_form(form, flashes) }}
-        {{ f.render_form_field(form.body) }}
-        {{ f.render_form_field(form.submit) }}
+        {{ f.begin_form(activity_form, flashes) }}
+        {{ f.render_form_field(activity_form.body) }}
+        {{ f.render_form_field(activity_form.submit) }}
         {{ f.end_form()}}
-    </div>
-   
-    <div class="ui stackable grid container">
-      <div class="sixteen wide tablet twelve wide computer centered column">
-          <h2 class="ui header">
-              Comments
-          </h2>
-          <div class="ui menu">
-              <div class="ui search item">
-                  <div class="ui transparent icon input">
-                      <input id="search-users" type="text" placeholder="Search comments">
-                      <i class="search icon"></i>
-                  </div>
-              </div>
-          </div>
 
-          {# Use overflow-x: scroll so that mobile views don't freak out
-           # when the table is too wide #}
-          <div>
-              <table class="ui searchable sortable unstackable selectable celled table">
-                 <tbody>
-                    {% for u in comments %}
+        <h2 class="ui header">Comments</h2>
+        <div class="ui menu">
+            <div class="ui search item">
+                <div class="ui transparent icon input">
+                    <input id="search-comments" type="text" placeholder="Search comments...">
+                    <i class="search icon"></i>
+                </div>
+            </div>
+        </div>
+
+        {# Use overflow-x: scroll so that mobile views don't freak out
+        # when the table is too wide #}
+        <div>
+            <table class="ui searchable stackable celled table">
+                <tbody>
+                    {% for comment in comments %}
                     <tr>
-                        <td class="user role">{{ u.commenter }}</td>
-                        <td>{{ u.text }}</td>
-                        <td> {{ u.created_date.strftime('%d-%m-%Y') }} at  {{ u.created_date.strftime('%I:%M:%S') }}</td>
+                        <td>{{ comment.user.first_name }} {{ comment.user.last_name }}</td>
+                        <td>{{ comment.text }}</td>
+                        <td> {{ comment.created_at.strftime('%d-%m-%Y') }} at  {{ comment.created_at.strftime('%I:%M:%S') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
-              </table>
-          </div>
-      </div>
-  </div>
-  <script type="text/javascript">
-    $(document).ready(function () {
-        $('#search-users').keyup(function () {
-            var searchText = $(this).val();
-            if (searchText.length > 0) {
-                $('tbody td:icontains(' + searchText + ')').addClass('positive');
-                $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
-                $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
-                $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
-            } else {
-                $('td.positive').removeClass('positive');
-                $('tr.hidden').removeClass('hidden').show();
-            }
-        });
+            </table>
+        </div>
+    </div>
+</div>
 
-        $('#select-role').dropdown({
-            onChange: function (value, text, $selectedItem) {
-                $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
-                $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
-            }
-        });
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#search-comments').keyup(function () {
+        var searchText = $(this).val();
+        if (searchText.length > 0) {
+            $('tbody td:icontains(' + searchText + ')').addClass('positive');
+            $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
+            $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
+            $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
+        } else {
+            $('td.positive').removeClass('positive');
+            $('tr.hidden').removeClass('hidden').show();
+        }
     });
+});
 </script>
-{% else %}  {% endif %} 
+
 {% endblock %}
