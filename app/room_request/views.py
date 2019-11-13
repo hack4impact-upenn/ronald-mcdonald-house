@@ -125,7 +125,8 @@ def view(id):
             flash("Your comment has been added to the post", 'form-post')
         except:
             db.session.rollback()
-        form.body.data = ''
+        activity_form.body.data = ''
+
 
     if transfer_form.validate_on_submit():
         flash("Succesfully transferred!")
