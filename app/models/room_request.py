@@ -1,4 +1,5 @@
 from .. import db
+from .activity import Activity
 from .guest import Guest
 from sqlalchemy import Column, Integer, Boolean, DateTime
 
@@ -47,10 +48,13 @@ class RoomRequest(db.Model):
     comments = db.Column(db.String(5000))
 
     # Room Request
-    guests = db.relationship('Guest', backref='room_request')
     wheelchair_access = db.Column(db.Boolean())
     full_bathroom = db.Column(db.Boolean())
     pack_n_play = db.Column(db.Boolean())
+
+    # Relationship
+    guests = db.relationship('Guest', backref='room_request')
+    activity = db.relationship('Activity', backref='activity')
 
     def __repr__(self):
         return ('<Room Request \n'
@@ -159,6 +163,7 @@ class RoomRequest(db.Model):
             try:
                 db.session.commit()
                 Guest.generate_fake(request)
+                Activity.generate_fake(request)
             except IntegrityError:
                 db.session.rollback()
 

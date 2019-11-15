@@ -7,3 +7,4 @@ from .user import *  # noqa
 from .miscellaneous import *  # noqa
 from .room_request import *
 from .guest import *
+from .activity import *

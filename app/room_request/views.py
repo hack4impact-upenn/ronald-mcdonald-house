@@ -1,22 +1,25 @@
 from flask import (
     Blueprint,
-    abort,
     flash,
     redirect,
     render_template,
+    request,
+    url_for,
 )
 from flask_login import current_user, login_required
-from app import db
 
 import os
+import datetime
 import urllib
+
 import sqlalchemy
-from sqlalchemy import not_, or_
+from sqlalchemy import create_engine, not_, or_
 from sqlalchemy.orm import sessionmaker
 
+from app import db
+from app.models import Activity, EditableHTML, Role, RoomRequest, User
 from ..decorators import admin_required
-from .forms import RoomRequestForm
-from app.models import EditableHTML, RoomRequest, User, Role
+from .forms import RoomRequestForm, ActivityForm, TransferForm
 
 room_request = Blueprint('room_request', __name__)
 
@@ -98,20 +101,52 @@ def delete_room_request(room_request_id):
         db.session.commit()
         flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.')
     return redirect('/room-request/')
-    
+
 
 @login_required
 @room_request.route('/<int:id>', methods=['GET', 'POST'])
-def viewID(id):
+def view(id):    
     room_request = RoomRequest.query.get(id)
-    name = f'{room_request.first_name} {room_request.last_name}' if room_request else ''
-    return render_template('room_request/id.html', id=id, name=name)
+    if room_request is None:
+        return abort(404)
+
+    comments = Activity.query.filter_by(room_request_id=id)
+    activity_form = ActivityForm()
+    transfer_form = TransferForm()
+
+    if activity_form.validate_on_submit():
+        activity = Activity(
+            text=activity_form.body.data,
+            user_id=current_user.id,
+            room_request_id=room_request.id)
+        try:
+            db.session.add(activity)
+            db.session.commit()
+            flash("Your comment has been added to the post", 'form-post')
+        except:
+            db.session.rollback()
+        activity_form.body.data = ''
+
+
+    if transfer_form.validate_on_submit():
+        flash("Succesfully transferred!")
+
+    return render_template('room_request/id.html',
+        id=id,
+        room_request=room_request,
+        activity_form=activity_form,
+        transfer_form=transfer_form,
+        comments=comments)
 
 
 @login_required
 @room_request.route('/<int:id>/transfer', methods=['GET', 'POST'])
 def transfer(id):
-    transfered = False
+    room_request = RoomRequest.query.get(id)
+    if room_request is None:
+        return abort(404)
+
+    transferred = False
     param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
             os.getenv('SQL_SERVER') or "{SQL Server}",
             os.getenv('AZURE_SERVER'),
@@ -120,24 +155,17 @@ def transfer(id):
             os.getenv('AZURE_PASS'))
     params = urllib.parse.quote_plus(param_string)    
     engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
-    Session = sessionmaker(bind=engine)
-    session1 = Session()
+    session = sessionmaker(bind=engine)()
+
     try:
-        user = RoomRequest.query.get(id)
-        try:
-            local_object = session1.merge(user)
-            session1.add(local_object)
-            session1.commit()
-            transfered = True
-            return render_template('room_request/transfer.html', id=id, transfered=transfered)
-        except Exception as e:
-            session1.rollback()
-            return render_template('room_request/transfer.html', id=id, transfered=transfered, error=e)
+        session.add(session.merge(room_request))
+        session.commit()
+        transferred = True
+        flash('Room request succesfully transferred!', 'form-transfer')
+        return redirect(url_for('room_request.view', id=id))
     except Exception as e:
-        print(e)
-        return render_template('room_request/transfer.html', id=id, transfered=transfered, error=e)
-    
-    return render_template('room_request/new_room_request.html', form=form)
+        session.rollback()
+        return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
 
 
 @login_required
@@ -158,3 +186,4 @@ def duplicate_room_requests(id):
         .filter(RoomRequest.id != room_request.id) \
         .all();
     return render_template('room_request/duplicates.html', duplicate_room_requests=duplicate_room_requests)
+

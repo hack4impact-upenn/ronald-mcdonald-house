@@ -135,5 +135,13 @@ class RoomRequestForm(FlaskForm):
     wheelchair_access = BooleanField('Wheelchair Access')
     full_bathroom = BooleanField('Full Bathroom with Tub')
     pack_n_play = BooleanField("Pack 'N' Play")
-
+    
     submit = SubmitField('Create')
+
+
+class ActivityForm(FlaskForm):
+    body = StringField("Body", validators=[InputRequired()])
+    submit = SubmitField("Post")
+
+class TransferForm(FlaskForm):
+    transfer = SubmitField("Transfer")
