@@ -1,4 +1,4 @@
-{% macro render_form(form) %}
+{% macro render_room_request_form(form) %}
     {% import 'macros/form_macros.html' as f %}
     {% set flashes = {
         'error':   get_flashed_messages(category_filter=['form-error']),
@@ -56,6 +56,7 @@
     </div>
 
     {{ f.render_form_field(form.hospital) }}
+    {{ f.render_form_field(form.other_hospital) }}
     {{ f.render_form_field(form.hospital_department) }}
     {{ f.render_form_field(form.description) }}
 
@@ -150,6 +151,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.js" crossorigin="anonymous"></script>
     <script>
         $(document).ready(() => {
+            // Initialize "other_hospital" to be hidden or not hidden depending on the value of "hospital"
+            const initialHospitalValue = $('#hospital-dropdown').dropdown('get value')
+            $('#other_hospital').parent().attr('hidden', initialHospitalValue === '' || initialHospitalValue !== 'Other')
+            console.log(initialHospitalValue)
+
+            $('#hospital-dropdown').dropdown({
+                'onChange': function(val) {
+                    $('#other_hospital').parent().attr('hidden', val !== 'other')
+                }
+            })
+
             function randomChoice(choices) {
                 return choices[Math.floor(Math.random() * choices.length)];
             }
@@ -190,7 +202,8 @@
                 $('#patient_last_name').val(faker.name.lastName());
                 $('#patient_dob').val(randomPastDate());
                 $('#patient_gender').val(randomChoice(['Male', 'Female', 'Non-Binary']));
-                $('#hospital').val(randomChoice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]));
+                $('#hospital-selection').dropdown('set value', 'other');
+                $('#other_hospital').val(randomChoice(["Friends Hospital", "Geisinger Medical Center"]));
                 $('#hospital_department').val(randomChoice(["Pediatrics","Oncology","General"]));
                 $('#description').val(faker.lorem.paragraph());
                 $('#diagnosis').val(faker.lorem.words());

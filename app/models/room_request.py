@@ -2,6 +2,7 @@ from .. import db
 from .activity import Activity
 from .guest import Guest
 from sqlalchemy import Column, Integer, Boolean, DateTime
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 
 class RoomRequest(db.Model):
@@ -32,7 +33,7 @@ class RoomRequest(db.Model):
     patient_last_name = db.Column(db.String(100))
     patient_dob = db.Column(db.Date)
     patient_gender = db.Column(db.String(15))
-    patient_hospital = db.Column(db.String(1000))
+    patient_hospital = db.Column(db.String(500))
     patient_hospital_department = db.Column(db.String(1000))
     patient_treatment_description = db.Column(db.String(1000))
     patient_diagnosis = db.Column(db.String(1000))
@@ -111,7 +112,7 @@ class RoomRequest(db.Model):
                 f'Pack n Play: {self.pack_n_play}\n>')
 
     @staticmethod
-    def generate_fake(count=5, **kwargs):
+    def generate_fake(count=10, **kwargs):
         """Generate fake room requests for testing."""
         from sqlalchemy.exc import IntegrityError
         from faker import Faker
@@ -119,6 +120,7 @@ class RoomRequest(db.Model):
 
         fake = Faker()
         seed()
+        hospitals = Hospital.query.all()
         for _ in range(count):
             request = RoomRequest(
                 first_name=fake.first_name(),
@@ -140,7 +142,7 @@ class RoomRequest(db.Model):
                 patient_last_name=fake.last_name(),
                 patient_dob=fake.past_date(),
                 patient_gender=choice(["Male", "Female", "Non Binary"]),
-                patient_hospital=choice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]),
+                patient_hospital=choice(hospitals).name,
                 patient_hospital_department=choice(["Pediatrics","Oncology","General"]),
                 patient_treatment_description=fake.word(),
                 patient_diagnosis=fake.word(),
@@ -160,12 +162,12 @@ class RoomRequest(db.Model):
                 pack_n_play=fake.boolean(),
                 **kwargs)
             db.session.add(request)
-            try:
-                db.session.commit()
-                Guest.generate_fake(request)
-                Activity.generate_fake(request)
-            except IntegrityError:
-                db.session.rollback()
+        try:
+            db.session.commit()
+            Guest.generate_fake(request)
+            Activity.generate_fake(request)
+        except IntegrityError:
+            db.session.rollback()
 
     @staticmethod
     def delete(id):
@@ -178,3 +180,27 @@ class RoomRequest(db.Model):
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
+
+
+class Hospital(db.Model):
+    __tablename__ = "hospitals"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(500), unique=True)
+
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.__repr__()
+
+    @staticmethod
+    def generate_fake():
+        for name in ["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]:
+            hospital = Hospital(name=name)
+            db.session.add(hospital)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+    

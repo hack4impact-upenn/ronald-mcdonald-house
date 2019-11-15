@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-{% import 'room_request/macros.html' as room_request_macros %}
+{% from 'room_request/form.html' import render_room_request_form %}
 
 {% set contact_info_endpoint = 'room_request.manage' %}
 {% set patient_info_endpoint = 'room_request.patient_info' %}
@@ -176,7 +176,7 @@
             {% elif request.endpoint == guest_info_endpoint %}
                 {{ guest_info(room_request) }}
             {% elif request.endpoint == edit_endpoint %}
-                {{ room_request_macros.render_form(form) }}
+                {{ render_room_request_form(form) }}
             {% elif request.endpoint == delete_endpoint %}
                 {{ delete_request(room_request) }}
             {% endif %}

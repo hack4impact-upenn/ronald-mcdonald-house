@@ -16,12 +16,28 @@
                 </div>
             </h2>
 
-            <div class="ui fluid search">
-                <div class="ui icon input">
-                    <input class="prompt" id="search-room-requests" type="text" placeholder="Search room requests">
-                    <i class="search icon"></i>
+            <div class="ui menu">
+                <div id="select-hospital" class="ui dropdown item">
+                    <div class="text">
+                        All hospitals
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" data-value="">All hospitals</div>
+                        {% for h in hospitals %}
+                            <div class="item" data-value="{{ h.name }}">{{ h.name }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="ui search item">
+                    <div class="ui icon input">
+                        <input class="prompt" id="search-room-requests" type="text" placeholder="Search room requests">
+                        <i class="search icon"></i>
+                    </div>
                 </div>
             </div>
+
+            
             <div style="max-width: 100%; overflow-y: hidden;">
                 <table class="ui searchable sortable unstackable selectable celled table">
                     <thead> 
@@ -96,7 +112,7 @@
                         <td class="collapsing">{{ r.patient_last_name }}</td>
                         <td>{{ r.patient_dob }}</td>
                         <td>{{ r.patient_gender }}</td>
-                        <td class="collapsing">{{ r.patient_hospital }}</td>
+                        <td class="collapsing hospital">{{ r.patient_hospital }}</td>
                         <td>{{ r.patient_hospital_department }}</td>
                         <td class="collapsing">{{ r.patient_treatment_description }}</td>
                         <td class="collapsing">{{ r.patient_diagnosis }}</td>
@@ -155,10 +171,10 @@
                 }
             });
 
-            $('#select-role').dropdown({
+            $('#select-hospital').dropdown({
                 onChange: function (value, text, $selectedItem) {
-                    $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
-                    $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
+                    $('td.hospital:contains(' + value + ')').closest('tr').removeClass('hidden').show();
+                    $('td.hospital').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
                 }
             });
 

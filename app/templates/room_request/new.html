@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-{% import 'room_request/macros.html' as room_request_macros %}
+{% from 'room_request/form.html' import render_room_request_form %}
 {% import 'macros/page_macros.html' as page %}
 
 {% block content %}
@@ -13,7 +13,7 @@
 
             <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
 
-            {{ room_request_macros.render_form(form) }}
+            {{ render_room_request_form(form) }}
         </div>
     </div>
 {% endblock %}

@@ -19,11 +19,17 @@ from sqlalchemy import create_engine, not_, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from .forms import RoomRequestForm, ActivityForm, TransferForm
-from .helpers import get_room_request_from_form, get_form_from_room_request
-from ..decorators import admin_required
+from .forms import (
+    RoomRequestForm,
+    HospitalForm,
+    ActivityForm,
+    TransferForm,
+    get_room_request_from_form,
+    get_form_from_room_request
+)
+from ..decorators import admin_required, staff_required
 from ..email import send_email
-from ..models import Activity, EditableHTML, RoomRequest, Guest, User, Role
+from ..models import Activity, EditableHTML, RoomRequest, Hospital, Guest, User, Role
 
 room_request = Blueprint('room_request', __name__)
 
@@ -33,7 +39,8 @@ room_request = Blueprint('room_request', __name__)
 def index():
     """View all room requests."""
     room_requests = RoomRequest.query.all()
-    return render_template('room_request/dashboard.html', room_requests=room_requests)
+    hospitals = Hospital.query.order_by('name').all()
+    return render_template('room_request/dashboard.html', room_requests=room_requests, hospitals=hospitals)
 
 
 @login_required
@@ -123,7 +130,7 @@ def _delete(id):
 @login_required
 @room_request.route('/new', methods=['GET', 'POST'])
 def new():
-    """Room Request page."""
+    """Create a new room request."""
     editable_html_obj = EditableHTML.get_editable_html('room_request')
     form = RoomRequestForm()
     if form.validate_on_submit():
@@ -137,7 +144,8 @@ def new():
                 subject='PRMH Room Request Submitted',
                 template='room_request/confirmation_email',
                 roomreq=room_request)
-            flash('Successfully submitted form', 'form-success')
+            flash('Successfully submitted room request. You will receive a confirmation email shortly.', 'form-success')
+            return redirect(url_for('room_request.new'))
         except IntegrityError:
             db.session.rollback()
             flash('Unable to save changes. Please try again.', 'form-error')
@@ -228,3 +236,20 @@ def duplicate_room_requests(id):
         .all();
     return render_template('room_request/duplicates.html', duplicate_room_requests=duplicate_room_requests)
 
+
+@login_required
+@staff_required
+@room_request.route('/hospitals', methods=['GET', 'POST'])
+def hospitals():
+    form = HospitalForm(hospitals=[h.name for h in Hospital.query.order_by('name').all()])
+    if form.validate_on_submit():
+        try:
+            Hospital.query.delete()
+            db.session.commit()
+            for name in list(set(form.hospitals.data)):
+                db.session.add(Hospital(name=name))
+            db.session.commit()
+            flash("Successfully updated list of hospital options.", 'form-success')
+        except IntegrityError:
+            db.session.rollback()
+    return render_template('room_request/hospitals.html', form=form)

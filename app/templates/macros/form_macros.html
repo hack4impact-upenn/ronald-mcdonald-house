@@ -104,6 +104,26 @@
     {% endif %}
 {% endmacro %}
 
+{% macro render_custom_model_select(field) %}
+    {{ field.label }}
+    {% if field.description %}
+        <div class="ui pointing below label">
+            {{ field.description }}
+        </div>
+    {% endif %}
+    <div id="{{field.name}}-dropdown" class="ui fluid {% if field.errors %}error{% endif %} {% if field.flags.required %}required{% endif %} selection dropdown">
+        {{ field() }}
+        <i class="dropdown icon"></i>
+        <div class="default text">{{field.label.text}}</div>
+        <div class="menu">
+            {% for choice in field.choices %}
+                <div class="item" data-value="{{choice}}">{{choice}}</div>
+            {% endfor %}
+            <div class="item">Other</div>
+        </div>
+    </div>
+{% endmacro %}
+
 {# Render a field for the form #}
 {% macro render_form_field(field, extra_classes='') %}
     {% if field.type == 'Radio Field' %}
@@ -139,6 +159,8 @@
         {{ render_form(field) }}
     {% elif field.type == 'CustomSelectField' %}
         {{ render_custom_select(field) }}
+    {% elif field.type == 'CustomModelSelectField' %}
+        {{ render_custom_model_select(field) }}
     {% else %}
         {{ field.label }}
         {% if field.description %}
