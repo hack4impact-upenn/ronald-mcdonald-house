@@ -1,0 +1,221 @@
+{% macro render_form(form) %}
+    {% import 'macros/form_macros.html' as f %}
+    {% set flashes = {
+        'error':   get_flashed_messages(category_filter=['form-error']),
+        'warning': get_flashed_messages(category_filter=['form-check-email']),
+        'info':    get_flashed_messages(category_filter=['form-info']),
+        'success': get_flashed_messages(category_filter=['form-success'])
+    } %}
+    {{ f.begin_form(form, flashes) }}
+    <h3>Personal Information of Requester</h3>
+    <div class="two fields">
+        {{ f.render_form_field(form.first_name) }}
+        {{ f.render_form_field(form.last_name) }}
+    </div>
+
+    {{ f.render_form_field(form.rel_to_patient) }}
+
+    {{ f.render_form_field(form.street_address) }}
+    {{ f.render_form_field(form.apt_st_address) }}
+    <div class="two fields">
+    {{ f.render_form_field(form.city) }}
+    {{ f.render_form_field(form.state) }}
+    </div>
+    <div class="two fields">
+        {{ f.render_form_field(form.zipcode) }}
+        {{ f.render_form_field(form.country) }}
+    </div>
+
+    <div class="two fields">
+        {{ f.render_form_field(form.phone_number) }}
+        {{ f.render_form_field(form.alt_phone_number) }}
+    </div>
+
+    {{ f.render_form_field(form.email) }}
+
+    <div class="two fields">
+        {{ f.render_form_field(form.primary_language) }}
+        {{ f.render_form_field(form.secondary_language) }}
+    </div>
+
+    {{ f.render_form_field(form.stayed_before) }}
+
+    <h3>Patient Information</h3>
+
+    {{ f.render_form_field(form.patient_first_name) }}
+    {{ f.render_form_field(form.patient_last_name) }}
+    <div class="two fields">
+        {{ f.render_form_field(form.patient_dob) }}
+        {{ f.render_form_field(form.patient_gender) }}
+    </div>
+
+    {{ f.render_form_field(form.hospital) }}
+    {{ f.render_form_field(form.hospital_dep) }}
+    {{ f.render_form_field(form.description) }}
+
+    <div class="two fields">
+        {{ f.render_form_field(form.diagnosis) }}
+        {{ f.render_form_field(form.first_appt_date) }}
+    </div>
+
+    <div class="two fields">
+        {{ f.render_form_field(form.check_in_date) }}
+        {{ f.render_form_field(form.check_out_date) }}
+    </div>
+
+    <div class="two fields">
+        {{ f.render_form_field(form.treating_dr) }}
+        {{ f.render_form_field(form.dr_phone_number) }}
+    </div>
+
+    <div class="two fields">
+        {{ f.render_form_field(form.hospital_social_worker) }}
+        {{ f.render_form_field(form.sw_phone_number) }}
+    </div>
+
+    {{ f.render_form_field(form.in_or_out_patient) }}
+    {{ f.render_form_field(form.staying_prior_to_admission) }}
+    {{ f.render_form_field(form.vaccinated) }}
+    {{ f.render_form_field(form.comments) }}
+
+    <h3>Room Occupancy</h3>
+    <p>Guest 1</p>
+    <div class="two fields">
+        {{ f.render_form_field(form.guest1_name) }}
+        {{ f.render_form_field(form.guest1_dob) }}
+    </div>
+    {{ f.render_form_field(form.guest1_rel_to_patient) }}
+    {{ f.render_form_field(form.guest1_email) }}
+    {{ f.render_form_field(form.guest1_guardian) }}
+
+    <p>Guest 2</p>
+    <div class="two fields">
+        {{ f.render_form_field(form.guest2_name) }}
+        {{ f.render_form_field(form.guest2_dob) }}
+    </div>
+    {{ f.render_form_field(form.guest2_rel_to_patient) }}
+    {{ f.render_form_field(form.guest2_email) }}
+    {{ f.render_form_field(form.guest2_guardian) }}
+
+    <p>Guest 3</p>
+    <div class="two fields">
+        {{ f.render_form_field(form.guest3_name) }}
+        {{ f.render_form_field(form.guest3_dob) }}
+    </div>
+    {{ f.render_form_field(form.guest3_rel_to_patient) }}
+    {{ f.render_form_field(form.guest3_email) }}
+    {{ f.render_form_field(form.guest3_guardian) }}
+
+    <p>Guest 4</p>
+    <div class="two fields">
+        {{ f.render_form_field(form.guest4_name) }}
+        {{ f.render_form_field(form.guest4_dob) }}
+    </div>
+    {{ f.render_form_field(form.guest4_rel_to_patient) }}
+    {{ f.render_form_field(form.guest4_email) }}
+    {{ f.render_form_field(form.guest4_guardian) }}
+
+    <p>Guest 5</p>
+    <div class="two fields">
+        {{ f.render_form_field(form.guest5_name) }}
+        {{ f.render_form_field(form.guest5_dob) }}
+    </div>
+    {{ f.render_form_field(form.guest5_rel_to_patient) }}
+    {{ f.render_form_field(form.guest5_email) }}
+    {{ f.render_form_field(form.guest5_guardian) }}
+
+    <h3>Special Needs</h3>
+    {{ f.render_form_field(form.wheelchair_access) }}
+    {{ f.render_form_field(form.full_bathroom) }}
+    {{ f.render_form_field(form.pack_n_play) }}
+
+    {{ f.form_message(flashes['error'], header='Something went wrong.', class='error') }}
+    {{ f.form_message(flashes['warning'], header='Check the email.', class='warning') }}
+    {{ f.form_message(flashes['info'], header='Information', class='info') }}
+    {{ f.form_message(flashes['success'], header='Success!', class='success') }}
+
+    <p>
+        <div id="populate-room-request-form" class="ui button">
+            Populate form with fake data
+        </div>
+    </p>
+
+    {% for field in form | selectattr('type', 'equalto', 'SubmitField') %}
+        {{ f.render_form_field(field) }}
+    {% endfor %}
+
+    {{ f.end_form() }}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.js" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(() => {
+            function randomChoice(choices) {
+                return choices[Math.floor(Math.random() * choices.length)];
+            }
+            function randomPastDate() {
+                const start = new Date()
+                start.setFullYear(new Date().getFullYear() - 20)
+                const end = new Date()
+                end.setFullYear(new Date().getFullYear() - 5)
+                const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
+                return date.toISOString().split('T')[0];
+            }
+            function randomFutureDate() {
+                const start = new Date()
+                start.setFullYear(new Date().getFullYear())
+                const end = new Date()
+                end.setFullYear(new Date().getFullYear() + 1)
+                const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+                return date.toISOString().split('T')[0];
+            }
+
+            $('#populate-room-request-form').click(() => {
+                $('#first_name').val(faker.name.firstName());
+                $('#last_name').val(faker.name.lastName());
+                $('#rel_to_patient').val(randomChoice(['Mother', 'Father', 'Guardian', 'Grandmother', 'Grandfather']));
+                $('#street_address').val(faker.address.streetAddress());
+                $('#apt_st_address').val(faker.address.secondaryAddress());
+                $('#city').val(faker.address.city());
+                $('#state').val(faker.address.state());
+                $('#zipcode').val(faker.address.zipCode());
+                $('#country').val(faker.address.country());
+                $('#phone_number').val(faker.phone.phoneNumber());
+                $('#alt_phone_number').val(faker.phone.phoneNumber());
+                $('#email').val(faker.internet.email());
+                $('#primary_language').val(randomChoice(['English', 'Spanish', 'Chinese']));
+                $('#secondary_language').val(randomChoice(['', 'Spanish', 'Chinese']));
+                $('#stayed_before').prop('checked', randomChoice([true, false]));
+                $('#patient_first_name').val(faker.name.firstName());
+                $('#patient_last_name').val(faker.name.lastName());
+                $('#patient_dob').val(randomPastDate());
+                $('#patient_gender').val(randomChoice(['Male', 'Female', 'Non-Binary']));
+                $('#hospital').val(randomChoice(["Children's Hospital of Pennsylvania", "Hospital of the University of Pennsylvania", "St. Christopher's", "Shriners"]));
+                $('#hospital_dep').val(randomChoice(["Pediatrics","Oncology","General"]));
+                $('#description').val(faker.lorem.paragraph());
+                $('#diagnosis').val(faker.lorem.words());
+                $('#first_appt_date').val(randomPastDate());
+                $('#check_in_date').val(randomPastDate());
+                $('#check_out_date').val(randomPastDate());
+                $('#treating_dr').val(faker.name.findName());
+                $('#dr_phone_number').val(faker.phone.phoneNumber());
+                $('#hospital_social_worker').val(faker.name.findName());
+                $('#sw_phone_number').val(faker.phone.phoneNumber());
+                $('#in_or_out_patient').val(randomChoice(['Inpatient', 'Outpatient']));
+                $('#staying_prior_to_admission').prop('checked', randomChoice([true, false]))
+                $('#vaccinated').prop('checked', randomChoice([true, false]))
+                const numGuests = Math.random() * 4 + 1;
+                for (let i = 0; i < numGuests; i++) {
+                    $(`#guest${i+1}_name`).val(faker.name.findName());
+                    $(`#guest${i+1}_dob`).val(randomPastDate());
+                    $(`#guest${i+1}_rel_to_patient`).val(randomChoice(['Mother', 'Father', 'Guardian', 'Grandmother', 'Grandfather']));
+                    $(`#guest${i+1}_email`).val(faker.internet.email());
+                    $(`#guest${i+1}_guardian`).val(randomChoice(['y', 'n']));
+                }
+                $('#wheelchair_access').val(randomChoice(['y', 'n']));
+                $('#full_bathroom').val(randomChoice(['y', 'n']));
+                $('#pack_n_play').val(randomChoice(['y', 'n']));
+            });
+        })
+    </script>
+
+{% endmacro %}
