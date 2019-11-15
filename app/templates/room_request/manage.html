@@ -104,8 +104,7 @@
         <table class="ui compact table">
             <thead>
                 <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Name</th>
                     <th>Relationship to Patient</th>
                     <th>Date of Birth</th>
                     <th>Email</th>
@@ -115,8 +114,7 @@
             <tbody>
                 {% for guest in room_request.guests %}
                 <tr>
-                    <td class="collapsing">{{ guest.first_name }}</td>
-                    <td class="collapsing">{{ guest.last_name }}</td>
+                    <td class="collapsing">{{ guest.name }}</td>
                     <td class="collapsing">{{ guest.relationship_to_patient }}</td>
                     <td class="collapsing">{{ guest.dob }}</td>
                     <td class="collapsing">{{ guest.email }}</td>

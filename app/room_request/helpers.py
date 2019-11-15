@@ -3,7 +3,7 @@ from .forms import RoomRequestForm
 
 def get_room_request_from_form(form):
     """Returns a room request from the given submitted RoomRequestForm."""
-    return RoomRequest(
+    room_request = RoomRequest(
         first_name=form.first_name.data,
         last_name=form.last_name.data,
         relationship_to_patient=form.rel_to_patient.data,
@@ -24,14 +24,14 @@ def get_room_request_from_form(form):
         patient_dob=form.patient_dob.data,
         patient_gender=form.patient_gender.data,
         patient_hospital=form.hospital.data,
-        patient_hospital_department=form.hospital_dep.data,
+        patient_hospital_department=form.hospital_department.data,
         patient_treatment_description=form.description.data,
         patient_diagnosis=form.diagnosis.data,
         patient_first_appt_date=form.first_appt_date.data,
         patient_check_in=form.check_in_date.data,
         patient_check_out=form.check_out_date.data,
-        patient_treating_doctor=form.treating_dr.data,
-        patient_doctors_phone=form.dr_phone_number.data,
+        patient_treating_doctor=form.treating_doctor.data,
+        patient_doctors_phone=form.doctor_phone_number.data,
         patient_social_worker=form.hospital_social_worker.data,
         patient_social_worker_phone=form.sw_phone_number.data,
         inpatient=form.in_or_out_patient.data,
@@ -40,12 +40,29 @@ def get_room_request_from_form(form):
         comments=form.comments.data,
         wheelchair_access=form.wheelchair_access.data,
         full_bathroom=form.full_bathroom.data,
-        pack_n_play=form.pack_n_play.data
-    )
+        pack_n_play=form.pack_n_play.data)
+    
+    guests = []
+    for i in range(1, 6):
+        guest_name = form[f'guest{i}_name'].data
+        guest_dob = form[f'guest{i}_dob'].data
+        guest_rel = form[f'guest{i}_rel_to_patient'].data
+        guest_email = form[f'guest{i}_email'].data
+        guest_guardian = form[f'guest{i}_guardian'].data
+        if guest_name and guest_dob and guest_rel and guest_email and guest_guardian:
+            guests.append(Guest(
+                name=guest_name,
+                dob=guest_dob,
+                relationship_to_patient=guest_rel,
+                email=guest_email,
+                guardian=guest_guardian))
+    room_request.guests = guests
+
+    return room_request
 
 def get_form_from_room_request(room_request):
     """Returns a RoomRequestForm with pre-filled data from the given room request."""
-    return RoomRequestForm(
+    form = RoomRequestForm(
         first_name=room_request.first_name,
         last_name=room_request.last_name,
         rel_to_patient=room_request.relationship_to_patient,
@@ -66,14 +83,14 @@ def get_form_from_room_request(room_request):
         patient_dob=room_request.patient_dob,
         patient_gender=room_request.patient_gender,
         hospital=room_request.patient_hospital,
-        hospital_dep=room_request.patient_hospital_department,
+        hospital_department=room_request.patient_hospital_department,
         description=room_request.patient_treatment_description,
         diagnosis=room_request.patient_diagnosis,
         first_appt_date=room_request.patient_first_appt_date,
         check_in_date=room_request.patient_check_in,
         check_out_date=room_request.patient_check_out,
-        treating_dr=room_request.patient_treating_doctor,
-        dr_phone_number=room_request.patient_doctors_phone,
+        treating_doctor=room_request.patient_treating_doctor,
+        doctor_phone_number=room_request.patient_doctors_phone,
         hospital_social_worker=room_request.patient_social_worker,
         sw_phone_number=room_request.patient_social_worker_phone,
         in_or_out_patient=room_request.inpatient,
@@ -83,3 +100,12 @@ def get_form_from_room_request(room_request):
         wheelchair_access=room_request.wheelchair_access,
         full_bathroom=room_request.full_bathroom,
         pack_n_play=room_request.pack_n_play)
+
+    for i, guest in enumerate(room_request.guests):
+        form[f'guest{i+1}_name'].data = guest.name
+        form[f'guest{i+1}_dob'].data = guest.dob
+        form[f'guest{i+1}_rel_to_patient'].data = guest.relationship_to_patient
+        form[f'guest{i+1}_email'].data = guest.email
+        form[f'guest{i+1}_guardian'].data = guest.guardian
+
+    return form
