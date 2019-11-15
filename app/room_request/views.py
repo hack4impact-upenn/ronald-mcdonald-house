@@ -127,7 +127,7 @@ def new():
     editable_html_obj = EditableHTML.get_editable_html('room_request')
     form = RoomRequestForm()
     if form.validate_on_submit():
-        room_request = get_room_request_from_form(room_request)
+        room_request = get_room_request_from_form(form)
         try:
             db.session.add(room_request)
             db.session.commit()
