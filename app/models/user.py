@@ -9,6 +9,7 @@ from .. import db, login_manager
 
 class Permission:
     GENERAL = 0x01
+    STAFF = 0x80
     ADMINISTER = 0xff
 
 
@@ -25,6 +26,7 @@ class Role(db.Model):
     def insert_roles():
         roles = {
             'User': (Permission.GENERAL, 'main', True),
+            'Staff': (Permission.STAFF, 'room_request', True),
             'Administrator': (
                 Permission.ADMINISTER,
                 'admin',
@@ -62,6 +64,9 @@ class User(UserMixin, db.Model):
             if self.email == current_app.config['ADMIN_EMAIL']:
                 self.role = Role.query.filter_by(
                     permissions=Permission.ADMINISTER).first()
+            if self.email == current_app.config['STAFF_EMAIL']:
+                self.role = Role.query.filter_by(
+                    permissions=Permission.STAFF).first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
 
@@ -74,6 +79,9 @@ class User(UserMixin, db.Model):
 
     def is_admin(self):
         return self.can(Permission.ADMINISTER)
+
+    def is_staff(self):
+        return self.can(Permission.STAFF)
 
     @property
     def password(self):

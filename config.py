@@ -50,6 +50,11 @@ class Config:
     # Admin account
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'password')
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@prmh.org')
+    # Staff account
+    STAFF_PASSWORD = os.environ.get('STAFF_PASSWORD', 'password')
+    STAFF_EMAIL = os.environ.get('STAFF_EMAIL', 'staff@prmh.org')
+
+    # Email
     EMAIL_SUBJECT_PREFIX = '[{}]'.format(APP_NAME)
     EMAIL_SENDER = '{app_name} Admin <{email}>'.format(
         app_name=APP_NAME, email=MAIL_USERNAME)

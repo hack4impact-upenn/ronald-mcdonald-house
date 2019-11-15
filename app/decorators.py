@@ -20,6 +20,8 @@ def permission_required(permission):
 
     return decorator
 
+def staff_required(f):
+    return permission_required(Permission.STAFF)(f)
 
 def admin_required(f):
     return permission_required(Permission.ADMINISTER)(f)
