@@ -14,17 +14,17 @@
                 </div>
             </h2>
 
-            <div class="ui fluid search">
+            <div class="ui fluid search" style="padding-top: 10px; padding-bottom: 20px;">
                 <div class="ui icon input">
                     <input class="prompt" id="search-room-requests" type="text" placeholder="Search room requests">
                     <i class="search icon"></i>
                 </div>
             </div>
-            <div style="max-width: 100%; overflow-y: hidden;">
-                <table class="ui searchable sortable unstackable selectable celled table">
+            <div style="max-width: 100%; overflow-y: hidden;" style="padding-top: 24px; padding-bottom: 36px;">
+                <table class="ui definition searchable sortable unstackable selectable celled table">
                     <thead> 
                         <tr>
-                            <th rowspan="2">Authenticate</th>
+                            <th rowspan="2"></th>
                             <th rowspan="2">First Name</th>
                             <th rowspan="2" class="sorted ascending">Last Name</th>
                             <th rowspan="2">Email Address</th>
@@ -64,19 +64,13 @@
                     </thead>
                     <tbody>
                     {% for r in room_requests %}
-                    <!--modal-->
-                    <div class="ui modal" id="delete-room-request-modal-{{ r.id }}">
-                        <div class="header">Confirm Deletion Request</div>
-                        <div class="content">
-                            <p>Do you want to delete this entry?</p>
-                        </div>
-                        <div class="actions">
-                            <div class="ui red approve button" onclick="deleteUser({{ r.id }})">Confirm</div>
-                            <div class="ui cancel button">Cancel</div>
-                        </div>
-                    </div>
                     <tr>
-                        <td><button class="ui red button" onclick="openDeleteModal({{ r.id }})">Delete</button></td>
+                        <td>
+                            <div class="ui fitted checkbox" id="merge_checked">
+                                <input type="checkbox">
+                                <label></label>
+                              </div>
+                        </td>
                         <td>{{ r.first_name }}</td>
                         <td>{{ r.last_name }}</td>
                         <td>{{ r.email }}</td>
@@ -119,16 +113,52 @@
             </div>
         </div>
     </div>
+    <div class="ui stackable grid container" style="padding-top: 5px; padding-bottom: 5px;">
+        
+        <!--modal-->
+        <div class="ui modal">
+            <div class="header">Confirm Deletion Request</div>
+            <div class="content">
+                <p>Do you want to delete the selected entries?</p>
+            </div>
+            <div class="actions">
+                <div class="ui primary approve button" onclick="deleteRoomRequest()">Confirm</div>
+                <div class="ui cancel button">Cancel</div>
+            </div>
+        </div>
+
+        <!--delete button-->
+        <!--opens the button, pressing confirm deletes-->
+        <button class="ui red button" id="push">Delete</button>
+        
+        <!--clear selection button-->
+        <button class="ui button" id="uncheck">Clear Selection</button>
+    </div>
 
     <script type="text/javascript">
-        function openDeleteModal(room_request_id) {
-            $(`#delete-room-request-modal-${room_request_id}`).modal('show')
+        // unchecks all checkboxes
+        function uncheckAll() {
+            $('input[type="checkbox"]:checked').prop('checked', false);
         }
+        $('#uncheck').on('click', uncheckAll)
+        
+        // open modal
+        $('#push').click(function(){
+            $('.ui.modal').modal('show')
+        });
+
+        // all checked into an array
+        $("#merge_checked").click(function(event){
+            var searchIDs = $('input[type="checkbox"]:checked').map(function(){
+                return $(this).val();
+            }).get();
+            console.log(searchIDs);
+        });
 
         // Make a DELETE request to the following URL
-        function deleteUser(user_id) {
+        function deleteRoomRequest(room_request_id) {
             $.ajax({
-                url: `/room-request/${user_id}/delete`,
+                url: `/room-request/${room_request_id}/delete`,
                 type: 'DELETE',
                 success: function(response) {
                 // Print the response in the browser console
@@ -138,29 +168,6 @@
                 },
             })
         }
-
-        $(document).ready(function () {
-            $('#search-room-requests').keyup(function () {
-                var searchText = $(this).val();
-                if (searchText.length > 0) {
-                    $('tbody td:icontains(' + searchText + ')').addClass('positive');
-                    $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
-                    $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
-                    $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
-                } else {
-                    $('td.positive').removeClass('positive');
-                    $('tr.hidden').removeClass('hidden').show();
-                }
-            });
-
-            $('#select-role').dropdown({
-                onChange: function (value, text, $selectedItem) {
-                    $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
-                    $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
-                }
-            });
-
-        });
     </script>
     
 {% endblock %}
