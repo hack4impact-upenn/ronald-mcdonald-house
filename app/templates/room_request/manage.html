@@ -20,35 +20,39 @@
                     <i class="search icon"></i>
                 </div>
             </div>
+
             <div style="max-width: 100%; overflow-y: hidden;" style="padding-top: 24px; padding-bottom: 36px;">
-                <table class="ui definition searchable sortable unstackable selectable celled table">
+                <table class="ui searchable sortable unstackable selectable celled table">
                     <thead> 
                         <tr>
-                            <th rowspan="2"></th>
-                            <th rowspan="2">First Name</th>
-                            <th rowspan="2" class="sorted ascending">Last Name</th>
-                            <th rowspan="2">Email Address</th>
-                            <th rowspan="2">Relationship to Patient</th>
-                            <th rowspan="2">Address</th> 
-                            <th rowspan="2">Primary Phone</th>
-                            <th rowspan="2">Secondary Phone</th>
-                            <th rowspan="2">Primary Language</th>
-                            <th rowspan="2">Secondary Language</th>
+                            <th rowspan="2">Patient First Name</th>
+                            <th rowspan="2" class="sorted ascending">Patient Last Name</th>
+                            <th rowspan="2">Check-In</th>
+                            <th rowspan="2">Check-Out</th>
+                            <th rowspan="2">Diagnosis</th> 
+                            <th rowspan="2">Department</th>
+                            <th rowspan="2">Requester First Name</th>
+                            <th rowspan="2">Requester Last Name</th>
+                            <th rowspan="2">Requester Phone Number</th>
                             <th rowspan="2">Requested Before?</th>
-                            <!--Patient Information-->
-                            <th colspan="22">Patient Information</th>
+                            <th colspan="6">Requester Information</th>
+                            <th colspan="16">Other Patient Information</th>
+                        </tr>
                         <tr>
-                            <th>Patient First Name</th>
-                            <th>Patient Last Name</th>
+                            <!--requester information-->
+                            <th>Email Address</th>
+                            <th>Relationship to Patient</th>
+                            <th>Secondary Phone Number</th>
+                            <th>Address</th>
+                            <th>Primary Language</th>
+                            <th>Secondary Language</th>
+
+                            <!--other patient information-->
                             <th>Patient Birthday</th>
                             <th>Patient Gender</th>
                             <th>Hospital in Philadelphia</th>
-                            <th>Hospital Department</th>
                             <th>Treatment Description</th>
-                            <th>Diagnosis</th>
                             <th>First Appointment Date</th>
-                            <th>Check In</th>
-                            <th>Check Out</th>
                             <th>Treating Doctor</th>
                             <th>Doctor Phone Number</th>
                             <th>Hospital Social Worker</th>
@@ -65,13 +69,48 @@
                     <tbody>
                     {% for r in room_requests %}
                     <tr>
-                        <td>
-                            <div class="ui fitted checkbox" id="merge_checked">
-                                <input type="checkbox">
-                                <label></label>
-                              </div>
-                        </td>
+                        <td class="collapsing">{{ r.patient_first_name }}</td>
+                        <td class="collapsing">{{ r.patient_last_name }}</td>
+                        <td class="collapsing">{{ r.patient_check_in }}</td>
+                        <td class="collapsing">{{ r.patient_check_out }}</td>
+                        <td class="collapsing">{{ r.patient_diagnosis }}</td>
+                        <td>{{ r.patient_hospital_department }}</td>
                         <td>{{ r.first_name }}</td>
+                        <td>{{ r.last_name }}</td>
+                        <td>{{ r.primary_phone }}</td>
+                        <td>{{ r.previous_stay }}</td>
+                        
+                        <!--other requester information-->
+                        <td>{{ r.email }}</td>
+                        <td>{{ r.relationship_to_patient }}</td>
+                        <td>{{ r.secondary_phone }}</td>
+                        <td class="collapsing">
+                                {{ r.address_line_one }} {{ r.address_line_two }} <br />
+                                {{ r.city }}, {{ r.state }}, {{ r.zip_code }}, {{ r.country }}
+                            </td>
+                        <td>{{ r.primary_language }}</td>
+                        <td>{{ r.secondary_language }}</td>
+
+                        <!--other patient information-->
+                        <td>{{ r.patient_dob }}</td>
+                        <td>{{ r.patient_gender }}</td>
+                        <td class="collapsing">{{ r.patient_hospital }}</td>
+                        <td>{{ r.patient_hospital_department }}</td>
+                        <td class="collapsing">{{ r.patient_treatment_description }}</td>
+                        <td class="collapsing">{{ r.patient_first_appt_date }}</td>
+                        <td class="collapsing">{{ r.patient_treating_doctor }}</td>
+                        <td class="collapsing">{{ r.patient_doctors_phone }}</td>
+                        <td class="collapsing">{{ r.patient_social_worker }}</td>
+                        <td class="collapsing">{{ r.patient_social_worker_phone }}</td>
+                        <td>{{ r.inpatient }}</td>
+                        <td>{{ r.inpatient_prior }}</td>
+                        <td>{{ r.vaccinated }}</td>
+                        <td>{{ r.wheelchair_access }}</td>
+                        <td>{{ r.full_bathroom }}</td>
+                        <td>{{ r.pack_n_play }}</td>
+                        <td class="collapsing">{{ r.comments }}</td>
+
+                        <!-- <td>{{ r.first_name }}</td>
                         <td>{{ r.last_name }}</td>
                         <td>{{ r.email }}</td>
                         <td>{{ r.relationship_to_patient }}</td>
@@ -105,7 +144,7 @@
                         <td>{{ r.wheelchair_access }}</td>
                         <td>{{ r.full_bathroom }}</td>
                         <td>{{ r.pack_n_play }}</td>
-                        <td class="collapsing">{{ r.comments }}</td>
+                        <td class="collapsing">{{ r.comments }}</td> -->
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -113,61 +152,9 @@
             </div>
         </div>
     </div>
-    <div class="ui stackable grid container" style="padding-top: 5px; padding-bottom: 5px;">
-        
-        <!--modal-->
-        <div class="ui modal">
-            <div class="header">Confirm Deletion Request</div>
-            <div class="content">
-                <p>Do you want to delete the selected entries?</p>
-            </div>
-            <div class="actions">
-                <div class="ui primary approve button" onclick="deleteRoomRequest()">Confirm</div>
-                <div class="ui cancel button">Cancel</div>
-            </div>
-        </div>
-
-        <!--delete button-->
-        <!--opens the button, pressing confirm deletes-->
-        <button class="ui red button" id="push">Delete</button>
-        
-        <!--clear selection button-->
-        <button class="ui button" id="uncheck">Clear Selection</button>
-    </div>
-
+    
     <script type="text/javascript">
-        // unchecks all checkboxes
-        function uncheckAll() {
-            $('input[type="checkbox"]:checked').prop('checked', false);
-        }
-        $('#uncheck').on('click', uncheckAll)
         
-        // open modal
-        $('#push').click(function(){
-            $('.ui.modal').modal('show')
-        });
-
-        // all checked into an array
-        $("#merge_checked").click(function(event){
-            var searchIDs = $('input[type="checkbox"]:checked').map(function(){
-                return $(this).val();
-            }).get();
-            console.log(searchIDs);
-        });
-
-        // Make a DELETE request to the following URL
-        function deleteRoomRequest(room_request_id) {
-            $.ajax({
-                url: `/room-request/${room_request_id}/delete`,
-                type: 'DELETE',
-                success: function(response) {
-                // Print the response in the browser console
-                console.log(response)
-                // Refresh the page
-                document.location.reload()
-                },
-            })
-        }
     </script>
     
 {% endblock %}
