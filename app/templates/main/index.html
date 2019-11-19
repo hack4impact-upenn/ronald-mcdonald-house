@@ -17,7 +17,7 @@
     </h2>
     <div class="ui segments">
       <div class="ui segment" style="text-align:center">
-      <b>Before submitting your room request, please read and acknolwedge that you undersatnd the following.</b>
+      <b>Before submitting your room request, please read and acknolwedge that you understand the following.</b>
       </div>
       <div class="ui segment" style="text-align:justify; padding-right:3em; padding-bottom:2em">
       <ul id="requirements-list">
@@ -43,10 +43,12 @@
     </div>
     
     <div style="text-align:center; padding-top:4px"">
-      <button id="edit" onclick="{{ url_for('room_request.new') }}" class="ui disabled right labeled icon button">
-          <i class="right arrow icon"></i>
-          Proceed to Room Request Form
-      </button>
+      <a href="{{ url_for('room_request.new') }}">
+        <button class="ui disabled right labeled icon button" id="edit">
+            <i class="right arrow icon"></i>
+            Proceed to Room Request Form
+        </button>
+      </a>
     </div>
 
     <script>
