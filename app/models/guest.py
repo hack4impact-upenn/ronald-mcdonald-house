@@ -8,27 +8,25 @@ class Guest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     
     # Guest Information
-    first_name = db.Column(db.String(100))
-    last_name = db.Column(db.String(100))
+    name = db.Column(db.String(200))
     relationship_to_patient = db.Column(db.String(100))
     email = db.Column(db.String(200))
     guardian = db.Column(db.Boolean())
-    guest_dob = db.Column(db.Date)
+    dob = db.Column(db.Date)
 
     # Room Request
     room_request_id = db.Column(db.Integer, db.ForeignKey('room_requests.id'))
 
     def __repr__(self):
-        return f'<Guest: {self.first_name} {self.last_name}>'
+        return f'<Guest: {self.name}>'
 
     def print_info(self):
         print('<Guest \n'
-            f'First Name: {self.first_name}\n'
-            f'Last Name: {self.last_name}\n'
+            f'Name: {self.name}\n'
             f'Relationship to Patient: {self.relationship_to_patient}\n'
             f'Email: {self.email}\n'
             f'Guardian: {self.guardian}\n'
-            f'Guest DOB: {self.guest_dob}\n')
+            f'Guest DOB: {self.dob}\n')
 
     def __str__(self):
         return self.__repr__()
@@ -44,14 +42,12 @@ class Guest(db.Model):
         seed()
         for i in range(randint(1, 5)):
             guest = Guest(
-                first_name=fake.first_name(),
-                last_name=fake.last_name(),
+                name=fake.name(),
                 relationship_to_patient=choice(["Mother", "Father", "Spouse"]),
                 email=fake.email(),
-                guardian=True,
-                guest_dob=fake.date_between(start_date="-30y", end_date="today"),
+                guardian=choice([True, False]),
+                dob=fake.date_between(start_date="-30y", end_date="today"),
                 room_request=room_request)
-            print(guest)
             db.session.add(guest)
         try:
             db.session.commit()

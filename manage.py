@@ -84,6 +84,19 @@ def setup_general():
             db.session.add(user)
             db.session.commit()
             print('Added administrator {}'.format(user.full_name()))
+    
+    staff_query = Role.query.filter_by(name='Staff')
+    if admin_query.first() is not None:
+        if User.query.filter_by(email=Config.STAFF_EMAIL).first() is None:
+            user = User(
+                first_name='Staff',
+                last_name='Account',
+                password=Config.STAFF_PASSWORD,
+                confirmed=True,
+                email=Config.STAFF_EMAIL)
+            db.session.add(user)
+            db.session.commit()
+            print('Added staff {}'.format(user.full_name()))
 
 
 @manager.command

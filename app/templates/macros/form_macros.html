@@ -109,7 +109,7 @@
     {% if field.type == 'Radio Field' %}
         {% set extra_classes = extra_classes + ' grouped fields' %}
     {% endif %}
-    <div class="field {% if field.errors %}error{% endif %} {{ extra_classes }}">
+    <div class="field {% if field.errors %}error{% endif %} {% if field.flags.required %}required{% endif %} {{ extra_classes }}">
         {{ render_form_input(field) }}
         {% if field.errors %}
             <div class="ui red pointing label">
