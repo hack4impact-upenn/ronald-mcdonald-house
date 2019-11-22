@@ -38,7 +38,7 @@ class RoomRequestForm(FlaskForm):
     secondary_language = StringField(
         'Secondary Language', validators=[Length(0, 128)])
     stayed_before = BooleanField(
-        'Have you stayed at PRMH before?')
+        'Have you submitted a room request before?')
 
     # Patient information
     patient_last_name = StringField(
