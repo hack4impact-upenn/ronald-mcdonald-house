@@ -19,7 +19,7 @@ from app.admin.forms import (
 )
 from app.decorators import admin_required
 from app.email import send_email
-from app.models import EditableHTML, Role, User
+from app.models import EditableHTML, Role, User, RoomRequest
 
 admin = Blueprint('admin', __name__)
 
@@ -29,7 +29,10 @@ admin = Blueprint('admin', __name__)
 @admin_required
 def index():
     """Admin dashboard page."""
-    return render_template('admin/index.html')
+    users = User.query.all()
+    roles = Role.query.all()
+    room_requests = RoomRequest.query.all()
+    return render_template('admin/index.html', users=users, roles=roles, room_requests=room_requests)
 
 
 @admin.route('/new-user', methods=['GET', 'POST'])
