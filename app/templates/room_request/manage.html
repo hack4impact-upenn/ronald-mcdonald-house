@@ -1,123 +1,198 @@
 {% extends 'layouts/base.html' %}
+{% import 'room_request/macros.html' as room_request_macros %}
 
-{% block content %}
-    <div class="ui stackable grid container">
-        <div class="sixteen wide column">
-            <a class="ui basic compact button" href="{{ url_for('admin.index') }}">
-                <i class="caret left icon"></i>
-                Back to dashboard
-            </a>
-            <h2 class="ui header">
-                Room Requests
-                <div class="sub header">
-                    View and manage all room requests.
-                </div>
-            </h2>
+{% set contact_info_endpoint = 'room_request.manage' %}
+{% set patient_info_endpoint = 'room_request.patient_info' %}
+{% set guest_info_endpoint = 'room_request.guest_info' %}
+{% set room_occupancy_info_endpoint = 'room_request.room_occupancy_info' %}
+{% set edit_endpoint = 'room_request.edit' %}
+{% set delete_endpoint = 'room_request.delete' %}
 
-            <div class="ui fluid search" style="padding-top: 10px; padding-bottom: 20px;">
-                <div class="ui icon input">
-                    <input class="prompt" id="search-room-requests" type="text" placeholder="Search room requests">
-                    <i class="search icon"></i>
-                </div>
-            </div>
+{% set view_endpoints = [
+    (contact_info_endpoint, 'Contact information'),
+    (patient_info_endpoint, 'Patient details'),
+    (room_occupancy_info_endpoint, 'Room occupancy needs'),
+    (guest_info_endpoint, 'Guest information'),
+] %}
+{% set manage_endpoints = [
+    (edit_endpoint, 'Edit request'),
+    (delete_endpoint, 'Delete request'),
+] %}
 
-            <div style="max-width: 100%; overflow-y: hidden;" style="padding-top: 24px; padding-bottom: 36px;">
-                <table class="ui searchable sortable unstackable selectable celled table">
-                    <thead> 
-                        <tr>
-                            <th rowspan="2">Patient First Name</th>
-                            <th rowspan="2" class="sorted ascending">Patient Last Name</th>
-                            <th rowspan="2">Check-In</th>
-                            <th rowspan="2">Check-Out</th>
-                            <th rowspan="2">Diagnosis</th> 
-                            <th rowspan="2">Department</th>
-                            <th rowspan="2">Requester First Name</th>
-                            <th rowspan="2">Requester Last Name</th>
-                            <th rowspan="2">Requester Phone Number</th>
-                            <th rowspan="2">Requested Before?</th>
-                            <th colspan="6">Requester Information</th>
-                            <th colspan="16">Other Patient Information</th>
-                        </tr>
-                        <tr>
-                            <!--requester information-->
-                            <th>Email Address</th>
-                            <th>Relationship to Patient</th>
-                            <th>Secondary Phone Number</th>
-                            <th>Address</th>
-                            <th>Primary Language</th>
-                            <th>Secondary Language</th>
+{% macro navigation(view_endpoints, manage_endpoints, room_request) %}
+<div class="ui vertical fluid secondary menu">
+    <div class="header item">View Request</div>
+    {% for route, name in view_endpoints %}
+        {% set href = url_for(route, id=room_request.id) %}
+        <a class="item {% if request.endpoint == route %}active{% endif %}" href="{{ href }}">
+            {{ name }}
+        </a>
+    {% endfor %}
+    <div class="header item">Manage Request</div>
+    {% for route, name in manage_endpoints %}
+        {% set href = url_for(route, id=room_request.id) %}
+        <a class="item {% if request.endpoint == route %}active{% endif %}" href="{{ href }}">
+            {{ name }}
+        </a>
+    {% endfor %}
+</div>
+{% endmacro %}
 
-                            <!--other patient information-->
-                            <th>Patient Birthday</th>
-                            <th>Patient Gender</th>
-                            <th>Hospital in Philadelphia</th>
-                            <th>Treatment Description</th>
-                            <th>First Appointment Date</th>
-                            <th>Treating Doctor</th>
-                            <th>Doctor Phone Number</th>
-                            <th>Hospital Social Worker</th>
-                            <th>Hospital Social Worker Phone Number</th>
-                            <th>Inpatient/Outpatient</th>
-                            <th>Inpatient Stay?</th>
-                            <th>Vaccinated</th>
-                            <th>Wheelchair Access</th>
-                            <th>Full Bathroom</th>
-                            <th>Pack & Play</th>
-                            <th>Additional Comments</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for r in room_requests %}
-                    <tr>
-                        <td class="collapsing">{{ r.patient_first_name }}</td>
-                        <td class="collapsing">{{ r.patient_last_name }}</td>
-                        <td class="collapsing">{{ r.patient_check_in }}</td>
-                        <td class="collapsing">{{ r.patient_check_out }}</td>
-                        <td class="collapsing">{{ r.patient_diagnosis }}</td>
-                        <td>{{ r.patient_hospital_department }}</td>
-                        <td>{{ r.first_name }}</td>
-                        <td>{{ r.last_name }}</td>
-                        <td>{{ r.primary_phone }}</td>
-                        <td>{{ r.previous_stay }}</td>
-                        
-                        <!--other requester information-->
-                        <td>{{ r.email }}</td>
-                        <td>{{ r.relationship_to_patient }}</td>
-                        <td>{{ r.secondary_phone }}</td>
-                        <td class="collapsing">
-                                {{ r.address_line_one }} {{ r.address_line_two }} <br />
-                                {{ r.city }}, {{ r.state }}, {{ r.zip_code }}, {{ r.country }}
-                            </td>
-                        <td>{{ r.primary_language }}</td>
-                        <td>{{ r.secondary_language }}</td>
+{% macro contact_info(room_request) %}
+<div>
+    <h3>Contact Information</h3>
+    <table class="ui compact definition table">
+        <tr><td class="collapsing">First Name</td><td>{{ room_request.first_name }}</td></tr>
+        <tr><td class="collapsing">Last Name</td><td>{{ room_request.last_name }}</td></tr>
+        <tr><td class="collapsing">Email</td><td>{{ room_request.email }}</td></tr>
+        <tr><td class="collapsing">Relationship to Patient</td><td>{{ room_request.relationship_to_patient }}</td></tr>
+        <tr><td class="collapsing">Address</td><td>
+            {{ room_request.address_line_one }} {{ room_request.address_line_two }} <br />
+            {{ room_request.city }}, {{ room_request.state }}, {{ room_request.zip_code }}, {{ room_request.country }}
+        </td></tr>
+        <tr><td class="collapsing">Primary Phone</td><td>{{ room_request.primary_phone }}</td></tr>
+        <tr><td class="collapsing">Secondary Phone</td><td>{{ room_request.secondary_phone }}</td></tr>
+        <tr><td class="collapsing">Primary Language</td><td>{{ room_request.primary_language }}</td></tr>
+        <tr><td class="collapsing">Secondary Language</td><td>{{ room_request.secondary_language }}</td></tr>
+        <tr><td class="collapsing">Requested Before</td><td>{{ room_request.previous_stay }}</td></tr>
+        <tr><td class="collapsing">Additional Comments</td><td>{{ room_request.comments }}</td></tr>    
+    </table>
+</div>
+{% endmacro %}
 
-                        <!--other patient information-->
-                        <td>{{ r.patient_dob }}</td>
-                        <td>{{ r.patient_gender }}</td>
-                        <td class="collapsing">{{ r.patient_hospital }}</td>
-                        <td class="collapsing">{{ r.patient_treatment_description }}</td>
-                        <td class="collapsing">{{ r.patient_first_appt_date }}</td>
-                        <td class="collapsing">{{ r.patient_treating_doctor }}</td>
-                        <td class="collapsing">{{ r.patient_doctors_phone }}</td>
-                        <td class="collapsing">{{ r.patient_social_worker }}</td>
-                        <td class="collapsing">{{ r.patient_social_worker_phone }}</td>
-                        <td>{{ r.inpatient }}</td>
-                        <td>{{ r.inpatient_prior }}</td>
-                        <td>{{ r.vaccinated }}</td>
-                        <td>{{ r.wheelchair_access }}</td>
-                        <td>{{ r.full_bathroom }}</td>
-                        <td>{{ r.pack_n_play }}</td>
-                        <td class="collapsing">{{ r.comments }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+{% macro patient_info(room_request) %}
+<div>
+    <h3 class="ui header">Patient Details</h3>
+    <table class="ui compact definition table">
+        <tr><td class="collapsing">First Name</td><td>{{ room_request.patient_first_name }}</td></tr>
+        <tr><td class="collapsing">Last Name</td><td>{{ room_request.patient_last_name }}</td></tr>
+        <tr><td class="collapsing">Date of Birth</td><td>{{ room_request.patient_dob }}</td></tr>
+        <tr><td class="collapsing">Gender</td><td>{{ room_request.patient_gender }}</td></tr>
+        <tr><td class="collapsing">Hospital</td><td>{{ room_request.patient_hospital }}</td></tr>
+        <tr><td class="collapsing">Hospital Department</td><td>{{ room_request.patient_hospital_department }}</td></tr>
+        <tr><td class="collapsing">Diagnosis</td><td>{{ room_request.patient_diagnosis }}</td></tr>
+        <tr><td class="collapsing">Treatment Description</td><td>{{ room_request.patient_treatment_description }}</td></tr>
+        <tr><td class="collapsing">First Appointment Date</td><td>{{ room_request.patient_first_appt_date }}</td></tr>
+        <tr><td class="collapsing">Check-in Date</td><td>{{ room_request.patient_check_in }}</td></tr>
+        <tr><td class="collapsing">Check-out Date</td><td>{{ room_request.patient_check_out }}</td></tr>
+        <tr><td class="collapsing">Treating Doctor</td><td>{{ room_request.patient_treating_doctor }}</td></tr>
+        <tr><td class="collapsing">Treating Doctor Phone</td><td>{{ room_request.patient_doctors_phone }}</td></tr>
+        <tr><td class="collapsing">Social Worker</td><td>{{ room_request.patient_social_worker }}</td></tr>
+        <tr><td class="collapsing">Social Worker Phone</td><td>{{ room_request.patient_social_worker_phone }}</td></tr>
+        <tr><td class="collapsing">Inpatient/Outpatient</td><td>{{ room_request.inpatient }}</td></tr>
+        <tr><td class="collapsing">Inpatient Stay</td><td>{{ room_request.inpatient_prior }}</td></tr>
+        <tr><td class="collapsing">Vaccinated</td><td>{{ room_request.vaccinated }}</td></tr>
+    </table>
+</div>
+{% endmacro %}
+
+{% macro room_occupancy_info(room_request) %}
+<div>
+    <h3 class="ui header">Room Occupancy Needs</h3>
+    <table class="ui compact definition table">
+        <tr><td class="collapsing">Wheelchair Access</td><td>{{ room_request.wheelchair_access }}</td></tr>
+        <tr><td class="collapsing">Full Bathroom</td><td>{{ room_request.full_bathroom }}</td></tr>
+        <tr><td class="collapsing">Pack & Play</td><td>{{ room_request.pack_n_play }}</td></tr>    
+    </table>
+</div>
+{% endmacro %}
+
+{% macro guest_info(room_request) %}
+<div>
+    <h3>Guest Information</h3>
+    <div style="max-width: 100%; overflow-y: hidden;">
+        <table class="ui compact table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Relationship to Patient</th>
+                    <th>Date of Birth</th>
+                    <th>Email</th>
+                    <th>Guardian?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for guest in room_request.guests %}
+                <tr>
+                    <td class="collapsing">{{ guest.name }}</td>
+                    <td class="collapsing">{{ guest.relationship_to_patient }}</td>
+                    <td class="collapsing">{{ guest.dob }}</td>
+                    <td class="collapsing">{{ guest.email }}</td>
+                    <td class="collapsing">{{ 'Yes' if guest.guardian else 'No' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro delete_request(room_request) %}
+<div>
+    <h3 class="ui red block header">
+        <i class="warning circle icon"></i>
+        <div class="content">
+            This action is permanent
+            <div class="sub header">
+                Deleting a room request is not a reversible change. Any information associated
+                with this request will be removed, and cannot be recovered.
             </div>
         </div>
+    </h3>
+
+    <div class="ui form">
+        <div class="inline field">
+            <div class="ui deletion checkbox">
+                <input type="checkbox" tabindex="0" class="hidden">
+                <label>I understand that this action cannot be undone.</label>
+            </div>
+        </div>
+        <a class="ui disabled negative button" id="delete-room-request-button">
+            Delete this room request
+        </a>
     </div>
-    
-    <script type="text/javascript">
-        
-    </script>
-    
+</div>
+{% endmacro %}
+
+{% block content %}
+<div class="ui stackable centered grid container">
+    <div class="fourteen wide column">
+        <h2 class="ui header">
+            {{ room_request.first_name }} {{ room_request.last_name }}
+            <div class="sub header">View and manage {{ room_request.first_name }}'s room request.</div>
+        </h2>
+    </div>
+    <div class="stretched divided very relaxed row">
+        <div class="four wide column">
+            {{ navigation(view_endpoints, manage_endpoints, room_request) }}
+        </div>
+        <div class="ten wide column">
+            {% if request.endpoint == contact_info_endpoint %}
+                {{ contact_info(room_request) }}
+            {% elif request.endpoint == patient_info_endpoint %}
+                {{ patient_info(room_request) }}
+            {% elif request.endpoint == room_occupancy_info_endpoint %}
+                {{ room_occupancy_info(room_request) }}
+            {% elif request.endpoint == guest_info_endpoint %}
+                {{ guest_info(room_request) }}
+            {% elif request.endpoint == edit_endpoint %}
+                {{ room_request_macros.render_form(form) }}
+            {% elif request.endpoint == delete_endpoint %}
+                {{ delete_request(room_request) }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$('.deletion.checkbox').checkbox({
+    onChecked: function() {
+        $('#delete-room-request-button').removeClass('disabled')
+            .attr('href', '{{ url_for('room_request._delete', id=room_request.id) }}');
+    },
+    onUnchecked: function() {
+        $('#delete-room-request-button').addClass('disabled').removeAttr('href');
+    }
+});
+</script>
 {% endblock %}
