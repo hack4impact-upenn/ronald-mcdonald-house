@@ -1,5 +1,26 @@
 {% extends 'layouts/base.html' %}
 
+
+{% macro dashboard_option(title, endpoint, description=None, icon=None) %}
+    <a class="column" href="{{ url_for(endpoint) }}">
+        <div class="ui padded segment">
+            <h3 class="ui header">
+                {% if icon is not none %}
+                    <i class="{{ icon }}"></i>
+                {% endif %}
+                <div class="content">
+                    {{ title }}
+                    {% if description is not none %}
+                        <div class="sub header">
+                            {{ description }}
+                        </div>
+                    {% endif %}
+                </div>
+            </h3>
+        </div>
+    </a>
+{% endmacro %}
+
 {% block content %}
     <div class="ui stackable grid container">
         <div class="sixteen wide tablet twelve wide computer centered column">
@@ -13,6 +34,14 @@
                     View and manage registered users.
                 </div>
             </h2>
+
+            <div>
+
+                {{ dashboard_option('Invite New User', 'admin.invite_user',
+                description='Invites a new user to create their own account', icon='add user icon') }}
+
+            </div>
+
 
             <div class="ui menu">
                 <div id="select-role" class="ui dropdown item">
@@ -34,6 +63,7 @@
                     </div>
                 </div>
             </div>
+
 
             {# Use overflow-x: scroll so that mobile views don't freak out
              # when the table is too wide #}
@@ -59,6 +89,8 @@
                     </tbody>
                 </table>
             </div>
+
+            
         </div>
     </div>
 
