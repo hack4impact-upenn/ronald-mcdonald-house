@@ -141,6 +141,8 @@
         </div>
     </p>
 
+    <p>  {{ form.recaptcha }} 
+    </p>
     {% for field in form | selectattr('type', 'equalto', 'SubmitField') %}
         {{ f.render_form_field(field) }}
     {% endfor %}

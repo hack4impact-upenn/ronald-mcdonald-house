@@ -125,8 +125,10 @@ def _delete(id):
 def new():
     """Room Request page."""
     editable_html_obj = EditableHTML.get_editable_html('room_request')
-    form = RoomRequestForm()
-    if form.validate_on_submit():
+    form = RoomRequestForm(request.form)
+    if form.is_submitted() and not form.validate_on_submit():
+        flash('Please check the reCaptcha at the bottom of the page.', 'form-error')
+    elif form.validate_on_submit():
         room_request = get_room_request_from_form(form)
         try:
             db.session.add(room_request)

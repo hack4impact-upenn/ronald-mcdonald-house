@@ -29,7 +29,7 @@ class Config:
         SECRET_KEY = 'SECRET_KEY_ENV_VAR_NOT_SET'
         print('SECRET KEY ENV VAR NOT SET! SHOULD NOT SEE IN PRODUCTION')
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-
+    
     # Email
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.sendgrid.net')
     MAIL_PORT = os.environ.get('MAIL_PORT', 587)
@@ -54,6 +54,10 @@ class Config:
     STAFF_PASSWORD = os.environ.get('STAFF_PASSWORD', 'password')
     STAFF_EMAIL = os.environ.get('STAFF_EMAIL', 'staff@prmh.org')
 
+    #recCptchaV3 
+    RECAPTCHA_PUBLIC_KEY = os.environ.get('RC_SITE_KEY')
+    RECAPTCHA_PRIVATE_KEY = os.environ.get('RC_SECRET_KEY')
+    
     # Email
     EMAIL_SUBJECT_PREFIX = '[{}]'.format(APP_NAME)
     EMAIL_SENDER = '{app_name} Admin <{email}>'.format(
