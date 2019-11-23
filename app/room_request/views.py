@@ -127,7 +127,7 @@ def new():
     editable_html_obj = EditableHTML.get_editable_html('room_request')
     form = RoomRequestForm(request.form)
     if form.is_submitted() and not form.validate_on_submit():
-        flash('Error Submitting. Please check the checkbox at the bottom of the page.', 'form-error')
+        flash('Please check the reCaptcha at the bottom of the page.', 'form-error')
     elif form.validate_on_submit():
         room_request = get_room_request_from_form(form)
         try:
