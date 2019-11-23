@@ -61,271 +61,265 @@
                 <div class="active item" data-tab="tab-name">Manage Users</div>
                 <div class="item" data-tab="tab-name2">Manage Room Requests</div>
             </div>
-                  <div class="active ui tab" data-tab="tab-name">
+                <div class="active ui tab" data-tab="tab-name">
                     <div class="ui stackable grid container">
                         <div class="sixteen wide column">
-                                    <h2 class="ui header">
-                                        Registered Users
-                                        <div class="sub header">
-                                            View and manage registered users.
-                                        </div>
-                                    </h2>
-                        
-                                    <div>
-                        
-                                        {{ dashboard_option('Invite New User', 'admin.invite_user',
-                                        description='Invites a new user to create their own account', icon='add user icon') }}
-                        
-                                    </div>
-                        
-                        
-                                    <div class="ui menu">
-                                        <div id="select-role" class="ui dropdown item">
-                                            <div class="text">
-                                                All account types
-                                            </div>
-                                            <i class="dropdown icon"></i>
-                                            <div class="menu">
-                                                <div class="item" data-value="">All account types</div>
-                                                {% for r in roles %}
-                                                    <div class="item" data-value="{{ r.name }}">{{ r.name }}</div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <div class="ui right search item">
-                                            <div class="ui transparent icon input">
-                                                <input id="search-users" type="text" placeholder="Search users…">
-                                                <i class="search icon"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                        
-                        
-                                    {# Use overflow-x: scroll so that mobile views don't freak out
-                                     # when the table is too wide #}
-                                    <div style="overflow-x: auto;">
-                                        <table class="ui searchable sortable unstackable selectable celled table">
-                                            <thead> 
-                                                <tr>
-                                                    <th rowspan="2">First Name</th>
-                                                    <th rowspan="2" class="sorted ascending">Last Name</th>
-                                                    <th rowspan="2">Email Address</th>
-                                                    <th rowspan="2">Account Type</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for u in users | sort(attribute='last_name') %}
-                                                <tr onclick="window.location.href = '{{ url_for('admin.user_info', user_id=u.id) }}';">
-                                                    <td>{{ u.first_name }}</td>
-                                                    <td>{{ u.last_name }}</td>
-                                                    <td>{{ u.email }}</td>
-                                                    <td class="user role">{{ u.role.name }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                        
-                                    
+                            <h2 class="ui header">
+                                Registered Users
+                                <div class="sub header">
+                                    View and manage registered users.
                                 </div>
+                            </h2>
+                
+                            <div>
+                                {{ dashboard_option('Invite New User', 'admin.invite_user',
+                                description='Invites a new user to create their own account', icon='add user icon') }}
                             </div>
                         
-                            <script type="text/javascript">
-                                $(document).ready(function () {
-                                    $('#search-users').keyup(function () {
-                                        var searchText = $(this).val();
-                                        if (searchText.length > 0) {
-                                            $('tbody td:icontains(' + searchText + ')').addClass('positive');
-                                            $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
-                                            $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
-                                            $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
-                                        } else {
-                                            $('td.positive').removeClass('positive');
-                                            $('tr.hidden').removeClass('hidden').show();
-                                        }
-                                    });
-                        
-                                    $('#select-role').dropdown({
-                                        onChange: function (value, text, $selectedItem) {
-                                            $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
-                                            $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
-                                        }
-                                    });
-                                });
-                            </script>
-                  </div>
-                  <div class="ui tab" data-tab="tab-name2">
-                    
-                        <div class="ui stackable grid container">
-                                <div class="sixteen wide column">
-                                    
-                                    <h2 class="ui header">
-                                        Room Requests
-                                        <div class="sub header">
-                                            View and manage all room requests.
-                                        </div>
-                                    </h2>
-                        
-                                    <div class="ui fluid search">
-                                        <div class="ui icon input">
-                                            <input class="prompt" id="search-room-requests" type="text" placeholder="Search room requests">
-                                            <i class="search icon"></i>
-                                        </div>
+                            <div class="ui menu">
+                                <div id="select-role" class="ui dropdown item">
+                                    <div class="text">
+                                        All account types
                                     </div>
-                                    <div style="max-width: 100%; overflow-y: hidden;">
-                                        <table class="ui searchable sortable unstackable selectable celled table">
-                                            <thead> 
-                                                <tr>
-                                                    <th rowspan="2">Authenticate</th>
-                                                    <th rowspan="2">First Name</th>
-                                                    <th rowspan="2" class="sorted ascending">Last Name</th>
-                                                    <th rowspan="2">Email Address</th>
-                                                    <th rowspan="2">Relationship to Patient</th>
-                                                    <th rowspan="2">Address</th> 
-                                                    <th rowspan="2">Primary Phone</th>
-                                                    <th rowspan="2">Secondary Phone</th>
-                                                    <th rowspan="2">Primary Language</th>
-                                                    <th rowspan="2">Secondary Language</th>
-                                                    <th rowspan="2">Requested Before?</th>
-                                                    <!--Patient Information-->
-                                                    <th colspan="22">Patient Information</th>
-                                                <tr>
-                                                    <th>Patient First Name</th>
-                                                    <th>Patient Last Name</th>
-                                                    <th>Patient Birthday</th>
-                                                    <th>Patient Gender</th>
-                                                    <th>Hospital in Philadelphia</th>
-                                                    <th>Hospital Department</th>
-                                                    <th>Treatment Description</th>
-                                                    <th>Diagnosis</th>
-                                                    <th>First Appointment Date</th>
-                                                    <th>Check In</th>
-                                                    <th>Check Out</th>
-                                                    <th>Treating Doctor</th>
-                                                    <th>Doctor Phone Number</th>
-                                                    <th>Hospital Social Worker</th>
-                                                    <th>Hospital Social Worker Phone Number</th>
-                                                    <th>Inpatient/Outpatient</th>
-                                                    <th>Inpatient Stay?</th>
-                                                    <th>Vaccinated</th>
-                                                    <th>Wheelchair Access</th>
-                                                    <th>Full Bathroom</th>
-                                                    <th>Pack & Play</th>
-                                                    <th>Additional Comments</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for r in room_requests %}
-                                            <!--modal-->
-                                            <div class="ui modal" id="delete-room-request-modal-{{ r.id }}">
-                                                <div class="header">Confirm Deletion Request</div>
-                                                <div class="content">
-                                                    <p>Do you want to delete this entry?</p>
-                                                </div>
-                                                <div class="actions">
-                                                    <div class="ui red approve button" onclick="deleteUser({{ r.id }})">Confirm</div>
-                                                    <div class="ui cancel button">Cancel</div>
-                                                </div>
-                                            </div>
-                                            <tr>
-                                                <td><button class="ui red button" onclick="openDeleteModal({{ r.id }})">Delete</button></td>
-                                                <td>{{ r.first_name }}</td>
-                                                <td>{{ r.last_name }}</td>
-                                                <td>{{ r.email }}</td>
-                                                <td>{{ r.relationship_to_patient }}</td>
-                                                <td class="collapsing">
-                                                    {{ r.address_line_one }} {{ r.address_line_two }} <br />
-                                                    {{ r.city }}, {{ r.state }}, {{ r.zip_code }}, {{ r.country }}
-                                                </td>
-                                                <td>{{ r.primary_phone }}</td>
-                                                <td>{{ r.secondary_phone }}</td>
-                                                <td>{{ r.primary_language }}</td>
-                                                <td>{{ r.secondary_language }}</td>
-                                                <td>{{ r.previous_stay }}</td>
-                                                <td class="collapsing">{{ r.patient_first_name }}</td>
-                                                <td class="collapsing">{{ r.patient_last_name }}</td>
-                                                <td>{{ r.patient_dob }}</td>
-                                                <td>{{ r.patient_gender }}</td>
-                                                <td class="collapsing">{{ r.patient_hospital }}</td>
-                                                <td>{{ r.patient_hospital_department }}</td>
-                                                <td class="collapsing">{{ r.patient_treatment_description }}</td>
-                                                <td class="collapsing">{{ r.patient_diagnosis }}</td>
-                                                <td class="collapsing">{{ r.patient_first_appt_date }}</td>
-                                                <td class="collapsing">{{ r.patient_check_in }}</td>
-                                                <td class="collapsing">{{ r.patient_check_out }}</td>
-                                                <td class="collapsing">{{ r.patient_treating_doctor }}</td>
-                                                <td class="collapsing">{{ r.patient_doctors_phone }}</td>
-                                                <td class="collapsing">{{ r.patient_social_worker }}</td>
-                                                <td class="collapsing">{{ r.patient_social_worker_phone }}</td>
-                                                <td>{{ r.inpatient }}</td>
-                                                <td>{{ r.inpatient_prior }}</td>
-                                                <td>{{ r.vaccinated }}</td>
-                                                <td>{{ r.wheelchair_access }}</td>
-                                                <td>{{ r.full_bathroom }}</td>
-                                                <td>{{ r.pack_n_play }}</td>
-                                                <td class="collapsing">{{ r.comments }}</td>
-                                            </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">All account types</div>
+                                        {% for r in roles %}
+                                            <div class="item" data-value="{{ r.name }}">{{ r.name }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="ui right search item">
+                                    <div class="ui transparent icon input">
+                                        <input id="search-users" type="text" placeholder="Search users…">
+                                        <i class="search icon"></i>
                                     </div>
                                 </div>
                             </div>
-                        
-                            <script type="text/javascript">
-                                function openDeleteModal(room_request_id) {
-                                    $(`#delete-room-request-modal-${room_request_id}`).modal('show')
-                                }
-                        
-                                // Make a DELETE request to the following URL
-                                function deleteUser(user_id) {
-                                    $.ajax({
-                                        url: `/room-request/${user_id}/delete`,
-                                        type: 'DELETE',
-                                        success: function(response) {
-                                        // Print the response in the browser console
-                                        console.log(response)
-                                        // Refresh the page
-                                        document.location.reload()
-                                        },
-                                    })
-                                }
-                        
-                                $(document).ready(function () {
-                                    $('#search-room-requests').keyup(function () {
-                                        var searchText = $(this).val();
-                                        if (searchText.length > 0) {
-                                            $('tbody td:icontains(' + searchText + ')').addClass('positive');
-                                            $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
-                                            $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
-                                            $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
-                                        } else {
-                                            $('td.positive').removeClass('positive');
-                                            $('tr.hidden').removeClass('hidden').show();
-                                        }
-                                    });
-                        
-                                    $('#select-role').dropdown({
-                                        onChange: function (value, text, $selectedItem) {
-                                            $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
-                                            $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
-                                        }
-                                    });
-                        
-                                });
-                            </script>
+                
+                
+                            {# Use overflow-x: scroll so that mobile views don't freak out
+                                # when the table is too wide #}
+                            <div style="overflow-x: auto;">
+                                <table class="ui searchable sortable unstackable selectable celled table">
+                                    <thead> 
+                                        <tr>
+                                            <th rowspan="2">First Name</th>
+                                            <th rowspan="2" class="sorted ascending">Last Name</th>
+                                            <th rowspan="2">Email Address</th>
+                                            <th rowspan="2">Account Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for u in users | sort(attribute='last_name') %}
+                                        <tr onclick="window.location.href = '{{ url_for('admin.user_info', user_id=u.id) }}';">
+                                            <td>{{ u.first_name }}</td>
+                                            <td>{{ u.last_name }}</td>
+                                            <td>{{ u.email }}</td>
+                                            <td class="user role">{{ u.role.name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-
-
+                        
+                                    
+                        </div>
+                    </div>
+                        
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('#search-users').keyup(function () {
+                                var searchText = $(this).val();
+                                if (searchText.length > 0) {
+                                    $('tbody td:icontains(' + searchText + ')').addClass('positive');
+                                    $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
+                                    $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
+                                    $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
+                                } else {
+                                    $('td.positive').removeClass('positive');
+                                    $('tr.hidden').removeClass('hidden').show();
+                                }
+                            });
+                
+                            $('#select-role').dropdown({
+                                onChange: function (value, text, $selectedItem) {
+                                    $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
+                                    $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
+                                    }
+                            });    
+                        });
+                    </script>
                 </div>
+
+                <div class="ui tab" data-tab="tab-name2">
+                    <div class="ui stackable grid container">
+                        <div class="sixteen wide column">
+
+                            <h2 class="ui header">
+                                Room Requests
+                                <div class="sub header">
+                                    View and manage all room requests.
+                                </div>
+                            </h2>
+                        
+                            <div class="ui fluid search">
+                                <div class="ui icon input">
+                                    <input class="prompt" id="search-room-requests" type="text" placeholder="Search room requests">
+                                    <i class="search icon"></i>
+                                </div>
+                            </div>
+                            <div style="max-width: 100%; overflow-y: hidden;">
+                                <table class="ui searchable sortable unstackable selectable celled table">
+                                    <thead> 
+                                        <tr>
+                                            <th rowspan="2">Authenticate</th>
+                                            <th rowspan="2">First Name</th>
+                                            <th rowspan="2" class="sorted ascending">Last Name</th>
+                                            <th rowspan="2">Email Address</th>
+                                            <th rowspan="2">Relationship to Patient</th>
+                                            <th rowspan="2">Address</th> 
+                                            <th rowspan="2">Primary Phone</th>
+                                            <th rowspan="2">Secondary Phone</th>
+                                            <th rowspan="2">Primary Language</th>
+                                            <th rowspan="2">Secondary Language</th>
+                                            <th rowspan="2">Requested Before?</th>
+                                            <!--Patient Information-->
+                                            <th colspan="22">Patient Information</th>
+                                        <tr>
+                                            <th>Patient First Name</th>
+                                            <th>Patient Last Name</th>
+                                            <th>Patient Birthday</th>
+                                            <th>Patient Gender</th>
+                                            <th>Hospital in Philadelphia</th>
+                                            <th>Hospital Department</th>
+                                            <th>Treatment Description</th>
+                                            <th>Diagnosis</th>
+                                            <th>First Appointment Date</th>
+                                            <th>Check In</th>
+                                            <th>Check Out</th>
+                                            <th>Treating Doctor</th>
+                                            <th>Doctor Phone Number</th>
+                                            <th>Hospital Social Worker</th>
+                                            <th>Hospital Social Worker Phone Number</th>
+                                            <th>Inpatient/Outpatient</th>
+                                            <th>Inpatient Stay?</th>
+                                            <th>Vaccinated</th>
+                                            <th>Wheelchair Access</th>
+                                            <th>Full Bathroom</th>
+                                            <th>Pack & Play</th>
+                                            <th>Additional Comments</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for r in room_requests %}
+                                    <!--modal-->
+                                    <div class="ui modal" id="delete-room-request-modal-{{ r.id }}">
+                                        <div class="header">Confirm Deletion Request</div>
+                                        <div class="content">
+                                            <p>Do you want to delete this entry?</p>
+                                        </div>
+                                        <div class="actions">
+                                            <div class="ui red approve button" onclick="deleteUser({{ r.id }})">Confirm</div>
+                                            <div class="ui cancel button">Cancel</div>
+                                        </div>
+                                    </div>
+                                    <tr>
+                                        <td><button class="ui red button" onclick="openDeleteModal({{ r.id }})">Delete</button></td>
+                                        <td>{{ r.first_name }}</td>
+                                        <td>{{ r.last_name }}</td>
+                                        <td>{{ r.email }}</td>
+                                        <td>{{ r.relationship_to_patient }}</td>
+                                        <td class="collapsing">
+                                            {{ r.address_line_one }} {{ r.address_line_two }} <br />
+                                            {{ r.city }}, {{ r.state }}, {{ r.zip_code }}, {{ r.country }}
+                                        </td>
+                                        <td>{{ r.primary_phone }}</td>
+                                        <td>{{ r.secondary_phone }}</td>
+                                        <td>{{ r.primary_language }}</td>
+                                        <td>{{ r.secondary_language }}</td>
+                                        <td>{{ r.previous_stay }}</td>
+                                        <td class="collapsing">{{ r.patient_first_name }}</td>
+                                        <td class="collapsing">{{ r.patient_last_name }}</td>
+                                        <td>{{ r.patient_dob }}</td>
+                                        <td>{{ r.patient_gender }}</td>
+                                        <td class="collapsing">{{ r.patient_hospital }}</td>
+                                        <td>{{ r.patient_hospital_department }}</td>
+                                        <td class="collapsing">{{ r.patient_treatment_description }}</td>
+                                        <td class="collapsing">{{ r.patient_diagnosis }}</td>
+                                        <td class="collapsing">{{ r.patient_first_appt_date }}</td>
+                                        <td class="collapsing">{{ r.patient_check_in }}</td>
+                                        <td class="collapsing">{{ r.patient_check_out }}</td>
+                                        <td class="collapsing">{{ r.patient_treating_doctor }}</td>
+                                        <td class="collapsing">{{ r.patient_doctors_phone }}</td>
+                                        <td class="collapsing">{{ r.patient_social_worker }}</td>
+                                        <td class="collapsing">{{ r.patient_social_worker_phone }}</td>
+                                        <td>{{ r.inpatient }}</td>
+                                        <td>{{ r.inpatient_prior }}</td>
+                                        <td>{{ r.vaccinated }}</td>
+                                        <td>{{ r.wheelchair_access }}</td>
+                                        <td>{{ r.full_bathroom }}</td>
+                                        <td>{{ r.pack_n_play }}</td>
+                                        <td class="collapsing">{{ r.comments }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                        
+                <script type="text/javascript">
+                    function openDeleteModal(room_request_id) {
+                        $(`#delete-room-request-modal-${room_request_id}`).modal('show')
+                    }
+            
+                    // Make a DELETE request to the following URL
+                    function deleteUser(user_id) {
+                        $.ajax({
+                            url: `/room-request/${user_id}/delete`,
+                            type: 'DELETE',
+                            success: function(response) {
+                            // Print the response in the browser console
+                            console.log(response)
+                            // Refresh the page
+                            document.location.reload()
+                            },
+                        })
+                    }
+            
+                    $(document).ready(function () {
+                        $('#search-room-requests').keyup(function () {
+                            var searchText = $(this).val();
+                            if (searchText.length > 0) {
+                                $('tbody td:icontains(' + searchText + ')').addClass('positive');
+                                $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
+                                $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
+                                $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
+                            } else {
+                                $('td.positive').removeClass('positive');
+                                $('tr.hidden').removeClass('hidden').show();
+                            }
+                        });
+            
+                        $('#select-role').dropdown({
+                            onChange: function (value, text, $selectedItem) {
+                                $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
+                                $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
+                            }
+                        });
+            
+                    });
+                </script>
             </div>
-                  
-
-            <script>
-                $('.tabular.menu .item').tab();
-            </script>
-
         </div>
     </div>
+                  
+
+    <script>
+        $('.tabular.menu .item').tab();
+    </script>
+
 {% endblock %}
 
