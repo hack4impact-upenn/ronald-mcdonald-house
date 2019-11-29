@@ -33,7 +33,7 @@ room_request = Blueprint('room_request', __name__)
 def index():
     """View all room requests."""
     room_requests = RoomRequest.query.all()
-    return render_template('room_request/dashboard.html', room_requests=room_requests)
+    return render_template('admin/index.html', room_requests=room_requests)
 
 
 @login_required
@@ -117,7 +117,7 @@ def _delete(id):
         db.session.delete(room_request)
         db.session.commit()
         flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.', 'success')
-    return redirect(url_for('room_request.index'))
+    return redirect(url_for('admin.index'))
 
 
 @login_required
