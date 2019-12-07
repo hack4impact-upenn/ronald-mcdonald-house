@@ -48,18 +48,20 @@
                     <td>{{ room_request.patient_check_out }}</td>
                 </tr>
             </table>
-            <!--add url for manage page based on id-->
-            <a href=""></a>
+
+            <a href="{{ url_for('room_request.manage', id=id) }}">
                 <button class="ui right labeled icon right floated button">
                     <i class="right arrow icon"></i>
                     View Full Profile
                 </button>
             </a>
+
             <form action="{{ url_for('room_request.transfer', id=id) }}" method="POST">
                 {{ f.begin_form(transfer_form, flashes) }}
                 {{ f.render_form_field(transfer_form.transfer) }}
                 {{ f.end_form() }}
             </form>
+
         </div>
 
         <div class="ui top attached menu">
@@ -79,9 +81,9 @@
                 <h3 class="ui dividing header">Comments</h3>
                 {% for comment in comments %}
                 <div class="comment">
-                    <a class="avatar">
+                    <!-- <a class="avatar">
                         <img src="/images/blank.jpg">
-                    </a>
+                    </a> -->
                     <div class="content">
                         <a class="author">{{ comment.user.first_name }} {{ comment.user.last_name }}</a>
                         <div class="metadata">
