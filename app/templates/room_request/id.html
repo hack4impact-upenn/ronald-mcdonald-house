@@ -22,9 +22,14 @@
                 {% endif %}
             </div>
         </div> -->
+
+        <div class="ui top attached menu">
+                <a class="item">
+                    <h3 class="ui header">Patient Information</h3>
+                </a>
+            </div>
         
-        <div class="ui segment">
-            <h3 class="ui dividing header">Patient Information</h3>
+        <div class="ui bottom attached segment">
             <p>Below is some important information about {{ room_request.first_name }} {{ room_request.last_name }}.</p>
             <table class="ui compact definition table">
                 <tr>
@@ -65,6 +70,9 @@
         </div>
 
         <div class="ui top attached menu">
+            <a class="item">
+                <h3 class="ui header">Comments</h3>
+            </a>
             <div class="right menu">
                 <div class="ui right aligned category search item">
                     <div class="ui transparent icon input">
@@ -77,13 +85,38 @@
         </div>
 
         <div class="ui bottom attached segment">
+            <table class="ui very basic collapsing celled table">
+                <thead></thead>
+                <tbody>
+                    {% for comment in comments %}
+                    <tr>
+                        <td>
+                            <h4 class="ui image header">
+                                <div class="content">
+                                    {{ comment.user.first_name }} {{ comment.user.last_name }}
+                                </div>
+                                <div class="sub header">
+                                    <span class="date">{{ comment.created_at.strftime('%d-%m-%Y') }} at {{ comment.created_at.strftime('%I:%M:%S') }}</span>
+                                </div>
+                            </h4>
+                        </td>
+                        <td class="text">
+                            {{ comment.text }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- <div class="ui bottom attached segment">
             <div class="ui searchable comments">
                 <h3 class="ui dividing header">Comments</h3>
                 {% for comment in comments %}
                 <div class="comment">
-                    <!-- <a class="avatar">
+                    <a class="avatar">
                         <img src="/images/blank.jpg">
-                    </a> -->
+                    </a>
                     <div class="content">
                         <a class="author">{{ comment.user.first_name }} {{ comment.user.last_name }}</a>
                         <div class="metadata">
@@ -103,7 +136,7 @@
                     {{ f.end_form() }}
                 </form>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 
