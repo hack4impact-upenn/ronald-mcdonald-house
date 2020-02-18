@@ -1,11 +1,11 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import ValidationError
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields import (PasswordField, StringField, SubmitField,
                             IntegerField, BooleanField, FormField, TextAreaField,
                             HiddenField)
 from wtforms.fields.html5 import EmailField, TelField, DateField
-from wtforms.validators import Email, EqualTo, InputRequired, Length, NumberRange, Optional
+from wtforms.validators import Email, EqualTo, InputRequired, Length, NumberRange, Optional, Required
 
 class RoomRequestForm(FlaskForm):
 
@@ -135,7 +135,7 @@ class RoomRequestForm(FlaskForm):
     wheelchair_access = BooleanField('Wheelchair Access')
     full_bathroom = BooleanField('Full Bathroom with Tub')
     pack_n_play = BooleanField("Pack 'N' Play")
-    
+    recaptcha = RecaptchaField()
     submit = SubmitField('Create')
 
 
