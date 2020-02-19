@@ -76,6 +76,40 @@ def guest_info(id):
         return abort(404)
     return render_template('room_request/manage.html', room_request=room_request)
 
+@login_required
+@room_request.route('/<int:id>/comments', methods=['GET', 'POST'])
+def comments(id):    
+    room_request = RoomRequest.query.get(id)
+    if room_request is None:
+        return abort(404)
+
+    comments_all = Activity.query.filter_by(room_request_id=id)
+    activity_form = ActivityForm()
+    transfer_form = TransferForm()
+
+    if activity_form.validate_on_submit():
+        activity = Activity(
+            text=activity_form.body.data,
+            user_id=current_user.id,
+            room_request_id=room_request.id)
+        try:
+            db.session.add(activity)
+            db.session.commit()
+            flash("Your comment has been added to the post", 'form-post')
+        except:
+            db.session.rollback()
+        activity_form.body.data = ''
+
+
+    if transfer_form.validate_on_submit():
+        flash("Succesfully transferred!")
+
+    return render_template('room_request/manage.html',
+        id=id,
+        room_request=room_request,
+        activity_form=activity_form,
+        transfer_form=transfer_form,
+        comments_all=comments_all)
 
 @login_required
 @room_request.route('/<int:id>/edit')
