@@ -2,141 +2,53 @@
 {% import 'macros/form_macros.html' as f %}
 
 {% block content %}
-
-{% set flashes = {
-    'post': get_flashed_messages(category_filter=['form-post']),
-    'transfer': get_flashed_messages(category_filter=['form-transfer'])
-} %}
-
 <div class="ui stackable grid container">
     <div class="sixteen wide tablet twelve wide computer centered column">
-        <h1>{{ room_request.first_name }} {{ room_request.last_name }}</h1>
-        <div class="sub header" style="padding-bottom: 16px;" >View and add {{ room_request.first_name }}'s room request comments.</div>
- 
-        <!-- <div class="ui grid">
-            <div class="twelve wide stretched column">
-                {% if request.endpoint == about_endpoint %}
-                    {{ about(room_request) }}
-                {% elif request.endpoint == comments_endpoint %}
-                    {{ comments(room_request) }}
-                {% endif %}
-            </div>
-        </div> -->
+    
+        <h1>Name: {{ room_request.first_name }} {{ room_request.last_name }}</h1>
+        <h1>Form ID: {{ id }}</h1>
+    
+        {% set flashes = {
+            'post': get_flashed_messages(category_filter=['form-post']),
+            'transfer': get_flashed_messages(category_filter=['form-transfer'])
+        } %}
+    
+        <form action="{{ url_for('room_request.transfer', id=id) }}" method="POST">
+            {{ f.begin_form(transfer_form, flashes) }}
+            {{ f.render_form_field(transfer_form.transfer) }}
+            {{ f.end_form() }}
+        </form>
 
-        <div class="ui top attached menu">
-                <a class="item">
-                    <h3 class="ui header">Patient Information</h3>
-                </a>
-            </div>
-        
-        <div class="ui bottom attached segment">
-            <p>Below is some important information about {{ room_request.first_name }} {{ room_request.last_name }}.</p>
-            <table class="ui compact definition table">
-                <tr>
-                    <td>Form ID</td>
-                    <td>{{ id }}</td>
-                </tr>
-                <tr>
-                    <td>Diagnosis</td>
-                    <td>{{ room_request.patient_diagnosis }}</td>
-                </tr>
-                <tr>
-                    <td>Department</td>
-                    <td>{{ room_request.patient_hospital_department }}</td>
-                </tr>
-                <tr>
-                    <td>Check-in</td>
-                    <td>{{ room_request.patient_check_in }}</td>
-                </tr>
-                <tr>
-                    <td>Check-in</td>
-                    <td>{{ room_request.patient_check_out }}</td>
-                </tr>
-            </table>
+        {{ f.begin_form(activity_form, flashes) }}
+        {{ f.render_form_field(activity_form.body) }}
+        {{ f.render_form_field(activity_form.submit) }}
+        {{ f.end_form()}}
 
-            <a href="{{ url_for('room_request.manage', id=id) }}">
-                <button class="ui right labeled icon right floated button">
-                    <i class="right arrow icon"></i>
-                    View Full Profile
-                </button>
-            </a>
-
-            <form action="{{ url_for('room_request.transfer', id=id) }}" method="POST">
-                {{ f.begin_form(transfer_form, flashes) }}
-                {{ f.render_form_field(transfer_form.transfer) }}
-                {{ f.end_form() }}
-            </form>
-
-        </div>
-
-        <div class="ui top attached menu">
-            <a class="item">
-                <h3 class="ui header">Comments</h3>
-            </a>
-            <div class="right menu">
-                <div class="ui right aligned category search item">
-                    <div class="ui transparent icon input">
-                        <input class="prompt" id="search-comments" type="text" placeholder="Search comments...">
-                        <i class="search link icon"></i>
-                    </div>
-                    <div class="results"></div>
+        <h2 class="ui header">Comments</h2>
+        <div class="ui menu">
+            <div class="ui search item">
+                <div class="ui transparent icon input">
+                    <input id="search-comments" type="text" placeholder="Search comments...">
+                    <i class="search icon"></i>
                 </div>
             </div>
         </div>
 
-        <div class="ui bottom attached segment">
-            <table class="ui very basic collapsing celled table">
-                <thead></thead>
+        {# Use overflow-x: scroll so that mobile views don't freak out
+        # when the table is too wide #}
+        <div>
+            <table class="ui searchable stackable celled table">
                 <tbody>
                     {% for comment in comments %}
                     <tr>
-                        <td>
-                            <h4 class="ui image header">
-                                <div class="content">
-                                    {{ comment.user.first_name }} {{ comment.user.last_name }}
-                                </div>
-                                <div class="sub header">
-                                    <span class="date">{{ comment.created_at.strftime('%d-%m-%Y') }} at {{ comment.created_at.strftime('%I:%M:%S') }}</span>
-                                </div>
-                            </h4>
-                        </td>
-                        <td class="text">
-                            {{ comment.text }}
-                        </td>
+                        <td>{{ comment.user.first_name }} {{ comment.user.last_name }}</td>
+                        <td>{{ comment.text }}</td>
+                        <td> {{ comment.created_at.strftime('%d-%m-%Y') }} at  {{ comment.created_at.strftime('%I:%M:%S') }}</td>
                     </tr>
-                    {% endfor %}
+                {% endfor %}
                 </tbody>
             </table>
         </div>
-
-        <!-- <div class="ui bottom attached segment">
-            <div class="ui searchable comments">
-                <h3 class="ui dividing header">Comments</h3>
-                {% for comment in comments %}
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="/images/blank.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">{{ comment.user.first_name }} {{ comment.user.last_name }}</a>
-                        <div class="metadata">
-                            <span class="date">{{ comment.created_at.strftime('%d-%m-%Y') }} at {{ comment.created_at.strftime('%I:%M:%S') }}</span>
-                        </div>
-                        <div class="text">
-                            {{ comment.text }}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-
-                <form class="ui reply form">
-                    {{ f.begin_form(activity_form, flashes) }}
-                    {{ f.render_form_field(activity_form.body) }}
-                    {{ f.render_form_field(activity_form.submit) }}
-                    {{ f.end_form() }}
-                </form>
-            </div>
-        </div> -->
     </div>
 </div>
 
