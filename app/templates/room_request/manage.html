@@ -21,14 +21,14 @@
 
 {% macro navigation(view_endpoints, manage_endpoints, room_request) %}
 <div class="ui vertical fluid secondary menu">
-    <div class="header item">View Request</div>
+    <div class="header item"><i class="address book icon"></i> View Request</div>
     {% for route, name in view_endpoints %}
         {% set href = url_for(route, id=room_request.id) %}
         <a class="item {% if request.endpoint == route %}active{% endif %}" href="{{ href }}">
             {{ name }}
         </a>
     {% endfor %}
-    <div class="header item">Manage Request</div>
+    <div class="header item"><i class="address book icon"></i> Manage Request</div>
     {% for route, name in manage_endpoints %}
         {% set href = url_for(route, id=room_request.id) %}
         <a class="item {% if request.endpoint == route %}active{% endif %}" href="{{ href }}">
