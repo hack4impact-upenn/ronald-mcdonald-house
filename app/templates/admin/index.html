@@ -5,6 +5,7 @@
 
 {% set endpoints = [
     ('admin.user_info', 'User information'),
+    ('room_request.manage', 'Manage request'),
     ('admin.change_user_email', 'Change email address'),
     ('admin.change_account_type', 'Change account type'),
     (deletion_endpoint, 'Delete user')
@@ -224,7 +225,7 @@
                                             <div class="ui cancel button">Cancel</div>
                                         </div>
                                     </div>
-                                    <tr>
+                                    <tr onclick="window.location.href = '{{ url_for('room_request.manage', id=r.id) }}';">
                                         <td><button class="ui red button" onclick="openDeleteModal({{ r.id }})">Delete</button></td>
                                         <td>{{ r.first_name }}</td>
                                         <td>{{ r.last_name }}</td>
