@@ -28,17 +28,18 @@ from ..models import Activity, EditableHTML, RoomRequest, Guest, User, Role
 room_request = Blueprint('room_request', __name__)
 
 
-@login_required
+
 @room_request.route('/')
+@login_required
 def index():
     """View all room requests."""
     room_requests = RoomRequest.query.all()
     return render_template('admin/index.html', room_requests=room_requests)
 
 
-@login_required
 @room_request.route('/<int:id>/manage')
 @room_request.route('/<int:id>/info')
+@login_required
 def manage(id):
     """Manage room request."""
     room_request = RoomRequest.query.get(id)
@@ -47,8 +48,8 @@ def manage(id):
     return render_template('room_request/manage.html', room_request=room_request)
 
 
-@login_required
 @room_request.route('/<int:id>/patient')
+@login_required
 def patient_info(id):
     """View patient info of given room request."""
     room_request = RoomRequest.query.get(id)
@@ -57,8 +58,8 @@ def patient_info(id):
     return render_template('room_request/manage.html', room_request=room_request)
 
 
-@login_required
 @room_request.route('/<int:id>/room-occupancy')
+@login_required
 def room_occupancy_info(id):
     """View room occupancy needs for given room request."""
     room_request = RoomRequest.query.get(id)
@@ -67,8 +68,8 @@ def room_occupancy_info(id):
     return render_template('room_request/manage.html', room_request=room_request)
 
 
-@login_required
 @room_request.route('/<int:id>/guests')
+@login_required
 def guest_info(id):
     """View table of guests for given room request."""
     room_request = RoomRequest.query.get(id)
@@ -76,8 +77,8 @@ def guest_info(id):
         return abort(404)
     return render_template('room_request/manage.html', room_request=room_request)
 
-@login_required
 @room_request.route('/<int:id>/comments', methods=['GET', 'POST'])
+@login_required
 def comments(id):    
     room_request = RoomRequest.query.get(id)
     if room_request is None:
@@ -111,8 +112,8 @@ def comments(id):
         transfer_form=transfer_form,
         comments_all=comments_all)
 
-@login_required
 @room_request.route('/<int:id>/edit')
+@login_required
 def edit(id):
     """Edit room request info."""
     room_request = RoomRequest.query.get(id)
@@ -132,8 +133,8 @@ def edit(id):
     return render_template('room_request/manage.html', room_request=room_request, form=form)
 
 
-@login_required
 @room_request.route('<int:id>/delete')
+@login_required
 def delete(id):
     """Request deletion of a room request, but does not actually perform the action until user confirmation."""
     room_request = RoomRequest.query.get(id)
@@ -142,8 +143,8 @@ def delete(id):
     return render_template('room_request/manage.html', room_request=room_request)
 
 
-@login_required
 @room_request.route('<int:id>/_delete')
+@login_required
 def _delete(id):
     """Delete a room request."""
     room_request = RoomRequest.query.get(id)
@@ -154,8 +155,8 @@ def _delete(id):
     return redirect(url_for('admin.index'))
 
 
-@login_required
 @room_request.route('/new', methods=['GET', 'POST'])
+@login_required
 def new():
     """Room Request page."""
     editable_html_obj = EditableHTML.get_editable_html('room_request')
@@ -180,8 +181,8 @@ def new():
     return render_template('room_request/new.html', form=form, editable_html_obj=editable_html_obj)
     
 
-@login_required
 @room_request.route('/<int:id>', methods=['GET', 'POST'])
+@login_required
 def view(id):    
     room_request = RoomRequest.query.get(id)
     if room_request is None:
@@ -216,8 +217,8 @@ def view(id):
         comments=comments)
 
 
-@login_required
 @room_request.route('/<int:id>/transfer', methods=['GET', 'POST'])
+@login_required
 def transfer(id):
     room_request = RoomRequest.query.get(id)
     if room_request is None:
@@ -245,8 +246,8 @@ def transfer(id):
         return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
 
 
-@login_required
 @room_request.route('/<int:id>/duplicates', methods=['GET', 'POST'])
+@login_required
 def duplicate_room_requests(id):
     room_request = RoomRequest.query.get(id)
     if room_request is None:
