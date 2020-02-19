@@ -1,10 +1,12 @@
 {% extends 'layouts/base.html' %}
 {% import 'room_request/macros.html' as room_request_macros %}
+{% import 'macros/form_macros.html' as f %}
 
 {% set contact_info_endpoint = 'room_request.manage' %}
 {% set patient_info_endpoint = 'room_request.patient_info' %}
 {% set guest_info_endpoint = 'room_request.guest_info' %}
 {% set room_occupancy_info_endpoint = 'room_request.room_occupancy_info' %}
+{% set comments_endpoint = 'room_request.comments' %}
 {% set edit_endpoint = 'room_request.edit' %}
 {% set delete_endpoint = 'room_request.delete' %}
 
@@ -15,20 +17,21 @@
     (guest_info_endpoint, 'Guest information'),
 ] %}
 {% set manage_endpoints = [
+    (comments_endpoint, 'Comments'),
     (edit_endpoint, 'Edit request'),
     (delete_endpoint, 'Delete request'),
 ] %}
 
 {% macro navigation(view_endpoints, manage_endpoints, room_request) %}
 <div class="ui vertical fluid secondary menu">
-    <div class="header item">View Request</div>
+    <div class="header item"><i class="address book icon"></i> View Request</div>
     {% for route, name in view_endpoints %}
         {% set href = url_for(route, id=room_request.id) %}
         <a class="item {% if request.endpoint == route %}active{% endif %}" href="{{ href }}">
             {{ name }}
         </a>
     {% endfor %}
-    <div class="header item">Manage Request</div>
+    <div class="header item"><i class="address book icon"></i> Manage Request</div>
     {% for route, name in manage_endpoints %}
         {% set href = url_for(route, id=room_request.id) %}
         <a class="item {% if request.endpoint == route %}active{% endif %}" href="{{ href }}">
@@ -154,9 +157,79 @@
 </div>
 {% endmacro %}
 
+{% macro comments(room_request) %}
+<div>
+    <h3 class="ui header">Comments</h3>
+    {% set flashes = {
+        'post': get_flashed_messages(category_filter=['form-post']),
+    } %}
+    <form action="{{ url_for('room_request.transfer', id=id) }}" method="POST">
+        {{ f.begin_form(transfer_form, flashes) }}
+        {{ f.end_form() }}
+    </form>
+    {{ f.begin_form(activity_form, flashes) }}
+    {{ f.render_form_field(activity_form.body) }}
+    {{ f.render_form_field(activity_form.submit) }}
+    {{ f.end_form()}}
+    <div class="ui menu">
+        <div class="ui search item">
+            <div class="ui transparent icon input">
+                <input id="search-comments" type="text" placeholder="Search comments...">
+                <i class="search icon"></i>
+            </div>
+        </div>
+    </div>
+    {# Use overflow-x: scroll so that mobile views don't freak out
+        # when the table is too wide #}
+    <div>
+        <table class="ui searchable sortable stackable celled table">
+            <thead> 
+                <tr>
+                    <th rowspan="2">Created By</th>
+                    <th rowspan="2">Comment</th>
+                    <th rowspan="2" class="sorted ascending">Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comment in comments_all %}
+                <tr>
+                    <td>{{ comment.user.first_name }} {{ comment.user.last_name }}</td>
+                    <td>{{ comment.text }}</td>
+                    <td> {{ comment.created_at.strftime('%d-%m-%Y') }} at {{ comment.created_at.strftime('%I:%M:%S') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+    
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#search-comments').keyup(function () {
+        var searchText = $(this).val();
+        if (searchText.length > 0) {
+            $('tbody td:icontains(' + searchText + ')').addClass('positive');
+            $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
+            $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
+            $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
+        } else {
+            $('td.positive').removeClass('positive');
+            $('tr.hidden').removeClass('hidden').show();
+        }
+    });
+});
+</script>
+
+
+{% endmacro %}
+
 {% block content %}
 <div class="ui stackable centered grid container">
     <div class="fourteen wide column">
+        <a class="ui basic compact button" href="{{ url_for('admin.index') }}">
+            <i class="caret left icon"></i>
+            Back to dashboard
+        </a>
         <h2 class="ui header">
             {{ room_request.first_name }} {{ room_request.last_name }}
             <div class="sub header">View and manage {{ room_request.first_name }}'s room request.</div>
@@ -175,6 +248,8 @@
                 {{ room_occupancy_info(room_request) }}
             {% elif request.endpoint == guest_info_endpoint %}
                 {{ guest_info(room_request) }}
+            {% elif request.endpoint == comments_endpoint %}
+                {{ comments(room_request) }}
             {% elif request.endpoint == edit_endpoint %}
                 {{ room_request_macros.render_form(form) }}
             {% elif request.endpoint == delete_endpoint %}
