@@ -56,15 +56,10 @@
             <h2 class="ui header">
                 Admin Dashboard
             </h2>
-            <div class="ui two column stackable grid">
-                {{ dashboard_option('Registered Users', 'admin.registered_users',
-                                    description='View and manage user accounts', icon='users icon') }}
-                {{ dashboard_option('Add New User', 'admin.new_user',
-                                    description='Create a new user account', icon='add user icon') }}
-                {{ dashboard_option('Invite New User', 'admin.invite_user',
-                                    description='Invites a new user to create their own account', icon='add user icon') }}
-                {{ dashboard_option('Edit Room Request Confirmation Email', 'admin.update_email_confirmation',
-                                    description='Edit Room Request Confirmation Email', icon='add user icon') }} 
+
+            <div class="ui tabular menu">
+                <div class="active item" data-tab="tab-name" style="cursor: pointer;">Manage Users</div>
+                <div class="item" data-tab="tab-name2" style="cursor: pointer;">Manage Room Requests</div>
             </div>
                 <div class="active ui tab" data-tab="tab-name">
                     <div class="ui stackable grid container">
