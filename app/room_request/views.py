@@ -27,8 +27,6 @@ from ..models import Activity, EditableHTML, RoomRequest, Guest, User, Role
 
 room_request = Blueprint('room_request', __name__)
 
-
-
 @room_request.route('/')
 @login_required
 def index():
@@ -86,7 +84,6 @@ def comments(id):
 
     comments_all = Activity.query.filter_by(room_request_id=id)
     activity_form = ActivityForm()
-    transfer_form = TransferForm()
 
     if activity_form.validate_on_submit():
         activity = Activity(
@@ -101,15 +98,10 @@ def comments(id):
             db.session.rollback()
         activity_form.body.data = ''
 
-
-    if transfer_form.validate_on_submit():
-        flash("Succesfully transferred!")
-
     return render_template('room_request/manage.html',
         id=id,
         room_request=room_request,
         activity_form=activity_form,
-        transfer_form=transfer_form,
         comments_all=comments_all)
 
 @room_request.route('/<int:id>/edit')
@@ -209,7 +201,7 @@ def view(id):
     if transfer_form.validate_on_submit():
         flash("Succesfully transferred!")
 
-    return render_template('room_request/id.html',
+    return render_template('room_request/manage.html',
         id=id,
         room_request=room_request,
         activity_form=activity_form,
