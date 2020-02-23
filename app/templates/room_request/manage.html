@@ -11,8 +11,8 @@
 {% set delete_endpoint = 'room_request.delete' %}
 
 {% set view_endpoints = [
-    (contact_info_endpoint, 'Contact information'),
     (patient_info_endpoint, 'Patient details'),
+    (contact_info_endpoint, 'Contact information'),
     (room_occupancy_info_endpoint, 'Room occupancy needs'),
     (guest_info_endpoint, 'Guest information'),
 ] %}
@@ -231,8 +231,9 @@ $(document).ready(function () {
             Back to dashboard
         </a>
         <h2 class="ui header">
-            {{ room_request.first_name }} {{ room_request.last_name }}
-            <div class="sub header">View and manage {{ room_request.first_name }}'s room request.</div>
+            {{ room_request.patient_first_name }} {{ room_request.patient_last_name }}
+            <div class="sub header">Room request submitted by {{ room_request.first_name }} {{ room_request.last_name }}, patient's  {{ room_request.relationship_to_patient }}</div>
+            <div class="sub header">{{ room_request.patient_check_in.strftime("%b %d, %Y") }} to {{ room_request.patient_check_out.strftime("%b %d, %Y") }}</div>
         </h2>
     </div>
     <div class="stretched divided very relaxed row">
@@ -240,10 +241,10 @@ $(document).ready(function () {
             {{ navigation(view_endpoints, manage_endpoints, room_request) }}
         </div>
         <div class="ten wide column">
-            {% if request.endpoint == contact_info_endpoint %}
-                {{ contact_info(room_request) }}
-            {% elif request.endpoint == patient_info_endpoint %}
+            {% if request.endpoint == patient_info_endpoint %}
                 {{ patient_info(room_request) }}
+            {% elif request.endpoint == contact_info_endpoint %}
+                {{ contact_info(room_request) }}
             {% elif request.endpoint == room_occupancy_info_endpoint %}
                 {{ room_occupancy_info(room_request) }}
             {% elif request.endpoint == guest_info_endpoint %}

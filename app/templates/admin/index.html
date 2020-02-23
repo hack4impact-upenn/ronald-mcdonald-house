@@ -86,41 +86,25 @@
                                     <thead> 
                                         <tr>
                                             <th rowspan="2">Authenticate</th>
-                                            <th rowspan="2">First Name</th>
-                                            <th rowspan="2" class="sorted ascending">Last Name</th>
-                                            <th rowspan="2">Email Address</th>
-                                            <th rowspan="2">Relationship to Patient</th>
-                                            <th rowspan="2">Address</th> 
-                                            <th rowspan="2">Primary Phone</th>
-                                            <th rowspan="2">Secondary Phone</th>
-                                            <th rowspan="2">Primary Language</th>
-                                            <th rowspan="2">Secondary Language</th>
-                                            <th rowspan="2">Requested Before?</th>
+                                            <th rowspan="2">Patient First Name</th>
+                                            <th rowspan="2">Patient Last Name</th>
+                                            <th rowspan="2" class="sorted ascending">Check In</th>
+                                            <th rowspan="2">Check Out</th>
+                                            <th rowspan="2">Hospital in Philadelphia</th>
+                                            <th rowspan="2">Diagnosis</th>
+                                            <th rowspan="2">Inpatient/Outpatient</th>
+                                            <th rowspan="2">Inpatient Stay?</th>
+                                            <th rowspan="2">Additional Comments</th>
                                             <!--Patient Information-->
-                                            <th colspan="22">Patient Information</th>
+                                            <th colspan="22">Requester Information</th>
                                         <tr>
-                                            <th>Patient First Name</th>
-                                            <th>Patient Last Name</th>
-                                            <th>Patient Birthday</th>
-                                            <th>Patient Gender</th>
-                                            <th>Hospital in Philadelphia</th>
-                                            <th>Hospital Department</th>
-                                            <th>Treatment Description</th>
-                                            <th>Diagnosis</th>
-                                            <th>First Appointment Date</th>
-                                            <th>Check In</th>
-                                            <th>Check Out</th>
-                                            <th>Treating Doctor</th>
-                                            <th>Doctor Phone Number</th>
-                                            <th>Hospital Social Worker</th>
-                                            <th>Hospital Social Worker Phone Number</th>
-                                            <th>Inpatient/Outpatient</th>
-                                            <th>Inpatient Stay?</th>
-                                            <th>Vaccinated</th>
-                                            <th>Wheelchair Access</th>
-                                            <th>Full Bathroom</th>
-                                            <th>Pack & Play</th>
-                                            <th>Additional Comments</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Relationship to Patient</th>
+                                            <th>Email Address</th>
+                                            <th>Primary Phone</th>
+                                            <th>Primary Language</th>
+                                            <th>Requested Before?</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -138,41 +122,23 @@
                                     </div>
                                     <tr onclick="window.location.href = '{{ url_for('room_request.manage', id=r.id) }}';">
                                         <td><button class="ui red button" onclick="openDeleteModal({{ r.id }})">Delete</button></td>
-                                        <td>{{ r.first_name }}</td>
-                                        <td>{{ r.last_name }}</td>
-                                        <td>{{ r.email }}</td>
-                                        <td>{{ r.relationship_to_patient }}</td>
-                                        <td class="collapsing">
-                                            {{ r.address_line_one }} {{ r.address_line_two }} <br />
-                                            {{ r.city }}, {{ r.state }}, {{ r.zip_code }}, {{ r.country }}
-                                        </td>
-                                        <td>{{ r.primary_phone }}</td>
-                                        <td>{{ r.secondary_phone }}</td>
-                                        <td>{{ r.primary_language }}</td>
-                                        <td>{{ r.secondary_language }}</td>
-                                        <td>{{ r.previous_stay }}</td>
                                         <td class="collapsing">{{ r.patient_first_name }}</td>
                                         <td class="collapsing">{{ r.patient_last_name }}</td>
-                                        <td>{{ r.patient_dob }}</td>
-                                        <td>{{ r.patient_gender }}</td>
+                                        <td class="collapsing">{{ r.patient_check_in.strftime("%b %d, %Y")  }}</td>
+                                        <td class="collapsing">{{ r.patient_check_out.strftime("%b %d, %Y")  }}</td>
                                         <td class="collapsing">{{ r.patient_hospital }}</td>
-                                        <td>{{ r.patient_hospital_department }}</td>
-                                        <td class="collapsing">{{ r.patient_treatment_description }}</td>
                                         <td class="collapsing">{{ r.patient_diagnosis }}</td>
-                                        <td class="collapsing">{{ r.patient_first_appt_date }}</td>
-                                        <td class="collapsing">{{ r.patient_check_in }}</td>
-                                        <td class="collapsing">{{ r.patient_check_out }}</td>
-                                        <td class="collapsing">{{ r.patient_treating_doctor }}</td>
-                                        <td class="collapsing">{{ r.patient_doctors_phone }}</td>
-                                        <td class="collapsing">{{ r.patient_social_worker }}</td>
-                                        <td class="collapsing">{{ r.patient_social_worker_phone }}</td>
                                         <td>{{ r.inpatient }}</td>
                                         <td>{{ r.inpatient_prior }}</td>
-                                        <td>{{ r.vaccinated }}</td>
-                                        <td>{{ r.wheelchair_access }}</td>
-                                        <td>{{ r.full_bathroom }}</td>
-                                        <td>{{ r.pack_n_play }}</td>
                                         <td class="collapsing">{{ r.comments }}</td>
+
+                                        <td>{{ r.first_name }}</td>
+                                        <td>{{ r.last_name }}</td>
+                                        <td>{{ r.relationship_to_patient }}</td>
+                                        <td>{{ r.email }}</td>
+                                        <td>{{ r.primary_phone }}</td>
+                                        <td>{{ r.primary_language }}</td>
+                                        <td>{{ r.previous_stay }}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>
