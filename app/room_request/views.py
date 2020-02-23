@@ -38,7 +38,7 @@ def index():
 
 @login_required
 @room_request.route('/<int:id>/manage')
-@room_request.route('/<int:id>/info')
+@room_request.route('/<int:id>/patient')
 def manage(id):
     """Manage room request."""
     room_request = RoomRequest.query.get(id)
@@ -48,8 +48,8 @@ def manage(id):
 
 
 @login_required
-@room_request.route('/<int:id>/patient')
-def patient_info(id):
+@room_request.route('/<int:id>/info')
+def requester_info(id):
     """View patient info of given room request."""
     room_request = RoomRequest.query.get(id)
     if room_request is None:
