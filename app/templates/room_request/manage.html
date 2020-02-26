@@ -8,6 +8,7 @@
 {% set room_occupancy_info_endpoint = 'room_request.room_occupancy_info' %}
 {% set comments_endpoint = 'room_request.comments' %}
 {% set edit_endpoint = 'room_request.edit' %}
+{% set transfer_endpoint = 'room_request.view' %}
 {% set delete_endpoint = 'room_request.delete' %}
 
 {% set view_endpoints = [
@@ -20,6 +21,7 @@
     (comments_endpoint, 'Comments'),
     (edit_endpoint, 'Edit request'),
     (delete_endpoint, 'Delete request'),
+    (transfer_endpoint, 'Approve request'), 
 ] %}
 
 {% macro navigation(view_endpoints, manage_endpoints, room_request) %}
@@ -163,10 +165,6 @@
     {% set flashes = {
         'post': get_flashed_messages(category_filter=['form-post']),
     } %}
-    <form action="{{ url_for('room_request.transfer', id=id) }}" method="POST">
-        {{ f.begin_form(transfer_form, flashes) }}
-        {{ f.end_form() }}
-    </form>
     {{ f.begin_form(activity_form, flashes) }}
     {{ f.render_form_field(activity_form.body) }}
     {{ f.render_form_field(activity_form.submit) }}
@@ -219,8 +217,16 @@ $(document).ready(function () {
     });
 });
 </script>
+{% endmacro %}
 
-
+{% macro view(room_request) %}
+<div>
+    <h3>transfer</h3>
+    <form action="{{ url_for('room_request.transfer', id=id) }}" method="POST">
+        {{ f.begin_form(transfer_form, flashes) }}
+        {{ f.end_form() }}
+    </form>
+</div>
 {% endmacro %}
 
 {% block content %}
@@ -255,6 +261,8 @@ $(document).ready(function () {
                 {{ room_request_macros.render_form(form) }}
             {% elif request.endpoint == delete_endpoint %}
                 {{ delete_request(room_request) }}
+            {% elif request.endpoint == transfer_endpoint %}
+                {{ transfer(room_request) }}
             {% endif %}
         </div>
     </div>
