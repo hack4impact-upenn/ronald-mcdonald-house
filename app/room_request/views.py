@@ -32,8 +32,10 @@ room_request = Blueprint('room_request', __name__)
 def index():
     """View all room requests."""
     room_requests = RoomRequest.query.all()
-    return render_template('admin/index.html', room_requests=room_requests)
-
+    if (current_user.role.name == 'Admin'):
+        return render_template('admin/index.html', room_requests=room_requests)
+    else:
+        return render_template('staff/index.html', room_requests=room_requests)
 
 @room_request.route('/<int:id>/manage')
 @room_request.route('/<int:id>/info')
