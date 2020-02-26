@@ -122,6 +122,20 @@
                                     </div>
                                     <tr onclick="window.location.href = '{{ url_for('room_request.manage', id=r.id) }}';">
                                         <td><button class="ui red button" onclick="openDeleteModal({{ r.id }})">Delete</button></td>
+
+                                        <td>{{ r.first_name }}</td>
+                                        <td>{{ r.last_name }}</td>
+                                        <td>{{ r.email }}</td>
+                                        <td>{{ r.relationship_to_patient }}</td>
+                                        <td class="collapsing">
+                                            {{ r.address_line_one }} {{ r.address_line_two }} <br />
+                                            {{ r.city }}, {{ r.state }}, {{ r.zip_code }}, {{ r.country }}
+                                        </td>
+                                        <td>{{ r.primary_phone }}</td>
+                                        <td>{{ r.secondary_phone }}</td>
+                                        <td>{{ r.primary_language }}</td>
+                                        <td>{{ r.secondary_language }}</td>
+                                        <td>{{ 'Yes' if r.previous_stay else 'No' }}</td>
                                         <td class="collapsing">{{ r.patient_first_name }}</td>
                                         <td class="collapsing">{{ r.patient_last_name }}</td>
                                         <td class="collapsing">{{ r.patient_check_in.strftime("%b %d, %Y")  }}</td>
@@ -129,7 +143,13 @@
                                         <td class="collapsing">{{ r.patient_hospital }}</td>
                                         <td class="collapsing">{{ r.patient_diagnosis }}</td>
                                         <td>{{ r.inpatient }}</td>
-                                        <td>{{ r.inpatient_prior }}</td>
+                                  
+                                        <td>{{ 'Yes' if r.impatient_prior else 'No' }}</td>
+                                        <td>{{ 'Yes' if r.vaccinated else 'No' }}</td>
+                                        <td>{{ 'Yes' if r.wheelchair_access else 'No' }}</td>
+                                        <td>{{ 'Yes' if r.full_bathroom else 'No' }}</td>
+                                        <td>{{ 'Yes' if r.pack_n_play else 'No' }}</td>
+
                                         <td class="collapsing">{{ r.comments }}</td>
 
                                         <td>{{ r.first_name }}</td>
