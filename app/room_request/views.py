@@ -148,7 +148,6 @@ def _delete(id):
 
 
 @room_request.route('/new', methods=['GET', 'POST'])
-@login_required
 def new():
     """Room Request page."""
     editable_html_obj = EditableHTML.get_editable_html('room_request')
