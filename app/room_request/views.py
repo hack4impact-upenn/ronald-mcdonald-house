@@ -38,7 +38,7 @@ def index():
         return render_template('staff/index.html', room_requests=room_requests)
 
 @room_request.route('/<int:id>/manage')
-@room_request.route('/<int:id>/info')
+@room_request.route('/<int:id>/patient')
 @login_required
 def manage(id):
     """Manage room request."""
@@ -48,9 +48,9 @@ def manage(id):
     return render_template('room_request/manage.html', room_request=room_request)
 
 
-@room_request.route('/<int:id>/patient')
 @login_required
-def patient_info(id):
+@room_request.route('/<int:id>/info')
+def requester_info(id):
     """View patient info of given room request."""
     room_request = RoomRequest.query.get(id)
     if room_request is None:

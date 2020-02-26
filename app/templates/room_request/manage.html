@@ -2,8 +2,8 @@
 {% import 'room_request/macros.html' as room_request_macros %}
 {% import 'macros/form_macros.html' as f %}
 
-{% set contact_info_endpoint = 'room_request.manage' %}
-{% set patient_info_endpoint = 'room_request.patient_info' %}
+{% set patient_info_endpoint = 'room_request.manage' %}
+{% set contact_info_endpoint = 'room_request.requester_info' %}
 {% set guest_info_endpoint = 'room_request.guest_info' %}
 {% set room_occupancy_info_endpoint = 'room_request.room_occupancy_info' %}
 {% set comments_endpoint = 'room_request.comments' %}
@@ -12,8 +12,8 @@
 {% set delete_endpoint = 'room_request.delete' %}
 
 {% set view_endpoints = [
-    (contact_info_endpoint, 'Contact information'),
     (patient_info_endpoint, 'Patient details'),
+    (contact_info_endpoint, 'Contact information'),
     (room_occupancy_info_endpoint, 'Room occupancy needs'),
     (guest_info_endpoint, 'Guest information'),
 ] %}
@@ -59,7 +59,7 @@
         <tr><td class="collapsing">Secondary Phone</td><td>{{ room_request.secondary_phone }}</td></tr>
         <tr><td class="collapsing">Primary Language</td><td>{{ room_request.primary_language }}</td></tr>
         <tr><td class="collapsing">Secondary Language</td><td>{{ room_request.secondary_language }}</td></tr>
-        <tr><td class="collapsing">Requested Before</td><td>{{ room_request.previous_stay }}</td></tr>
+        <tr><td class="collapsing">Requested Before</td><td>{{ 'Yes' if room_request.previous_stay else 'No' }}</td></tr>
         <tr><td class="collapsing">Additional Comments</td><td>{{ room_request.comments }}</td></tr>    
     </table>
 </div>
@@ -85,8 +85,8 @@
         <tr><td class="collapsing">Social Worker</td><td>{{ room_request.patient_social_worker }}</td></tr>
         <tr><td class="collapsing">Social Worker Phone</td><td>{{ room_request.patient_social_worker_phone }}</td></tr>
         <tr><td class="collapsing">Inpatient/Outpatient</td><td>{{ room_request.inpatient }}</td></tr>
-        <tr><td class="collapsing">Inpatient Stay</td><td>{{ room_request.inpatient_prior }}</td></tr>
-        <tr><td class="collapsing">Vaccinated</td><td>{{ room_request.vaccinated }}</td></tr>
+        <tr><td class="collapsing">Inpatient Stay</td><td>{{ 'Yes' if room_request.inpatient_prior else 'No' }}</td></tr>
+        <tr><td class="collapsing">Vaccinated</td><td>{{ 'Yes' if room_request.vaccinated else 'No' }}</td></tr>
     </table>
 </div>
 {% endmacro %}
@@ -95,9 +95,9 @@
 <div>
     <h3 class="ui header">Room Occupancy Needs</h3>
     <table class="ui compact definition table">
-        <tr><td class="collapsing">Wheelchair Access</td><td>{{ room_request.wheelchair_access }}</td></tr>
-        <tr><td class="collapsing">Full Bathroom</td><td>{{ room_request.full_bathroom }}</td></tr>
-        <tr><td class="collapsing">Pack & Play</td><td>{{ room_request.pack_n_play }}</td></tr>    
+        <tr><td class="collapsing">Wheelchair Access</td><td>{{ 'Yes' if room_request.wheelchair_access else 'No' }}</td></tr>
+        <tr><td class="collapsing">Full Bathroom</td><td>{{ 'Yes' if room_request.full_bathroom else 'No' }}</td></tr>
+        <tr><td class="collapsing">Pack & Play</td><td>{{ 'Yes' if room_request.pack_n_play else 'No' }}</td></tr>    
     </table>
 </div>
 {% endmacro %}
@@ -237,8 +237,9 @@ $(document).ready(function () {
             Back to dashboard
         </a>
         <h2 class="ui header">
-            {{ room_request.first_name }} {{ room_request.last_name }}
-            <div class="sub header">View and manage {{ room_request.first_name }}'s room request.</div>
+            {{ room_request.patient_first_name }} {{ room_request.patient_last_name }}
+            <div class="sub header">Room request submitted by {{ room_request.first_name }} {{ room_request.last_name }}, patient's  {{ room_request.relationship_to_patient }}</div>
+            <div class="sub header">{{ room_request.patient_check_in.strftime("%b %d, %Y") }} to {{ room_request.patient_check_out.strftime("%b %d, %Y") }}</div>
         </h2>
     </div>
     <div class="stretched divided very relaxed row">
@@ -246,10 +247,10 @@ $(document).ready(function () {
             {{ navigation(view_endpoints, manage_endpoints, room_request) }}
         </div>
         <div class="ten wide column">
-            {% if request.endpoint == contact_info_endpoint %}
-                {{ contact_info(room_request) }}
-            {% elif request.endpoint == patient_info_endpoint %}
+            {% if request.endpoint == patient_info_endpoint %}
                 {{ patient_info(room_request) }}
+            {% elif request.endpoint == contact_info_endpoint %}
+                {{ contact_info(room_request) }}
             {% elif request.endpoint == room_occupancy_info_endpoint %}
                 {{ room_occupancy_info(room_request) }}
             {% elif request.endpoint == guest_info_endpoint %}
