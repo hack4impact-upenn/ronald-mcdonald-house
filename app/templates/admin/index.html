@@ -150,11 +150,7 @@
                                         <td>{{ r.secondary_phone }}</td>
                                         <td>{{ r.primary_language }}</td>
                                         <td>{{ r.secondary_language }}</td>
-                                            {% if r.previous_stay %}
-                                                <td>Yes</td>
-                                            {% else %}
-                                                <td>No</td>
-                                            {% endif %}
+                                        <td>{{ 'Yes' if r.previous_stay else 'No' }}</td>
                                         <td class="collapsing">{{ r.patient_first_name }}</td>
                                         <td class="collapsing">{{ r.patient_last_name }}</td>
                                         <td>{{ r.patient_dob }}</td>
@@ -171,31 +167,11 @@
                                         <td class="collapsing">{{ r.patient_social_worker }}</td>
                                         <td class="collapsing">{{ r.patient_social_worker_phone }}</td>
                                         <td>{{ r.inpatient }}</td>
-                                            {% if r.inpatient_prior %}
-                                                <td>Yes</td>
-                                            {% else %}
-                                                <td>No</td>
-                                            {% endif %}
-                                            {% if r.vaccinated %}
-                                                <td>Yes</td>
-                                            {% else %}
-                                                <td>No</td>
-                                            {% endif %}
-                                            {% if r.wheelchair_access %}
-                                                <td>Yes</td>
-                                            {% else %}
-                                                <td>No</td>
-                                            {% endif %}
-                                            {% if r.full_bathroom %}
-                                                <td>Yes</td>
-                                            {% else %}
-                                                <td>No</td>
-                                            {% endif %}
-                                            {% if r.pack_n_play %}
-                                                <td>Yes</td>
-                                            {% else %}
-                                                <td>No</td>
-                                            {% endif %}
+                                        <td>{{ 'Yes' if r.impatient_prior else 'No' }}</td>
+                                        <td>{{ 'Yes' if r.vaccinated else 'No' }}</td>
+                                        <td>{{ 'Yes' if r.wheelchair_access else 'No' }}</td>
+                                        <td>{{ 'Yes' if r.full_bathroom else 'No' }}</td>
+                                        <td>{{ 'Yes' if r.pack_n_play else 'No' }}</td>
                                         <td class="collapsing">{{ r.comments }}</td>
                                     </tr>
                                     {% endfor %}
