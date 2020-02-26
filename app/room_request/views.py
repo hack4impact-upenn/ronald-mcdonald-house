@@ -146,7 +146,10 @@ def _delete(id):
         db.session.delete(room_request)
         db.session.commit()
         flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.', 'success')
-    return redirect(url_for('admin.index'))
+    if (current_user.role.name == 'Admin'):
+        return render_template('admin/index.html', room_requests=room_requests)
+    else:
+        return render_template('staff/index.html', room_requests=room_requests)
 
 
 @room_request.route('/new', methods=['GET', 'POST'])
