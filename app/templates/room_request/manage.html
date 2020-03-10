@@ -232,10 +232,17 @@ $(document).ready(function () {
 {% block content %}
 <div class="ui stackable centered grid container">
     <div class="fourteen wide column">
+        {% if current_user.role.name == 'Admin' %}
         <a class="ui basic compact button" href="{{ url_for('admin.index') }}">
             <i class="caret left icon"></i>
-            Back to dashboard
+            Back to admin dashboard
         </a>
+        {% else %}
+        <a class="ui basic compact button" href="{{ url_for('staff.index') }}">
+            <i class="caret left icon"></i>
+            Back to staff dashboard
+        </a>
+        {% endif %}
         <h2 class="ui header">
             {{ room_request.patient_first_name }} {{ room_request.patient_last_name }}
             <div class="sub header">Room request submitted by {{ room_request.first_name }} {{ room_request.last_name }}, patient's  {{ room_request.relationship_to_patient }}</div>
