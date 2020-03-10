@@ -76,7 +76,7 @@ class RoomRequestForm(FlaskForm):
     staying_prior_to_admission = BooleanField(
         'For Inpatient Only: Will the patient be staying in the House prior to admission? (Explain in the Comments section below)')
     vaccinated = BooleanField(
-        'Have all patients and family members who will be staying at the House been vaccinated for measles, mumps, and rubella (MMR), and been vaccinated for and/or diagnosed with chickenpox in the past?')
+        'Have all patients and family members who will be staying at the House been vaccinated for measles, mumps, and rubella (MMR), and been vaccinated for and/or diagnosed with chickenpox in the past? Put no if you are unsure.')
     comments = TextAreaField('Comments', validators=[Length(0, 3000)])
 
     # Room occupancy
