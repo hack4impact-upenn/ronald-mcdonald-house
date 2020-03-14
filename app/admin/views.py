@@ -20,6 +20,7 @@ from app.admin.forms import (
 from app.decorators import admin_required
 from app.email import send_email
 from app.models import EditableHTML, Role, User, RoomRequest
+from sqlalchemy import func
 
 admin = Blueprint('admin', __name__)
 
@@ -32,7 +33,9 @@ def index():
     users = User.query.all()
     roles = Role.query.all()
     room_requests = RoomRequest.query.all()
-    return render_template('admin/index.html', users=users, roles=roles, room_requests=room_requests)
+    duplicates = db.session.query(RoomRequest.email, func.count(RoomRequest.email)).group_by(RoomRequest.email).all()
+
+    return render_template('admin/index.html', users=users, roles=roles, room_requests=room_requests, duplicates=duplicates)
 
 
 @admin.route('/new-user', methods=['GET', 'POST'])

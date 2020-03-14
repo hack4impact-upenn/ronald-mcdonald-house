@@ -49,7 +49,7 @@
             <div class="ui tabular menu">
                 <div class="active item" data-tab="tab-name" style="cursor: pointer;">Manage Room Requests</div>
             </div>
-            
+
                 <div class="active ui tab" data-tab="tab-name">
                     <div class="ui stackable grid container">
                         <div class="sixteen wide column">
@@ -60,7 +60,7 @@
                                     View and manage all room requests.
                                 </div>
                             </h2>
-                        
+
                             <div class="ui fluid search">
                                 <div class="ui icon input">
                                     <input class="prompt" id="search-room-requests" type="text" placeholder="Search room requests">
@@ -69,46 +69,43 @@
                             </div>
                             <div style="max-width: 100%; overflow-y: hidden;">
                                 <table class="ui searchable sortable unstackable selectable celled table">
-                                    <thead> 
-                                        <tr>
-                                            <th rowspan="2">Authenticate</th>
-                                            <th rowspan="2">First Name</th>
-                                            <th rowspan="2" class="sorted ascending">Last Name</th>
-                                            <th rowspan="2">Email Address</th>
-                                            <th rowspan="2">Relationship to Patient</th>
-                                            <th rowspan="2">Address</th> 
-                                            <th rowspan="2">Primary Phone</th>
-                                            <th rowspan="2">Secondary Phone</th>
-                                            <th rowspan="2">Primary Language</th>
-                                            <th rowspan="2">Secondary Language</th>
-                                            <th rowspan="2">Requested Before?</th>
-                                            <!--Patient Information-->
-                                            <th colspan="22">Patient Information</th>
-                                        <tr>
-                                            <th>Patient First Name</th>
-                                            <th>Patient Last Name</th>
-                                            <th>Patient Birthday</th>
-                                            <th>Patient Gender</th>
-                                            <th>Hospital in Philadelphia</th>
-                                            <th>Hospital Department</th>
-                                            <th>Treatment Description</th>
-                                            <th>Diagnosis</th>
-                                            <th>First Appointment Date</th>
-                                            <th>Check In</th>
-                                            <th>Check Out</th>
-                                            <th>Treating Doctor</th>
-                                            <th>Doctor Phone Number</th>
-                                            <th>Hospital Social Worker</th>
-                                            <th>Hospital Social Worker Phone Number</th>
-                                            <th>Inpatient/Outpatient</th>
-                                            <th>Inpatient Stay?</th>
-                                            <th>Vaccinated</th>
-                                            <th>Wheelchair Access</th>
-                                            <th>Full Bathroom</th>
-                                            <th>Pack & Play</th>
-                                            <th>Additional Comments</th>
-                                        </tr>
-                                    </thead>
+                                  <thead>
+                                      <tr>
+                                          <th>Delete</th>
+                                          <th>Requester First Name</th>
+                                          <th class="sorted ascending">Requester Last Name</th>
+                                          <th>Email Address</th>
+                                          <th>Relationship to Patient</th>
+                                          <th>Address</th>
+                                          <th>Primary Phone</th>
+                                          <th>Secondary Phone</th>
+                                          <th>Primary Language</th>
+                                          <th>Secondary Language</th>
+                                          <th>Requested Before?</th>
+                                          <th>Patient First Name</th>
+                                          <th>Patient Last Name</th>
+                                          <th>Patient Birthday</th>
+                                          <th>Patient Gender</th>
+                                          <th>Hospital in Philadelphia</th>
+                                          <th>Hospital Department</th>
+                                          <th>Treatment Description</th>
+                                          <th>Diagnosis</th>
+                                          <th>First Appointment Date</th>
+                                          <th>Check In</th>
+                                          <th>Check Out</th>
+                                          <th>Treating Doctor</th>
+                                          <th>Doctor Phone</th>
+                                          <th>Hospital Social Worker</th>
+                                          <th>Hospital Social Worker Phone</th>
+                                          <th>Inpatient/Outpatient</th>
+                                          <th>Inpatient Stay?</th>
+                                          <th>Vaccinated?</th>
+                                          <th>Wheelchair Access?</th>
+                                          <th>Full Bathroom?</th>
+                                          <th>Pack 'n Play?</th>
+                                          <th>Additional Comments</th>
+                                      </tr>
+                                  </thead>
                                     <tbody>
                                     {% for r in room_requests %}
                                     <!--modal-->
@@ -123,7 +120,7 @@
                                         </div>
                                     </div>
                                     <tr onclick="window.location.href = '{{ url_for('room_request.manage', id=r.id) }}';">
-                                        <td><button class="ui red button" onclick="openDeleteModal({{ r.id }})">Delete</button></td>
+                                        <td><button class="ui red button" onclick="openDeleteModal(event, {{ r.id }})">Delete</button></td>
                                         <td>{{ r.first_name }}</td>
                                         <td>{{ r.last_name }}</td>
                                         <td>{{ r.email }}</td>
@@ -167,26 +164,28 @@
 
                         </div>
                     </div>
-                        
+
                 <script type="text/javascript">
-                    function openDeleteModal(room_request_id) {
-                        $(`#delete-room-request-modal-${room_request_id}`).modal('show')
-                    }
-            
-                    // Make a DELETE request to the following URL
-                    function deleteUser(user_id) {
-                        $.ajax({
-                            url: `/room-request/${user_id}/delete`,
-                            type: 'DELETE',
-                            success: function(response) {
-                            // Print the response in the browser console
-                            console.log(response)
-                            // Refresh the page
-                            document.location.reload()
-                            },
-                        })
-                    }
-            
+                  function openDeleteModal(e, room_request_id) {
+                      $(`#delete-room-request-modal-${room_request_id}`).modal('show')
+                      e.stopImmediatePropagation();
+                  }
+
+                  // Make a DELETE request to the following URL
+                  function deleteUser(user_id) {
+                      $.ajax({
+                          url: `/room-request/${user_id}/_delete`,
+                          type: 'DELETE',
+                          success: function(response) {
+                          // Print the response in the browser console
+                          console.log(response)
+                          // Refresh the page
+                          document.location.reload()
+                          },
+                          data: {"csrf_token": `{{ csrf_token() }}`}
+                      })
+                  }
+
                     $(document).ready(function () {
                         $('#search-room-requests').keyup(function () {
                             var searchText = $(this).val();
@@ -200,30 +199,29 @@
                                 $('tr.hidden').removeClass('hidden').show();
                             }
                         });
-            
+
                         $('#select-role').dropdown({
                             onChange: function (value, text, $selectedItem) {
                                 $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
                                 $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
                             }
                         });
-            
+
                     });
                 </script>
             </div>
-            
-            
+
+
             <script>
                 $('.tabular.menu .item').tab();
             </script>
 
         </div>
     </div>
-                  
+
 
     <script>
         $('.tabular.menu .item').tab();
     </script>
 
 {% endblock %}
-
