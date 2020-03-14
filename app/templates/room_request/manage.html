@@ -21,7 +21,7 @@
     (comments_endpoint, 'Comments'),
     (edit_endpoint, 'Edit request'),
     (delete_endpoint, 'Delete request'),
-    (transfer_endpoint, 'Approve request'), 
+    (transfer_endpoint, 'Approve request'),
 ] %}
 
 {% macro navigation(view_endpoints, manage_endpoints, room_request) %}
@@ -60,7 +60,7 @@
         <tr><td class="collapsing">Primary Language</td><td>{{ room_request.primary_language }}</td></tr>
         <tr><td class="collapsing">Secondary Language</td><td>{{ room_request.secondary_language }}</td></tr>
         <tr><td class="collapsing">Requested Before</td><td>{{ 'Yes' if room_request.previous_stay else 'No' }}</td></tr>
-        <tr><td class="collapsing">Additional Comments</td><td>{{ room_request.comments }}</td></tr>    
+        <tr><td class="collapsing">Additional Comments</td><td>{{ room_request.comments }}</td></tr>
     </table>
 </div>
 {% endmacro %}
@@ -97,7 +97,7 @@
     <table class="ui compact definition table">
         <tr><td class="collapsing">Wheelchair Access</td><td>{{ 'Yes' if room_request.wheelchair_access else 'No' }}</td></tr>
         <tr><td class="collapsing">Full Bathroom</td><td>{{ 'Yes' if room_request.full_bathroom else 'No' }}</td></tr>
-        <tr><td class="collapsing">Pack & Play</td><td>{{ 'Yes' if room_request.pack_n_play else 'No' }}</td></tr>    
+        <tr><td class="collapsing">Pack & Play</td><td>{{ 'Yes' if room_request.pack_n_play else 'No' }}</td></tr>
     </table>
 </div>
 {% endmacro %}
@@ -181,11 +181,11 @@
         # when the table is too wide #}
     <div>
         <table class="ui searchable sortable stackable celled table">
-            <thead> 
+            <thead>
                 <tr>
-                    <th rowspan="2">Created By</th>
-                    <th rowspan="2">Comment</th>
-                    <th rowspan="2" class="sorted ascending">Time</th>
+                    <th>Created By</th>
+                    <th>Comment</th>
+                    <th class="sorted ascending">Time</th>
                 </tr>
             </thead>
             <tbody>
@@ -200,7 +200,7 @@
         </table>
     </div>
 </div>
-    
+
 <script type="text/javascript">
 $(document).ready(function () {
     $('#search-comments').keyup(function () {
@@ -232,7 +232,7 @@ $(document).ready(function () {
 {% block content %}
 <div class="ui stackable centered grid container">
     <div class="fourteen wide column">
-        {% if current_user.role.name == 'Admin' %}
+        {% if current_user.role.name == 'Administrator' %}
         <a class="ui basic compact button" href="{{ url_for('admin.index') }}">
             <i class="caret left icon"></i>
             Back to admin dashboard

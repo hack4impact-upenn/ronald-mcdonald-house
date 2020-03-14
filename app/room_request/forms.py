@@ -131,15 +131,15 @@ class RoomRequestForm(FlaskForm):
     guest5_guardian = BooleanField('Guardian?')
 
     # Special needs
-    wheelchair_access = BooleanField('Wheelchair Access')
-    full_bathroom = BooleanField('Full Bathroom with Tub')
-    pack_n_play = BooleanField("Pack 'N' Play")
+    wheelchair_access = BooleanField('Wheelchair access')
+    full_bathroom = BooleanField('Full bathroom with tub')
+    pack_n_play = BooleanField("Pack 'n Play")
     recaptcha = RecaptchaField()
     submit = SubmitField('Create')
 
 
 class ActivityForm(FlaskForm):
-    body = StringField("Body", validators=[InputRequired()])
+    body = StringField("Add comment", validators=[InputRequired()])
     submit = SubmitField("Post")
 
 class TransferForm(FlaskForm):

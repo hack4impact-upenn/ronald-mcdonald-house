@@ -79,7 +79,7 @@ def guest_info(id):
 
 @room_request.route('/<int:id>/comments', methods=['GET', 'POST'])
 @login_required
-def comments(id):    
+def comments(id):
     room_request = RoomRequest.query.get(id)
     if room_request is None:
         return abort(404)
@@ -113,7 +113,7 @@ def edit(id):
     room_request = RoomRequest.query.get(id)
     if room_request is None:
         return abort(404)
-    
+
     form = get_form_from_room_request(room_request)
     if form.validate_on_submit():
         room_request = get_room_request_from_form(form)
@@ -127,7 +127,7 @@ def edit(id):
     return render_template('room_request/manage.html', room_request=room_request, form=form)
 
 
-@room_request.route('<int:id>/delete')
+@room_request.route('<int:id>/delete', methods=['DELETE'])
 @login_required
 def delete(id):
     """Request deletion of a room request, but does not actually perform the action until user confirmation."""
@@ -137,16 +137,17 @@ def delete(id):
     return render_template('room_request/manage.html', room_request=room_request)
 
 
-@room_request.route('<int:id>/_delete')
+@room_request.route('<int:id>/_delete', methods=['DELETE'])
 @login_required
 def _delete(id):
     """Delete a room request."""
     room_request = RoomRequest.query.get(id)
+    room_requests = RoomRequest.query.all()
     if room_request:
         db.session.delete(room_request)
         db.session.commit()
-        flash(f'Successfully deleted room request for {room_request.first_name} {room_request.last_name}.', 'success')
-    if (current_user.role.name == 'Admin'):
+        # flash("Successfully deleted room request for " + room_request.first_name + " ", room_request.last_name + ".", 'success')
+    if (current_user.role.name == 'Administrator'):
         return render_template('admin/index.html', room_requests=room_requests)
     else:
         return render_template('staff/index.html', room_requests=room_requests)
@@ -175,11 +176,11 @@ def new():
             db.session.rollback()
             flash('Unable to save changes. Please try again.', 'form-error')
     return render_template('room_request/new.html', form=form, editable_html_obj=editable_html_obj)
-    
+
 
 @room_request.route('/<int:id>', methods=['GET', 'POST'])
 @login_required
-def view(id):    
+def view(id):
     room_request = RoomRequest.query.get(id)
     if room_request is None:
         return abort(404)
@@ -227,7 +228,7 @@ def transfer(id):
             os.getenv('AZURE_DATABASE'),
             os.getenv('AZURE_USERNAME'),
             os.getenv('AZURE_PASS'))
-    params = urllib.parse.quote_plus(param_string)    
+    params = urllib.parse.quote_plus(param_string)
     engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
     session = sessionmaker(bind=engine)()
 
@@ -260,4 +261,3 @@ def duplicate_room_requests(id):
         .filter(RoomRequest.id != room_request.id) \
         .all();
     return render_template('room_request/duplicates.html', duplicate_room_requests=duplicate_room_requests)
-
