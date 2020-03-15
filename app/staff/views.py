@@ -12,15 +12,15 @@ from flask_rq import get_queue
 
 from app import db
 
-from app.decorators import staff_required, login_required
+from app.decorators import staff_required
 from app.models import EditableHTML, Role, RoomRequest
 
 staff = Blueprint('staff', __name__)
 
 
-@staff.route('/')
 @login_required
 @staff_required
+@staff.route('/')
 def index():
     """Staff dashboard page."""
     roles = Role.query.all()

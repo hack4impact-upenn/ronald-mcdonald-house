@@ -94,4 +94,7 @@ def create_app(config):
     from .room_request import room_request as room_request_blueprint
     app.register_blueprint(room_request_blueprint, url_prefix='/room-request')
 
+    from .staff import staff as staff_blueprint
+    app.register_blueprint(staff_blueprint, url_prefix='/staff')
+
     return app
