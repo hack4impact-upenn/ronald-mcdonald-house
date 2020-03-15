@@ -140,8 +140,8 @@ class RoomRequestForm(FlaskForm):
 
 
 class ActivityForm(FlaskForm):
-    body = StringField("Body", validators=[InputRequired()])
-    submit = SubmitField("Post")
+    body = StringField("Add New Comment", validators=[InputRequired()])
+    submit = SubmitField("Post New Comment")
 
 class TransferForm(FlaskForm):
     transfer = SubmitField("Transfer")

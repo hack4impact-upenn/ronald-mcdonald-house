@@ -23,36 +23,27 @@
             </div>
         </div> -->
 
-        <div class="ui top attached menu">
-                <a class="item">
-                    <h3 class="ui header">Patient Information</h3>
-                </a>
+        <div class="ui segment">
+            <div class="ui items">
+                <div class="item">
+                    <div class="image">
+                        <img src="/images/image.jpg">
+                    </div>
+                    <div class="content">
+                        <a class="header">{{ room_request.first_name }} {{ room_request.last_name }}</a>
+                        <div class="meta">
+                            <span>Form ID: <b>{{ id }}</b></span>
+                        </div>
+                        <div class="description">
+                            <p><b>Diagnosis:</b> {{ room_request.patient_diagnosis }}</p>
+                            <p><b>Department:</b> {{ room_request.patient_hospital_department }}</p>
+                            <p><b>Check-In:</b> {{ room_request.patient_check_in }}</p>
+                            <p><b>Check-Out:</b> {{ room_request.patient_check_out }}</p>
+                            
+                        </div>
+                    </div>
+                </div>
             </div>
-        
-        <div class="ui bottom attached segment">
-            <p>Below is some important information about {{ room_request.first_name }} {{ room_request.last_name }}.</p>
-            <table class="ui compact definition table">
-                <tr>
-                    <td>Form ID</td>
-                    <td>{{ id }}</td>
-                </tr>
-                <tr>
-                    <td>Diagnosis</td>
-                    <td>{{ room_request.patient_diagnosis }}</td>
-                </tr>
-                <tr>
-                    <td>Department</td>
-                    <td>{{ room_request.patient_hospital_department }}</td>
-                </tr>
-                <tr>
-                    <td>Check-in</td>
-                    <td>{{ room_request.patient_check_in }}</td>
-                </tr>
-                <tr>
-                    <td>Check-in</td>
-                    <td>{{ room_request.patient_check_out }}</td>
-                </tr>
-            </table>
 
             <a href="{{ url_for('room_request.manage', id=id) }}">
                 <button class="ui right labeled icon right floated button">
@@ -109,34 +100,12 @@
             </table>
         </div>
 
-        <!-- <div class="ui bottom attached segment">
-            <div class="ui searchable comments">
-                <h3 class="ui dividing header">Comments</h3>
-                {% for comment in comments %}
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="/images/blank.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">{{ comment.user.first_name }} {{ comment.user.last_name }}</a>
-                        <div class="metadata">
-                            <span class="date">{{ comment.created_at.strftime('%d-%m-%Y') }} at {{ comment.created_at.strftime('%I:%M:%S') }}</span>
-                        </div>
-                        <div class="text">
-                            {{ comment.text }}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-
-                <form class="ui reply form">
-                    {{ f.begin_form(activity_form, flashes) }}
-                    {{ f.render_form_field(activity_form.body) }}
-                    {{ f.render_form_field(activity_form.submit) }}
-                    {{ f.end_form() }}
-                </form>
-            </div>
-        </div> -->
+        <div class="ui segment">
+            {{ f.begin_form(activity_form, flashes) }}
+            {{ f.render_form_field(activity_form.body) }}
+            {{ f.render_form_field(activity_form.submit) }}
+            {{ f.end_form() }}
+        </div>
     </div>
 </div>
 
