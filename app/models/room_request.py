@@ -26,8 +26,6 @@ class RoomRequest(db.Model):
     primary_language = db.Column(db.String(100))
     secondary_language = db.Column(db.String(100))
     previous_stay = db.Column(db.Boolean())
-    
-
 
     # Patient Information
     patient_first_name = db.Column(db.String(100))
@@ -50,7 +48,7 @@ class RoomRequest(db.Model):
     vaccinated = db.Column(db.Boolean())
     comments = db.Column(db.String(5000))
 
-    #unfilled but required
+    #Required not on form
     phone_3 = db.Column(db.String(50))
     phone_4 = db.Column(db.String(50))
     email_2 = db.Column(db.String(1000))
@@ -74,8 +72,7 @@ class RoomRequest(db.Model):
     familiy_incomeID = db.Column(db.Integer())
     third_party_transport_approved = db.Column(db.Integer())
 
-    #unrequired
-    
+    #Optional fields
     patient_death_date = db.Column(db.Date)
     patient_2_first_name = db.Column(db.String(100))
     patient_2_last_name = db.Column(db.String(100))
@@ -105,8 +102,25 @@ class RoomRequest(db.Model):
     seconadry_state = db.Column(db.String(64))
     seconadry_zip_code = db.Column(db.String(10))
     seconadry_country = db.Column(db.String(50))
-    seconadry_phone_desc = db.Column(db.String(20))
-
+    seconadry_phone_1_desc = db.Column(db.String(20))
+    seconadry_phone_1 = db.Column(db.String(20))
+    seconadry_phone_2_desc = db.Column(db.String(20))
+    seconadry_phone_2 = db.Column(db.String(20))
+    seconadry_phone_3_desc = db.Column(db.String(20))
+    seconadry_phone_3 = db.Column(db.String(20))
+    seconadry_phone_4_desc = db.Column(db.String(20))
+    seconadry_phone_4 = db.Column(db.String(20))
+    SecondaryEmailAddress = db.Column(db.String(100))
+    SecondaryEmailAddress2 = db.Column(db.String(100))
+    SecondaryEmergencyContactName = db.Column(db.String(100))
+    SecondaryEmergencyContactRelationship = db.Column(db.String(30))
+    SecondaryEmergencyContactPhone1Desc = db.Column(db.String(20))
+    SecondaryEmergencyContactPhone1 = db.Column(db.String(20))
+    SecondaryEmergencyContactPhone2Desc = db.Column(db.String(20))
+    SecondaryEmergencyContactPhone2 = db.Column(db.String(20))
+    Patient2MiddleName = db.Column(db.String(100))
+    Patient3MiddleName = db.Column(db.String(100))
+    Patient4MiddleName = db.Column(db.String(100))
     
 
     # Special Needs
