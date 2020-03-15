@@ -73,6 +73,40 @@ class RoomRequest(db.Model):
     seconard_do_not_mail = db.Column(db.Integer())
     familiy_incomeID = db.Column(db.Integer())
     third_party_transport_approved = db.Column(db.Integer())
+
+    #unrequired
+    
+    patient_death_date = db.Column(db.Date)
+    patient_2_first_name = db.Column(db.String(100))
+    patient_2_last_name = db.Column(db.String(100))
+    patient_2_dob = db.Column(db.Date)
+    patient_2_gender = db.Column(db.String(15))
+    patient_2_death_date = db.Column(db.Date)
+    patient_3_first_name = db.Column(db.String(100))
+    patient_3_last_name = db.Column(db.String(100))
+    patient_3_dob = db.Column(db.Date)
+    patient_3_gender = db.Column(db.String(15))
+    patient_3_death_date = db.Column(db.Date)
+    patient_4_first_name = db.Column(db.String(100))
+    patient_4_last_name = db.Column(db.String(100))
+    patient_4_dob = db.Column(db.Date)
+    patient_4_gender = db.Column(db.String(15))
+    patient_4_death_date = db.Column(db.Date)
+
+    emergency_contact_name = db.Column(db.String(100))
+    emergency_contact_relationship = db.Column(db.String(30))
+    emergency_contact_phone_1_desc = db.Column(db.String(20))
+    emergency_contact_phone_1 = db.Column(db.String(20))
+    emergency_contact_phone_2_desc = db.Column(db.String(20))
+    emergency_contact_phone_2 = db.Column(db.String(20))
+    seconadry_address_line_one = db.Column(db.String(1000))
+    seconadry_address_line_two = db.Column(db.String(1000))
+    seconadry_city = db.Column(db.String(64))
+    seconadry_state = db.Column(db.String(64))
+    seconadry_zip_code = db.Column(db.String(10))
+    seconadry_country = db.Column(db.String(50))
+    seconadry_phone_desc = db.Column(db.String(20))
+
     
 
     # Special Needs
