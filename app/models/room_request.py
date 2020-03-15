@@ -26,6 +26,8 @@ class RoomRequest(db.Model):
     primary_language = db.Column(db.String(100))
     secondary_language = db.Column(db.String(100))
     previous_stay = db.Column(db.Boolean())
+    
+
 
     # Patient Information
     patient_first_name = db.Column(db.String(100))
@@ -47,6 +49,31 @@ class RoomRequest(db.Model):
     inpatient_prior = db.Column(db.Boolean())
     vaccinated = db.Column(db.Boolean())
     comments = db.Column(db.String(5000))
+
+    #unfilled but required
+    phone_3 = db.Column(db.String(50))
+    phone_4 = db.Column(db.String(50))
+    email_2 = db.Column(db.String(1000))
+    notes = db.Column(db.String(10000))
+    regionID = db.Column(db.Integer())
+    secondary_regionID = db.Column(db.Integer())
+    media_wavier_status = db.Column(db.Integer())
+    email_list_status = db.Column(db.Integer())
+    email_list_status_2 = db.Column(db.Integer())
+    secondary_email_list_status = db.Column(db.Integer())
+    secondary_email_list_status2 = db.Column(db.Integer())
+    ethnicityID = db.Column(db.Integer())
+    primary_languageID = db.Column(db.Integer())
+    secondary_languageID = db.Column(db.Integer())
+    wheelchair_access_2 = db.Column(db.Integer())
+    wheelchair_access_3 = db.Column(db.Integer())
+    wheelchair_access_4 = db.Column(db.Integer())
+    fee_assistnace = db.Column(db.Integer())
+    do_no_mail = db.Column(db.Integer())
+    seconard_do_not_mail = db.Column(db.Integer())
+    familiy_incomeID = db.Column(db.Integer())
+    third_party_transport_approved = db.Column(db.Integer())
+    
 
     # Special Needs
     wheelchair_access = db.Column(db.Boolean())
