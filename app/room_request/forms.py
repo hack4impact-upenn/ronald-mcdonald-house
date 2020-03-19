@@ -76,7 +76,7 @@ class RoomRequestForm(FlaskForm):
     staying_prior_to_admission = BooleanField(
         'For Inpatient Only: Will the patient be staying in the House prior to admission? (Explain in the Comments section below)')
     vaccinated = BooleanField(
-        'Have all patients and family members who will be staying at the House been vaccinated for measles, mumps, and rubella (MMR), and been vaccinated for and/or diagnosed with chickenpox in the past?')
+        'Have all patients and family members who will be staying at the House been vaccinated for measles, mumps, and rubella (MMR), and been vaccinated for and/or diagnosed with chickenpox in the past? Put no if you are unsure.')
     comments = TextAreaField('Comments', validators=[Length(0, 3000)])
 
     # Room occupancy
@@ -131,15 +131,15 @@ class RoomRequestForm(FlaskForm):
     guest5_guardian = BooleanField('Guardian?')
 
     # Special needs
-    wheelchair_access = BooleanField('Wheelchair Access')
-    full_bathroom = BooleanField('Full Bathroom with Tub')
-    pack_n_play = BooleanField("Pack 'N' Play")
+    wheelchair_access = BooleanField('Wheelchair access')
+    full_bathroom = BooleanField('Full bathroom with tub')
+    pack_n_play = BooleanField("Pack 'n Play")
     recaptcha = RecaptchaField()
     submit = SubmitField('Create')
 
 
 class ActivityForm(FlaskForm):
-    body = StringField("Body", validators=[InputRequired()])
+    body = StringField("Add comment", validators=[InputRequired()])
     submit = SubmitField("Post")
 
 class TransferForm(FlaskForm):
