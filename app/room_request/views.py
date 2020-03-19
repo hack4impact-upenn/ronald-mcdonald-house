@@ -18,6 +18,8 @@ import sqlalchemy
 from sqlalchemy import create_engine, not_, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import *
+
 
 from .forms import RoomRequestForm, ActivityForm, TransferForm
 from .helpers import get_room_request_from_form, get_form_from_room_request
@@ -213,31 +215,85 @@ def view(id):
         transfer_form=transfer_form,
         comments=comments)
 
+def connectionString(table, dbString):
+    return ("""SELECT ISNULL(
+        (
+         SELECT [sup{}].[{}ID] 
+         FROM [sup{}]
+         WHERE [sup{}].[{}Desc] = {}
+        ), 1)""".format(table, table, table, table, table, ("\'" + dbString.replace("'","''") + "\'")))
 
 @room_request.route('/<int:id>/transfer', methods=['GET', 'POST'])
 @login_required
 def transfer(id):
-    room_request = RoomRequest.query.get(id)
+    requestID = id
+    room_request = RoomRequest.query.get(requestID)
     if room_request is None:
         return abort(404)
 
     transferred = False
     param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
-            os.getenv('SQL_SERVER') or "{SQL Server}",
+            os.getenv('SQL_SERVER') or "{ODBC Driver 17 for SQL Server}",
             os.getenv('AZURE_SERVER'),
             os.getenv('AZURE_DATABASE'),
             os.getenv('AZURE_USERNAME'),
-            os.getenv('AZURE_PASS'))
-    params = urllib.parse.quote_plus(param_string)
+            os.getenv('AZURE_PASS'))    
+    params = urllib.parse.quote_plus(param_string)    
     engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
     session = sessionmaker(bind=engine)()
+    metadata = MetaData(bind=engine)
 
+    family = Table('Family', metadata, autoload=True)
+    familyMember = Table('FamilyMember', metadata, autoload=True)
+    familyWaitList = Table('FamilyWaitList', metadata, autoload=True)
+    supRelationship = Table('supRelationship', metadata, autoload=True)
+    supHospital = Table('supHospital', metadata, autoload=True)
+    supWard = Table('supWard', metadata, autoload=True)
+    supDiagnosis = Table('supDiagnosis', metadata, autoload=True)
+    supReasonForVisit = Table('supReasonForVisit', metadata, autoload=True)
+    wheelchair = 0
+    if room_request.wheelchair_access:
+        wheelchair = 1
     try:
-        session.add(session.merge(room_request))
-        session.commit()
-        transferred = True
-        flash('Room request succesfully transferred!', 'form-transfer')
-        return redirect(url_for('room_request.view', id=id))
+        insFam = family.insert().values(PatientSurname= room_request.patient_last_name, PatientFirstName= room_request.patient_first_name, PatientGender= room_request.patient_gender[0], PatientBirthDate = room_request.patient_dob, Address = (room_request.address_line_one + " " + room_request.address_line_two), City = room_request.city, ProvinceCode = room_request.state[0:3], PostalCode = room_request.zip_code, Country = room_request.country, Phone1Desc = "Phone 1", Phone1 = room_request.primary_phone, Phone2Desc = "Phone 2", Phone2 = room_request.secondary_phone, Phone3Desc = "", Phone3 = "", Phone4Desc = "", Phone4 = "", EmailAddress = "",  EmailAddress2 = "", DateCreated = room_request.created_at, CreatedBy = "Web Form", DateModified = room_request.created_at, ModifiedBy = "Web Form",  PatientRequiresWheelchair = wheelchair)
+        conn = engine.connect()
+        famResult = conn.execute(insFam)
+        famEntry = family.select().execute().fetchall()
+        famID = famEntry[len(famEntry)-1].FamilyID
+        relationshipID = engine.execute(connectionString('Relationship', room_request.relationship_to_patient))
+        relationshipID = relationshipID.first()[0]
+        insFamMember = familyMember.insert().values(FamilyID = famID, Surname = room_request.last_name, FirstName = room_request.first_name, MiddleNames = '', BirthDate = '', Gender = '', RelationshipID = relationshipID, DateCreated = room_request.created_at, CreatedBy = 'Web Form', DateModified = room_request.created_at, ModifiedBy = 'Web Form', Notes = '')
+        famMemberResult = conn.execute(insFamMember)
+        for guest in room_request.guests:
+            guard = 0
+            if guest.guardian:
+                guard = 1
+            lastName = str(guest.name.split(' ')[1])
+            firstName = str(guest.name.split(' ')[0])
+            relationshipID = engine.execute(connectionString('Relationship', room_request.relationship_to_patient))
+            relationshipID = relationshipID.first()[0]
+            insFamMember = familyMember.insert().values(FamilyID = famID, Surname = lastName, FirstName = firstName, MiddleNames = '', BirthDate = guest.dob, Gender = '', RelationshipID = relationshipID, DateCreated = room_request.created_at, CreatedBy = 'Web Form', DateModified = room_request.created_at, ModifiedBy = 'Web Form', Notes = '', FirstCaregiver = guard)
+            conn.execute(insFamMember)
+        hospitalID = engine.execute(connectionString('Hospital', room_request.patient_hospital))
+        hospitalID = hospitalID.first()[0]
+        wardID = engine.execute(connectionString('Ward', room_request.patient_hospital_department))
+        wardID = wardID.first()[0]
+        reasonForVisitID = engine.execute(connectionString('ReasonForVisit', room_request.patient_treatment_description))
+        reasonForVisitID = reasonForVisitID.first()[0]
+        DiagnosisID = engine.execute(connectionString('Diagnosis', room_request.patient_diagnosis))
+        DiagnosisID = DiagnosisID.first()[0]
+        estimatedLengthOfStay = room_request.patient_check_out - room_request.patient_check_in
+        otherReq = ''
+        if room_request.full_bathroom:
+            otherReq += "Full bathroom requested. "
+        if room_request.pack_n_play:
+            otherReq += "Pack n play requested. "
+        insFamWaitList = familyWaitList.insert().values(FamilyID = famID, StartDate = room_request.patient_check_in, EndDate = room_request.patient_check_out, EndReasonID = 1, DiagnosisID = DiagnosisID, WardID = wardID, TentativeRoomID = 6, EstimatedLengthOfStay = estimatedLengthOfStay.days, ReferralName = '', ReferralOrganization = '', ReferralPhone1Desc = '', ReferralPhone1 = '', ReferralPhone1Ext = '', ReferralPhone2Desc = '', ReferralPhone2 = '', ReferralPhone2Ext = '', ReminderToConfirmGiven = 0, AskedAboutDiseaseSymptoms = 0, OutsideAgencyName = '', OutsideAgencyAddress = '', OutsideAgencyCity = '', OutsideAgencyProvinceCode = '', OutsideAgencyPostalCode = '', OutsideAgencyCountry = '', OutsideAgencyPhone1Desc = '', OutsideAgencyPhone1 = '', OutsideAgencyPhone2Desc = '', OutsideAgencyPhone2 = '', DateCreated = room_request.created_at, CreatedBy = 'Web Form', DateModified = room_request.created_at, ModifiedBy = 'Web Form', DateRequested = room_request.created_at, OtherSpecialRequests = otherReq, HospitalID = hospitalID)
+        famWaitListResult = conn.execute(insFamWaitList)
+        db.session.delete(room_request)
+        db.session.commit()
+        flash(f'Successfully transfered room request for {room_request.first_name} {room_request.last_name}.', 'success')
+        return redirect(url_for('admin.index'))
     except Exception as e:
         session.rollback()
         return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
@@ -259,5 +315,5 @@ def duplicate_room_requests(id):
             RoomRequest.email == room_request.email,
         )) \
         .filter(RoomRequest.id != room_request.id) \
-        .all();
+        .all()
     return render_template('room_request/duplicates.html', duplicate_room_requests=duplicate_room_requests)

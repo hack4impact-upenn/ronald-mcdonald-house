@@ -8,7 +8,7 @@
 {% set room_occupancy_info_endpoint = 'room_request.room_occupancy_info' %}
 {% set comments_endpoint = 'room_request.comments' %}
 {% set edit_endpoint = 'room_request.edit' %}
-{% set transfer_endpoint = 'room_request.view' %}
+{% set transfer_endpoint = 'room_request.transfer' %}
 {% set delete_endpoint = 'room_request.delete' %}
 
 {% set view_endpoints = [
@@ -219,10 +219,13 @@ $(document).ready(function () {
 </script>
 {% endmacro %}
 
-{% macro view(room_request) %}
+{% macro transfer(room_request) %}
 <div>
     <h3>transfer</h3>
     <form action="{{ url_for('room_request.transfer', id=id) }}" method="POST">
+        {% set flashes = {
+            'post': get_flashed_messages(category_filter=['form-post']),
+        } %}
         {{ f.begin_form(transfer_form, flashes) }}
         {{ f.end_form() }}
     </form>
