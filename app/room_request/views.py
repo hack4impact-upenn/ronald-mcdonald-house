@@ -170,8 +170,10 @@ def new():
                 send_email,
                 recipient=room_request.email,
                 subject='PRMH Room Request Submitted',
-                template='room_request/confirmation_email',
-                roomreq=room_request)
+                template='room_request/email/confirmation',
+                num_guests=len(room_request.guests),
+                roomreq=room_request
+            )
             flash('Successfully submitted form', 'form-success')
         except IntegrityError:
             db.session.rollback()

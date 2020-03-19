@@ -120,7 +120,7 @@
                                         </div>
                                     </div>
                                     <tr onclick="window.location.href = '{{ url_for('room_request.manage', id=r.id) }}';">
-                                        <td><button class="ui red button" onclick="openDeleteModal(event, {{ r.id }})">Delete</button></td>
+                                        <td id="delete-button"><button class="ui red button" onclick="openDeleteModal(event, {{ r.id }})">Delete</button></td>
                                         <td>{{ r.first_name }}</td>
                                         <td>{{ r.last_name }}</td>
                                         <td>{{ r.email }}</td>
@@ -190,7 +190,7 @@
                         $('#search-room-requests').keyup(function () {
                             var searchText = $(this).val();
                             if (searchText.length > 0) {
-                                $('tbody td:icontains(' + searchText + ')').addClass('positive');
+                                $('tbody td:icontains(' + searchText + ')').not( "[id='delete-button']" ).addClass('positive');
                                 $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
                                 $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
                                 $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();

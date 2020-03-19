@@ -1,0 +1,9 @@
+<p>Dear {{ roomreq.first_name + ' ' + roomreq.last_name }},</p>
+
+<p>Your request to stay from {{ roomreq.patient_check_in }} to {{ roomreq.patient_check_out }} for {{ num_guests }} people has been approved</p>
+
+<p>Sincerely,</p>
+
+<p>The {{ config.APP_NAME }} Team</p>
+
+<p><small>Note: replies to this email address are not monitored.</small></p>
