@@ -41,7 +41,7 @@ def get_room_request_from_form(form):
         wheelchair_access=form.wheelchair_access.data,
         full_bathroom=form.full_bathroom.data,
         pack_n_play=form.pack_n_play.data)
-    
+
     guests = []
     for i in range(1, 6):
         guest_name = form[f'guest{i}_name'].data

@@ -5,6 +5,7 @@ from flask import (
     render_template,
     request,
     url_for,
+    abort
 )
 from flask_login import current_user, login_required
 from flask_rq import get_queue
@@ -34,7 +35,7 @@ room_request = Blueprint('room_request', __name__)
 def index():
     """View all room requests."""
     room_requests = RoomRequest.query.all()
-    if (current_user.role.name == 'Admin'):
+    if (current_user.role.name == 'Administrator'):
         return render_template('admin/index.html', room_requests=room_requests)
     else:
         return render_template('staff/index.html', room_requests=room_requests)
@@ -108,7 +109,7 @@ def comments(id):
         activity_form=activity_form,
         comments_all=comments_all)
 
-@room_request.route('/<int:id>/edit')
+@room_request.route('/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit(id):
     """Edit room request info."""
@@ -171,8 +172,10 @@ def new():
                 send_email,
                 recipient=room_request.email,
                 subject='PRMH Room Request Submitted',
-                template='room_request/confirmation_email',
-                roomreq=room_request)
+                template='room_request/email/confirmation',
+                num_guests=len(room_request.guests),
+                roomreq=room_request
+            )
             flash('Successfully submitted form', 'form-success')
         except IntegrityError:
             db.session.rollback()

@@ -1,0 +1,13 @@
+Dear {{ roomreq.first_name + ' ' + roomreq.last_name }},
+
+Thank you for applying to stay at the Philadelphia Ronald McDonald House.
+
+Your request to stay from {{ roomreq.patient_check_in }} to {{ roomreq.patient_check_out }} for {{ num_guests }} people is being processed.
+
+You will receive a confirmation from our staff if your room request is approved.
+
+Sincerely,
+
+The {{ config.APP_NAME }} Team
+
+Note: replies to this email address are not monitored.
