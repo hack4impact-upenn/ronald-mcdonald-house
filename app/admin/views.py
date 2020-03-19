@@ -21,6 +21,7 @@ from app.decorators import admin_required
 from app.email import send_email
 from app.models import EditableHTML, Role, User, RoomRequest
 from sqlalchemy import func
+import re
 
 admin = Blueprint('admin', __name__)
 
@@ -33,7 +34,7 @@ def index():
     users = User.query.all()
     roles = Role.query.all()
     room_requests = RoomRequest.query.all()
-    duplicates = db.session.query(RoomRequest.email, func.count(RoomRequest.email)).group_by(RoomRequest.email).all()
+    duplicates = duplicate_requests(room_requests)
 
     return render_template('admin/index.html', users=users, roles=roles, room_requests=room_requests, duplicates=duplicates)
 
@@ -217,16 +218,13 @@ def update_email_confirmation():
     return render_template(
         'room_request/confirmation_email.html', editable_html_obj=editable_html_obj)
 
-
-@admin.route('/duplicate_requests')
-@login_required
-@admin_required
-def duplicate_requests():
+def duplicate_requests(room_requests):
     """Find duplicate room requests."""
 
     def extract_primary_phone(room_request):
         """Extract and normalize the primary phone field, possibly caching the value."""
 
+        clean_phone = '+1{},\n'.format(re.sub(r'[^0-9]', '', room_request.primary_phone))
         return room_request.primary_phone
 
     def extract_email(room_request):
@@ -288,9 +286,6 @@ def duplicate_requests():
         # Return the connected component.
         return component
 
-    # Fetch all room requests.
-    room_requests = RoomRequest.query.all()
-
     # Initialize auxiliary data structures.
     extractors = [extract_primary_phone, extract_email]
     relations = build_graph(room_requests, extractors)
@@ -309,4 +304,4 @@ def duplicate_requests():
         if len(group) > 1:
             groups.append(group)
 
-    return str(groups), 200
+    return groups
