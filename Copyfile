@@ -1,0 +1,3 @@
+freedts.conf:/etc/freetds/
+odbcinst.ini:/etc/
+odbc.ini /etc/
