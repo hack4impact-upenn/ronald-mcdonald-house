@@ -62,7 +62,7 @@
                 <div class="active item" data-tab="tab-name" style="cursor: pointer;">Room Requests</div>
                 <div class="item" data-tab="tab-name1" style="cursor: pointer;">Duplicates</div>
                 <div class="item" data-tab="tab-name2" style="cursor: pointer;">Users</div>
-                <!-- <div class="item" data-tab="tab-name3" style="cursor: pointer;">Emails</div> -->
+                <div class="item" data-tab="tab-name3" style="cursor: pointer;">Additional</div>
             </div>
 
                 <div class="active ui tab" data-tab="tab-name">
@@ -76,7 +76,7 @@
                                 </div>
                             </h2>
 
-                            <div class="ui fluid search">
+                            <div class="ui fluid search" style="margin-bottom:16px;">
                                 <div class="ui icon input">
                                     <input class="prompt" id="search-room-requests" type="text" placeholder="Search room requests">
                                     <i class="search icon"></i>
@@ -86,91 +86,41 @@
                                 <table class="ui searchable sortable unstackable selectable celled table">
                                   <thead>
                                       <tr>
-                                          <th>Delete</th>
-                                          <th>Requester First Name</th>
-                                          <th class="sorted ascending">Requester Last Name</th>
-                                          <th>Email Address</th>
-                                          <th>Relationship to Patient</th>
-                                          <th>Address</th>
-                                          <th>Primary Phone</th>
-                                          <th>Secondary Phone</th>
-                                          <th>Primary Language</th>
-                                          <th>Secondary Language</th>
-                                          <th>Requested Before?</th>
                                           <th>Patient First Name</th>
                                           <th>Patient Last Name</th>
-                                          <th>Patient Birthday</th>
-                                          <th>Patient Gender</th>
-                                          <th>Hospital in Philadelphia</th>
-                                          <th>Hospital Department</th>
-                                          <th>Treatment Description</th>
-                                          <th>Diagnosis</th>
-                                          <th>First Appointment Date</th>
                                           <th>Check In</th>
                                           <th>Check Out</th>
-                                          <th>Treating Doctor</th>
-                                          <th>Doctor Phone</th>
-                                          <th>Hospital Social Worker</th>
-                                          <th>Hospital Social Worker Phone</th>
+                                          <th>Hospital in Philadelphia</th>
+                                          <th>Diagnosis</th>
                                           <th>Inpatient/Outpatient</th>
                                           <th>Inpatient Stay?</th>
-                                          <th>Vaccinated?</th>
-                                          <th>Wheelchair Access?</th>
-                                          <th>Full Bathroom?</th>
-                                          <th>Pack 'n Play?</th>
-                                          <th style="min-width: 400px; white-space: normal;">Additional Comments</th>
+                                          <th>Requester First Name</th>
+                                          <th class="sorted ascending">Requester Last Name</th>
+                                          <th>Relationship to Patient</th>
+                                          <th>Email Address</th>
+                                          <th>Primary Phone</th>
+                                          <th>Primary Language</th>
+                                          <th>Requested Before?</th>
                                       </tr>
                                   </thead>
                                   <tbody>
                                   {% for r in room_requests %}
-                                  <!--modal-->
-                                  <div class="ui modal" id="delete-room-request-modal-{{ r.id }}">
-                                      <div class="header">Confirm Deletion Request</div>
-                                      <div class="content">
-                                          <p>Do you want to delete this entry?</p>
-                                      </div>
-                                      <div class="actions">
-                                          <div class="ui red approve button" onclick="deleteUser({{ r.id }})">Confirm</div>
-                                          <div class="ui cancel button">Cancel</div>
-                                      </div>
-                                  </div>
                                   <tr onclick="window.location.href = '{{ url_for('room_request.manage', id=r.id) }}';">
-                                      <td id="delete-button"><button class="ui red button" onclick="openDeleteModal(event, {{ r.id }})">Delete</button></td>
-                                      <td>{{ r.first_name }}</td>
-                                      <td>{{ r.last_name }}</td>
-                                      <td>{{ r.email }}</td>
-                                      <td>{{ r.relationship_to_patient }}</td>
-                                      <td class="collapsing">
-                                          {{ r.address_line_one }} {{ r.address_line_two }} <br />
-                                          {{ r.city }}, {{ r.state }}, {{ r.zip_code }}, {{ r.country }}
-                                      </td>
-                                      <td>{{ r.primary_phone }}</td>
-                                      <td>{{ r.secondary_phone }}</td>
-                                      <td>{{ r.primary_language }}</td>
-                                      <td>{{ r.secondary_language }}</td>
-                                      <td>{{ 'Yes' if r.previous_stay else 'No' }}</td>
                                       <td class="collapsing">{{ r.patient_first_name }}</td>
                                       <td class="collapsing">{{ r.patient_last_name }}</td>
-                                      <td>{{ r.patient_dob }}</td>
-                                      <td>{{ r.patient_gender }}</td>
-                                      <td class="collapsing">{{ r.patient_hospital }}</td>
-                                      <td>{{ r.patient_hospital_department }}</td>
-                                      <td class="collapsing">{{ r.patient_treatment_description }}</td>
-                                      <td class="collapsing">{{ r.patient_diagnosis }}</td>
-                                      <td class="collapsing">{{ r.patient_first_appt_date }}</td>
                                       <td class="collapsing">{{ r.patient_check_in }}</td>
                                       <td class="collapsing">{{ r.patient_check_out }}</td>
-                                      <td class="collapsing">{{ r.patient_treating_doctor }}</td>
-                                      <td class="collapsing">{{ r.patient_doctors_phone }}</td>
-                                      <td class="collapsing">{{ r.patient_social_worker }}</td>
-                                      <td class="collapsing">{{ r.patient_social_worker_phone }}</td>
+                                      <td class="collapsing">{{ r.patient_hospital }}</td>
+                                      <td class="collapsing">{{ r.patient_diagnosis }}</td>
                                       <td>{{ r.inpatient }}</td>
                                       <td>{{ 'Yes' if r.inpatient_prior else 'No' }}</td>
-                                      <td>{{ 'Yes' if r.vaccinated else 'No' }}</td>
-                                      <td>{{ 'Yes' if r.wheelchair_access else 'No' }}</td>
-                                      <td>{{ 'Yes' if r.full_bathroom else 'No' }}</td>
-                                      <td>{{ 'Yes' if r.pack_n_play else 'No' }}</td>
-                                      <td class="collapsing" style="min-width: 400px; white-space: normal;">{{ r.comments }}</td>
+                                      <td>{{ r.first_name }}</td>
+                                      <td>{{ r.last_name }}</td>
+                                      <td>{{ r.relationship_to_patient }}</td>
+                                      <td>{{ r.email }}</td>
+                                      <td>{{ r.primary_phone }}</td>
+                                      <td>{{ r.primary_language }}</td>
+                                      <td>{{ 'Yes' if r.previous_stay else 'No' }}</td>
                                   </tr>
                                   {% endfor %}
                                   </tbody>
@@ -181,31 +131,11 @@
                     </div>
 
                 <script type="text/javascript">
-                    function openDeleteModal(e, room_request_id) {
-                        $(`#delete-room-request-modal-${room_request_id}`).modal('show')
-                        e.stopImmediatePropagation();
-                    }
-
-                    // Make a DELETE request to the following URL
-                    function deleteUser(user_id) {
-                        $.ajax({
-                            url: `/room-request/${user_id}/_delete`,
-                            type: 'DELETE',
-                            success: function(response) {
-                            // Print the response in the browser console
-                            console.log(response)
-                            // Refresh the page
-                            document.location.reload()
-                            },
-                            data: {"csrf_token": `{{ csrf_token() }}`}
-                        })
-                    }
-
                     $(document).ready(function () {
                         $('#search-room-requests').keyup(function () {
                             var searchText = $(this).val();
                             if (searchText.length > 0) {
-                                $('tbody td:icontains(' + searchText + ')').not( "[id='delete-button']" ).addClass('positive');
+                                $('tbody td:icontains(' + searchText + ')').addClass('positive');
                                 $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
                                 $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
                                 $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
@@ -242,39 +172,22 @@
                             <table class="ui unstackable selectable single line celled table striped">
                               <thead>
                                   <tr>
-                                      <th>Expand Duplicates</th>
-                                      <th>Requester First Name</th>
-                                      <th>Requester Last Name</th>
-                                      <th>Email Address</th>
-                                      <th>Relationship to Patient</th>
-                                      <th>Address</th>
-                                      <th>Primary Phone</th>
-                                      <th>Secondary Phone</th>
-                                      <th>Primary Language</th>
-                                      <th>Secondary Language</th>
-                                      <th>Requested Before?</th>
+                                      <th>Show Duplicates</th>
                                       <th>Patient First Name</th>
                                       <th>Patient Last Name</th>
-                                      <th>Patient Birthday</th>
-                                      <th>Patient Gender</th>
-                                      <th>Hospital in Philadelphia</th>
-                                      <th>Hospital Department</th>
-                                      <th>Treatment Description</th>
-                                      <th>Diagnosis</th>
-                                      <th>First Appointment Date</th>
                                       <th>Check In</th>
                                       <th>Check Out</th>
-                                      <th>Treating Doctor</th>
-                                      <th>Doctor Phone</th>
-                                      <th>Hospital Social Worker</th>
-                                      <th>Hospital Social Worker Phone</th>
+                                      <th>Hospital in Philadelphia</th>
+                                      <th>Diagnosis</th>
                                       <th>Inpatient/Outpatient</th>
                                       <th>Inpatient Stay?</th>
-                                      <th>Vaccinated?</th>
-                                      <th>Wheelchair Access?</th>
-                                      <th>Full Bathroom?</th>
-                                      <th>Pack 'n Play?</th>
-                                      <th style="min-width: 400px; white-space: normal;">Additional Comments</th>
+                                      <th>Requester First Name</th>
+                                      <th class="sorted ascending">Requester Last Name</th>
+                                      <th>Relationship to Patient</th>
+                                      <th>Email Address</th>
+                                      <th>Primary Phone</th>
+                                      <th>Primary Language</th>
+                                      <th>Requested Before?</th>
                                   </tr>
                               </thead>
                                 {% for d in duplicates %}
@@ -290,82 +203,42 @@
                                         </span>
                                         </div>
                                       </td>
-                                      <td>{{ d[0].first_name }}</td>
-                                      <td>{{ d[0].last_name }}</td>
-                                      <td>{{ d[0].email }}</td>
-                                      <td>{{ d[0].relationship_to_patient }}</td>
-                                      <td class="collapsing">
-                                          {{ d[0].address_line_one }} {{ d[0].address_line_two }} <br />
-                                          {{ d[0].city }}, {{ d[0].state }}, {{ d[0].zip_code }}, {{ d[0].country }}
-                                      </td>
-                                      <td>{{ d[0].primary_phone }}</td>
-                                      <td>{{ d[0].secondary_phone }}</td>
-                                      <td>{{ d[0].primary_language }}</td>
-                                      <td>{{ d[0].secondary_language }}</td>
-                                      <td>{{ 'Yes' if d[0].previous_stay else 'No' }}</td>
                                       <td class="collapsing">{{ d[0].patient_first_name }}</td>
                                       <td class="collapsing">{{ d[0].patient_last_name }}</td>
-                                      <td>{{ d[0].patient_dob }}</td>
-                                      <td>{{ d[0].patient_gender }}</td>
-                                      <td class="collapsing">{{ d[0].patient_hospital }}</td>
-                                      <td>{{ d[0].patient_hospital_department }}</td>
-                                      <td class="collapsing">{{ d[0].patient_treatment_description }}</td>
-                                      <td class="collapsing">{{ d[0].patient_diagnosis }}</td>
-                                      <td class="collapsing">{{ d[0].patient_first_appt_date }}</td>
                                       <td class="collapsing">{{ d[0].patient_check_in }}</td>
                                       <td class="collapsing">{{ d[0].patient_check_out }}</td>
-                                      <td class="collapsing">{{ d[0].patient_treating_doctor }}</td>
-                                      <td class="collapsing">{{ d[0].patient_doctors_phone }}</td>
-                                      <td class="collapsing">{{ d[0].patient_social_worker }}</td>
-                                      <td class="collapsing">{{ d[0].patient_social_worker_phone }}</td>
+                                      <td class="collapsing">{{ d[0].patient_hospital }}</td>
+                                      <td class="collapsing">{{ d[0].patient_diagnosis }}</td>
                                       <td>{{ d[0].inpatient }}</td>
                                       <td>{{ 'Yes' if d[0].inpatient_prior else 'No' }}</td>
-                                      <td>{{ 'Yes' if d[0].vaccinated else 'No' }}</td>
-                                      <td>{{ 'Yes' if d[0].wheelchair_access else 'No' }}</td>
-                                      <td>{{ 'Yes' if d[0].full_bathroom else 'No' }}</td>
-                                      <td>{{ 'Yes' if d[0].pack_n_play else 'No' }}</td>
-                                      <td class="collapsing" style="min-width: 400px; white-space: normal;">{{ d[0].comments }}</td>
+                                      <td>{{ d[0].first_name }}</td>
+                                      <td>{{ d[0].last_name }}</td>
+                                      <td>{{ d[0].relationship_to_patient }}</td>
+                                      <td>{{ d[0].email }}</td>
+                                      <td>{{ d[0].primary_phone }}</td>
+                                      <td>{{ d[0].primary_language }}</td>
+                                      <td>{{ 'Yes' if d[0].previous_stay else 'No' }}</td>
                                   </tr>
                                 </tbody>
                                 <tbody hidden>
                                   {% for r in d[1:] %}
                                   <tr onclick="window.location.href = '{{ url_for('room_request.manage', id=r.id) }}';">
                                       <td></td>
-                                      <td>{{ r.first_name }}</td>
-                                      <td>{{ r.last_name }}</td>
-                                      <td>{{ r.email }}</td>
-                                      <td>{{ r.relationship_to_patient }}</td>
-                                      <td class="collapsing">
-                                          {{ r.address_line_one }} {{ r.address_line_two }} <br />
-                                          {{ r.city }}, {{ r.state }}, {{ r.zip_code }}, {{ r.country }}
-                                      </td>
-                                      <td>{{ r.primary_phone }}</td>
-                                      <td>{{ r.secondary_phone }}</td>
-                                      <td>{{ r.primary_language }}</td>
-                                      <td>{{ r.secondary_language }}</td>
-                                      <td>{{ 'Yes' if r.previous_stay else 'No' }}</td>
                                       <td class="collapsing">{{ r.patient_first_name }}</td>
                                       <td class="collapsing">{{ r.patient_last_name }}</td>
-                                      <td>{{ r.patient_dob }}</td>
-                                      <td>{{ r.patient_gender }}</td>
-                                      <td class="collapsing">{{ r.patient_hospital }}</td>
-                                      <td>{{ r.patient_hospital_department }}</td>
-                                      <td class="collapsing">{{ r.patient_treatment_description }}</td>
-                                      <td class="collapsing">{{ r.patient_diagnosis }}</td>
-                                      <td class="collapsing">{{ r.patient_first_appt_date }}</td>
                                       <td class="collapsing">{{ r.patient_check_in }}</td>
                                       <td class="collapsing">{{ r.patient_check_out }}</td>
-                                      <td class="collapsing">{{ r.patient_treating_doctor }}</td>
-                                      <td class="collapsing">{{ r.patient_doctors_phone }}</td>
-                                      <td class="collapsing">{{ r.patient_social_worker }}</td>
-                                      <td class="collapsing">{{ r.patient_social_worker_phone }}</td>
+                                      <td class="collapsing">{{ r.patient_hospital }}</td>
+                                      <td class="collapsing">{{ r.patient_diagnosis }}</td>
                                       <td>{{ r.inpatient }}</td>
                                       <td>{{ 'Yes' if r.inpatient_prior else 'No' }}</td>
-                                      <td>{{ 'Yes' if r.vaccinated else 'No' }}</td>
-                                      <td>{{ 'Yes' if r.wheelchair_access else 'No' }}</td>
-                                      <td>{{ 'Yes' if r.full_bathroom else 'No' }}</td>
-                                      <td>{{ 'Yes' if r.pack_n_play else 'No' }}</td>
-                                      <td class="collapsing" style="min-width: 400px; white-space: normal;">{{ r.comments }}</td>
+                                      <td>{{ r.first_name }}</td>
+                                      <td>{{ r.last_name }}</td>
+                                      <td>{{ r.relationship_to_patient }}</td>
+                                      <td>{{ r.email }}</td>
+                                      <td>{{ r.primary_phone }}</td>
+                                      <td>{{ r.primary_language }}</td>
+                                      <td>{{ 'Yes' if r.previous_stay else 'No' }}</td>
                                   </tr>
                                   {% endfor %}
                                 </tbody>
@@ -486,38 +359,22 @@
                 </script>
             </div>
 
-            <!-- <div class="ui tab" data-tab="tab-name3">
+            <div class="ui tab" data-tab="tab-name3">
                 <div class="ui stackable grid container">
                     <div class="sixteen wide column">
                         {{ dashboard_option('Edit Room Request Confirmation Email', 'admin.update_email_confirmation',
                                     description='Sent when anyone submits the room request form', icon='envelope icon') }}
                     </div>
+                    <div class="sixteen wide column">
+                        {{ dashboard_option('Edit Room Request Confirmation Email', 'admin.update_email_confirmation',
+                                    description='Sent when anyone submits the room request form', icon='envelope icon') }}
+                    </div>
+                    <div class="sixteen wide column">
+                        {{ dashboard_option('Edit Room Request Confirmation Email', 'admin.update_email_confirmation',
+                                    description='Sent when anyone submits the room request form', icon='envelope icon') }}
+                    </div>
                 </div>
-
-                <script type="text/javascript">
-                    $(document).ready(function () {
-                        $('#search-users').keyup(function () {
-                            var searchText = $(this).val();
-                            if (searchText.length > 0) {
-                                $('tbody td:icontains(' + searchText + ')').addClass('positive');
-                                $('td.positive').not(':icontains(' + searchText + ')').removeClass('positive');
-                                $('tbody td').not(':icontains(' + searchText + ')').closest('tr').addClass('hidden').hide();
-                                $('tr.hidden:icontains(' + searchText + ')').removeClass('hidden').show();
-                            } else {
-                                $('td.positive').removeClass('positive');
-                                $('tr.hidden').removeClass('hidden').show();
-                            }
-                        });
-
-                        $('#select-role').dropdown({
-                            onChange: function (value, text, $selectedItem) {
-                                $('td.user.role:contains(' + value + ')').closest('tr').removeClass('hidden').show();
-                                $('td.user.role').not(':contains(' + value + ')').closest('tr').addClass('hidden').hide();
-                                }
-                        });
-                    });
-                </script>
-            </div> -->
+            </div>
 
             <script>
                 $('.tabular.menu .item').tab();

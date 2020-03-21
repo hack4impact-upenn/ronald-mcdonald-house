@@ -8,8 +8,7 @@ from .. import db, login_manager
 
 
 class Permission:
-    GENERAL = 0x01
-    STAFF = 0x80
+    STAFF = 0x01
     ADMINISTER = 0xff
 
 
@@ -25,8 +24,7 @@ class Role(db.Model):
     @staticmethod
     def insert_roles():
         roles = {
-            'User': (Permission.GENERAL, 'main', True),
-            'Staff': (Permission.STAFF, 'room_request', True),
+            'Staff': (Permission.STAFF, 'staff', True),
             'Administrator': (
                 Permission.ADMINISTER,
                 'admin',

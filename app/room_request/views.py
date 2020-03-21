@@ -221,7 +221,7 @@ def view(id):
 def connectionString(table, dbString):
     return ("""SELECT ISNULL(
         (
-         SELECT [sup{}].[{}ID] 
+         SELECT [sup{}].[{}ID]
          FROM [sup{}]
          WHERE [sup{}].[{}Desc] = {}
         ), 1)""".format(table, table, table, table, table, ("\'" + dbString.replace("'","''") + "\'")))
@@ -240,8 +240,8 @@ def transfer(id):
             os.getenv('AZURE_SERVER'),
             os.getenv('AZURE_DATABASE'),
             os.getenv('AZURE_USERNAME'),
-            os.getenv('AZURE_PASS'))    
-    params = urllib.parse.quote_plus(param_string)    
+            os.getenv('AZURE_PASS'))
+    params = urllib.parse.quote_plus(param_string)
     engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
     session = sessionmaker(bind=engine)()
     metadata = MetaData(bind=engine)

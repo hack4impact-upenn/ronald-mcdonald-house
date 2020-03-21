@@ -97,4 +97,6 @@ def create_app(config):
     from .staff import staff as staff_blueprint
     app.register_blueprint(staff_blueprint, url_prefix='/staff')
 
+    db.app = app
+
     return app
