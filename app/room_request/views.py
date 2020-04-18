@@ -168,14 +168,14 @@ def new():
         try:
             db.session.add(room_request)
             db.session.commit()
-            get_queue().enqueue(
-                send_email,
-                recipient=room_request.email,
-                subject='PRMH Room Request Submitted',
-                template='room_request/email/confirmation',
-                num_guests=len(room_request.guests),
-                roomreq=room_request
-            )
+            # get_queue().enqueue(
+            #     send_email,
+            #     recipient=room_request.email,
+            #     subject='PRMH Room Request Submitted',
+            #     template='room_request/email/confirmation',
+            #     num_guests=len(room_request.guests),
+            #     roomreq=room_request
+            # )
             return render_template('room_request/success.html')
         except IntegrityError:
             db.session.rollback()
