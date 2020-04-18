@@ -134,7 +134,7 @@ class RoomRequestForm(FlaskForm):
     wheelchair_access = BooleanField('Wheelchair access')
     full_bathroom = BooleanField('Full bathroom with tub')
     pack_n_play = BooleanField("Pack 'n Play")
-    recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()
     submit = SubmitField('Create')
 
 
