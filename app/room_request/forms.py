@@ -24,7 +24,7 @@ class RoomRequestForm(FlaskForm):
     state = StringField(
         'State', validators=[InputRequired()])
     zipcode = StringField(
-        'Zipcode', validators=[InputRequired()])
+        'Zip Code', validators=[InputRequired()])
     country = StringField(
         'Country', validators=[InputRequired()])
     phone_number = TelField(

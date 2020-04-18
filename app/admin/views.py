@@ -162,7 +162,7 @@ def change_account_type(user_id):
     return render_template('admin/manage_user.html', user=user, form=form)
 
 
-@admin.route('/user/<int:user_id>/delete')
+@admin.route('/user/<int:user_id>/delete', methods=['GET', 'DELETE'])
 @login_required
 @admin_required
 def delete_user_request(user_id):
@@ -173,7 +173,7 @@ def delete_user_request(user_id):
     return render_template('admin/manage_user.html', user=user)
 
 
-@admin.route('/user/<int:user_id>/_delete')
+@admin.route('/user/<int:user_id>/_delete', methods=['GET', 'DELETE'])
 @login_required
 @admin_required
 def delete_user(user_id):
@@ -209,14 +209,34 @@ def update_editor_contents():
 
     return 'OK', 200
 
-@admin.route('/update_email_confirmation')
+
+@admin.route('/edit_email_confirmation')
 @login_required
 @admin_required
 def update_email_confirmation():
-    """Update the email confirmation upon room request submission."""
-    editable_html_obj = EditableHTML.get_editable_html('room_request_email')
+    editable_html_obj = EditableHTML.get_editable_html('email_confirmation')
     return render_template(
-        'room_request/confirmation_email.html', editable_html_obj=editable_html_obj)
+        'room_request/edit_text.html', editable_html_obj=editable_html_obj, title="Confirmation Email")
+
+
+@admin.route('/edit_home')
+@login_required
+@admin_required
+def update_home():
+    editable_html_obj = EditableHTML.get_editable_html('home_page_language')
+    return render_template(
+        'room_request/edit_text.html', editable_html_obj=editable_html_obj, title="Home Page Language")
+
+
+@admin.route('/edit_form_instructions')
+@login_required
+@admin_required
+def update_form_instructions():
+    """Update the email confirmation upon room request submission."""
+    editable_html_obj = EditableHTML.get_editable_html("form_instructions")
+    return render_template(
+        'room_request/edit_text.html', editable_html_obj=editable_html_obj, title="Form Instructions")
+
 
 def duplicate_requests(room_requests):
     """Find duplicate room requests."""

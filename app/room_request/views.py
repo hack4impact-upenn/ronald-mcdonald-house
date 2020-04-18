@@ -130,7 +130,7 @@ def edit(id):
     return render_template('room_request/manage.html', room_request=room_request, form=form)
 
 
-@room_request.route('<int:id>/delete', methods=['DELETE'])
+@room_request.route('<int:id>/delete', methods=['GET', 'DELETE'])
 @login_required
 def delete(id):
     """Request deletion of a room request, but does not actually perform the action until user confirmation."""
@@ -140,7 +140,7 @@ def delete(id):
     return render_template('room_request/manage.html', room_request=room_request)
 
 
-@room_request.route('<int:id>/_delete', methods=['DELETE'])
+@room_request.route('<int:id>/_delete', methods=['GET', 'DELETE'])
 @login_required
 def _delete(id):
     """Delete a room request."""
@@ -151,15 +151,15 @@ def _delete(id):
         db.session.commit()
         # flash("Successfully deleted room request for " + room_request.first_name + " ", room_request.last_name + ".", 'success')
     if (current_user.role.name == 'Administrator'):
-        return render_template('admin/index.html', room_requests=room_requests)
+        return redirect(url_for('admin.index'))
     else:
-        return render_template('staff/index.html', room_requests=room_requests)
+        return redirect(url_for('staff.index'))
 
 
 @room_request.route('/new', methods=['GET', 'POST'])
 def new():
     """Room Request page."""
-    editable_html_obj = EditableHTML.get_editable_html('room_request')
+    editable_html_obj = EditableHTML.get_editable_html('form_instructions')
     form = RoomRequestForm(request.form)
     if form.is_submitted() and not form.validate_on_submit():
         flash('Please check the reCaptcha at the bottom of the page.', 'form-error')
@@ -176,7 +176,7 @@ def new():
                 num_guests=len(room_request.guests),
                 roomreq=room_request
             )
-            flash('Successfully submitted form', 'form-success')
+            return render_template('room_request/success.html')
         except IntegrityError:
             db.session.rollback()
             flash('Unable to save changes. Please try again.', 'form-error')

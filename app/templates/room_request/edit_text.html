@@ -3,7 +3,11 @@
 
 {% block content %}
     <div class="ui text container">
-      <h1>Update Room Request Confirmation Email</h1>
+      <a class="ui basic compact button" href="{{ url_for('admin.index') }}">
+          <i class="caret left icon"></i>
+          Back to dashboard
+      </a>
+      <h1>Edit {{ title }}</h1>
         {{ page.render_inline_editor(editable_html_obj, current_user) }}
     </div>
     <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
