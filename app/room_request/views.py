@@ -15,6 +15,7 @@ import os
 import datetime
 import urllib
 import logging
+import html2text
 
 import sqlalchemy
 from sqlalchemy import create_engine, not_, or_
@@ -164,7 +165,6 @@ def new():
     editable_html_obj = EditableHTML.get_editable_html('form_instructions')
     editable_html_obj_email = EditableHTML.get_editable_html('email_confirmation')
     email = editable_html_obj_email.value
-    logger.error(email)
     form = RoomRequestForm(request.form)
     if form.is_submitted() and not form.validate_on_submit():
         flash('Please fill out all required fields and check the reCaptcha at the bottom of the page.', 'form-error')
@@ -173,6 +173,11 @@ def new():
             room_request = get_room_request_from_form(form)
             db.session.add(room_request)
             db.session.commit()
+            greeting = "<p>Dear " + room_request.last_name + " Family,\n\n"
+            info = '''Thank you for contacting us to request a room at the Philadelphia Ronald McDonald House.
+            You have requested an arrival date of ''' + room_request.patient_check_in.strftime("%m/%d/%Y") +
+            " and a departure date of " + room_request.patient_check_out.strftime("%m/%d/%Y") + ".\n\n"
+            email = greeting + info + email
             get_queue().enqueue(
                 send_custom_email,
                 recipient=room_request.email,
