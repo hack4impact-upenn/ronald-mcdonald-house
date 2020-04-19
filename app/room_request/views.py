@@ -161,8 +161,8 @@ def new():
     """Room Request page."""
     editable_html_obj = EditableHTML.get_editable_html('form_instructions')
     editable_html_obj_email = EditableHTML.get_editable_html('email_confirmation')
-    form = RoomRequestForm(request.form)
     email = editable_html_obj_email.value
+    form = RoomRequestForm(request.form)
     if form.is_submitted() and not form.validate_on_submit():
         flash('Please fill out all required fields and check the reCaptcha at the bottom of the page.', 'form-error')
     elif form.validate_on_submit():
@@ -170,6 +170,12 @@ def new():
             room_request = get_room_request_from_form(form)
             db.session.add(room_request)
             db.session.commit()
+            get_queue().enqueue(
+                send_custom_email,
+                recipient=room_request.email,
+                subject='PRMH Room Request Submitted',
+                custom_html=editable_html_obj_email
+            )
             return render_template('room_request/success.html')
         except IntegrityError:
             db.session.rollback()
