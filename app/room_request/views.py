@@ -14,6 +14,7 @@ from app import db
 import os
 import datetime
 import urllib
+import logging
 
 import sqlalchemy
 from sqlalchemy import create_engine, not_, or_
@@ -28,6 +29,7 @@ from ..decorators import admin_required
 from ..email import send_email, send_custom_email
 from ..models import Activity, EditableHTML, RoomRequest, Guest, User, Role
 
+logger = logging.getLogger('werkzeug')
 room_request = Blueprint('room_request', __name__)
 
 @room_request.route('/')
@@ -162,6 +164,7 @@ def new():
     editable_html_obj = EditableHTML.get_editable_html('form_instructions')
     editable_html_obj_email = EditableHTML.get_editable_html('email_confirmation')
     email = editable_html_obj_email.value
+    logger.error(email)
     form = RoomRequestForm(request.form)
     if form.is_submitted() and not form.validate_on_submit():
         flash('Please fill out all required fields and check the reCaptcha at the bottom of the page.', 'form-error')
@@ -174,13 +177,13 @@ def new():
                 send_custom_email,
                 recipient=room_request.email,
                 subject='PRMH Room Request Submitted',
-                custom_html=editable_html_obj_email
+                custom_html=email
             )
             return render_template('room_request/success.html')
         except IntegrityError:
             db.session.rollback()
             flash('Unable to save changes. Please try again.', 'form-error')
-    return render_template('room_request/new.html', form=form, editable_html_obj=email)
+    return render_template('room_request/new.html', form=form, editable_html_obj=editable_html_obj)
 
 
 @room_request.route('/<int:id>', methods=['GET', 'POST'])
