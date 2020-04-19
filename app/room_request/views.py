@@ -25,7 +25,7 @@ from sqlalchemy import *
 from .forms import RoomRequestForm, ActivityForm, TransferForm
 from .helpers import get_room_request_from_form, get_form_from_room_request
 from ..decorators import admin_required
-from ..email import send_email
+from ..email import send_email, send_custom_email
 from ..models import Activity, EditableHTML, RoomRequest, Guest, User, Role
 
 room_request = Blueprint('room_request', __name__)
@@ -160,27 +160,21 @@ def _delete(id):
 def new():
     """Room Request page."""
     editable_html_obj = EditableHTML.get_editable_html('form_instructions')
+    editable_html_obj_email = EditableHTML.get_editable_html('email_confirmation')
     form = RoomRequestForm(request.form)
+    email = editable_html_obj_email.value
     if form.is_submitted() and not form.validate_on_submit():
-        flash('Please check the reCaptcha at the bottom of the page.', 'form-error')
+        flash('Please fill out all required fields and check the reCaptcha at the bottom of the page.', 'form-error')
     elif form.validate_on_submit():
-        room_request = get_room_request_from_form(form)
         try:
+            room_request = get_room_request_from_form(form)
             db.session.add(room_request)
             db.session.commit()
-            # get_queue().enqueue(
-            #     send_email,
-            #     recipient=room_request.email,
-            #     subject='PRMH Room Request Submitted',
-            #     template='room_request/email/confirmation',
-            #     num_guests=len(room_request.guests),
-            #     roomreq=room_request
-            # )
             return render_template('room_request/success.html')
         except IntegrityError:
             db.session.rollback()
             flash('Unable to save changes. Please try again.', 'form-error')
-    return render_template('room_request/new.html', form=form, editable_html_obj=editable_html_obj)
+    return render_template('room_request/new.html', form=form, editable_html_obj=email)
 
 
 @room_request.route('/<int:id>', methods=['GET', 'POST'])

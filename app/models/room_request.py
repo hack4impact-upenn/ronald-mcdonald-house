@@ -1,7 +1,7 @@
 from .. import db
 from .activity import Activity
 from .guest import Guest
-from sqlalchemy import Column, Integer, Boolean, DateTime
+from sqlalchemy import Column, Integer, Boolean, DateTime, Text
 from datetime import datetime
 
 class RoomRequest(db.Model):
@@ -11,42 +11,42 @@ class RoomRequest(db.Model):
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
     # Requester Personal Information
-    first_name = db.Column(db.String(100))
-    last_name = db.Column(db.String(100))
-    relationship_to_patient = db.Column(db.String(100))
-    address_line_one = db.Column(db.String(1000))
-    address_line_two = db.Column(db.String(1000))
-    city = db.Column(db.String(64))
-    state = db.Column(db.String(64))
-    zip_code = db.Column(db.String(15))
-    country = db.Column(db.String(64))
-    primary_phone = db.Column(db.String(50))
-    secondary_phone = db.Column(db.String(50))
-    email = db.Column(db.String(1000))
-    primary_language = db.Column(db.String(100))
-    secondary_language = db.Column(db.String(100))
+    first_name = db.Column(db.String())
+    last_name = db.Column(db.String())
+    relationship_to_patient = db.Column(db.String())
+    address_line_one = db.Column(db.String())
+    address_line_two = db.Column(db.String())
+    city = db.Column(db.String())
+    state = db.Column(db.String())
+    zip_code = db.Column(db.String())
+    country = db.Column(db.String())
+    primary_phone = db.Column(db.String())
+    secondary_phone = db.Column(db.String())
+    email = db.Column(db.String())
+    primary_language = db.Column(db.String())
+    secondary_language = db.Column(db.String())
     previous_stay = db.Column(db.Boolean())
 
     # Patient Information
-    patient_first_name = db.Column(db.String(100))
-    patient_last_name = db.Column(db.String(100))
+    patient_first_name = db.Column(db.String())
+    patient_last_name = db.Column(db.String())
     patient_dob = db.Column(db.Date)
-    patient_gender = db.Column(db.String(15))
-    patient_hospital = db.Column(db.String(1000))
-    patient_hospital_department = db.Column(db.String(1000))
-    patient_treatment_description = db.Column(db.String(1000))
-    patient_diagnosis = db.Column(db.String(1000))
+    patient_gender = db.Column(db.String())
+    patient_hospital = db.Column(db.String())
+    patient_hospital_department = db.Column(db.String())
+    patient_treatment_description = db.Column(db.String())
+    patient_diagnosis = db.Column(db.String())
     patient_first_appt_date = db.Column(db.Date)
     patient_check_in = db.Column(db.Date)
     patient_check_out = db.Column(db.Date)
-    patient_treating_doctor = db.Column(db.String(100))
-    patient_doctors_phone = db.Column(db.String(64))
-    patient_social_worker = db.Column(db.String(100))
-    patient_social_worker_phone = db.Column(db.String(100))
-    inpatient = db.Column(db.String(24))
+    patient_treating_doctor = db.Column(db.String())
+    patient_doctors_phone = db.Column(db.String())
+    patient_social_worker = db.Column(db.String())
+    patient_social_worker_phone = db.Column(db.String())
+    inpatient = db.Column(db.String())
     inpatient_prior = db.Column(db.Boolean())
     vaccinated = db.Column(db.Boolean())
-    comments = db.Column(db.String(5000))
+    comments = db.Column(db.Text)
 
     # Special Needs
     wheelchair_access = db.Column(db.Boolean())
