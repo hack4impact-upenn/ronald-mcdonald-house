@@ -167,9 +167,11 @@ def new():
     email = editable_html_obj_email.value
     form = RoomRequestForm(request.form)
     if form.is_submitted() and not form.validate_on_submit():
+        logger.error('START')
         flash('Please fill out all required fields and check the reCaptcha at the bottom of the page.', 'form-error')
     elif form.validate_on_submit():
         try:
+            logger.error('START')
             room_request = get_room_request_from_form(form)
             db.session.add(room_request)
             db.session.commit()
@@ -178,14 +180,16 @@ def new():
             You have requested an arrival date of ''' + room_request.patient_check_in.strftime("%m/%d/%Y") +
             " and a departure date of " + room_request.patient_check_out.strftime("%m/%d/%Y") + ".</p>\n\n")
             email = greeting + info + email
-            get_queue().enqueue(
-                send_custom_email,
-                recipient=room_request.email,
-                subject='PRMH Room Request Submitted',
-                custom_html=email
-            )
+            # get_queue().enqueue(
+            #     send_custom_email,
+            #     recipient=room_request.email,
+            #     subject='PRMH Room Request Submitted',
+            #     custom_html=email
+            # )
             return render_template('room_request/success.html')
+            logger.error('END')
         except IntegrityError:
+            logger.error('ERROR')
             db.session.rollback()
             flash('Unable to save changes. Please try again.', 'form-error')
     return render_template('room_request/new.html', form=form, editable_html_obj=editable_html_obj)
