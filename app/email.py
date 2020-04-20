@@ -1,11 +1,14 @@
 import os
 import html2text
+import logging
 
 from flask import render_template, render_template_string
 from flask_mail import Message
 
 from app import create_app
 from app import mail
+
+logger = logging.getLogger('werkzeug')
 
 
 def send_email(recipient, subject, template, **kwargs):

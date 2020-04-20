@@ -48,12 +48,9 @@ class RoomRequestForm(FlaskForm):
     patient_dob = DateField(
         'Date of Birth', validators=[InputRequired()])
     patient_gender = SelectField('Gender', choices=[
-        ('', ''), ('January', 'January'), ('February', 'February'),
-        ('March', 'March'), ('April', 'April'), ('May', 'May'),
-        ('June', 'June'), ('July', 'July'), ('August', 'August'),
-        ('September', 'September'), ('October', 'October'),
-        ('November', 'November'), ('December', 'December')
-    ], validators=[AnyOf(['January', 'February'])])
+        ('', ''), ('Male', 'Male'), ('Female', 'Female'),
+        ('Unborn', 'Unborn'), ('Other', 'Other')
+    ], validators=[AnyOf(['Male', 'Female', 'Unborn', 'Other'])])
     hospital = StringField(
         'Hospital in Philadelphia', validators=[InputRequired(), Length(1, 128)])
     hospital_department = StringField(
@@ -139,7 +136,7 @@ class RoomRequestForm(FlaskForm):
     wheelchair_access = BooleanField('Wheelchair access')
     full_bathroom = BooleanField('Full bathroom with tub')
     pack_n_play = BooleanField("Pack 'n Play")
-    # recaptcha = RecaptchaField()
+    recaptcha = RecaptchaField()
     submit = SubmitField('Create')
 
 

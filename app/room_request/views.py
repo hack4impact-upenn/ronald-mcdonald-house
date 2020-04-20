@@ -173,10 +173,10 @@ def new():
             room_request = get_room_request_from_form(form)
             db.session.add(room_request)
             db.session.commit()
-            greeting = "<p>Dear " + room_request.last_name + " Family,\n\n"
-            info = ('''Thank you for contacting us to request a room at the Philadelphia Ronald McDonald House.
+            greeting = "<p>Dear " + room_request.last_name + " Family,</p>\n\n"
+            info = ('''<p>Thank you for contacting us to request a room at the Philadelphia Ronald McDonald House.
             You have requested an arrival date of ''' + room_request.patient_check_in.strftime("%m/%d/%Y") +
-            " and a departure date of " + room_request.patient_check_out.strftime("%m/%d/%Y") + ".\n\n")
+            " and a departure date of " + room_request.patient_check_out.strftime("%m/%d/%Y") + ".</p>\n\n")
             email = greeting + info + email
             get_queue().enqueue(
                 send_custom_email,
