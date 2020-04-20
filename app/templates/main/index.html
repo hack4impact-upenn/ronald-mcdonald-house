@@ -1,3 +1,4 @@
+{% import 'macros/page_macros.html' as page %}
 {% extends 'layouts/base.html' %}
 
 {% block content %}
@@ -19,18 +20,7 @@
       <b>Before submitting your room request, please read and acknowledge that you understand the following.</b>
       </div>
       <div class="ui segment" style="text-align:justify; padding-right:3em; padding-bottom:2em">
-      <ul id="requirements-list">
-        <li>To ensure the continued safety and security of our guest families, the Philadelphia Ronald McDonald House will require a criminal history background check for all adults ages 18 & older, including the patient, staying at the House. This includes all adult visitors staying overnight in a guest family’s room. An email address for each adult staying overnight must be provided.</li>
-        <li style="padding-top:1em">The Room Request you are about to submit is not a reservation. Our House is usually full and it is likely we may not have a room available for your family on your date of arrival. The information you are about to submit is for the purpose of putting your family on our waiting list.</li>
-        <li style="padding-top:1em">Families who live more than 25 miles (based on <a href="http://maps.randmcnally.com/">Rand McNally</a> – shortest distance) from the Philadelphia Ronald McDonald House, have a child receiving inpatient or active outpatient treatment at a local Philadelphia hospital, and have a child 21 years of age or younger are eligible to stay with us if a room is available.</li>
-        <li style="padding-top:1em">Our Chestnut St. House is within close proximity to the Children’s Hospital of Philadelphia and Wills Eye Institute. In addition, families with children being treated at Jefferson Hospital, the Hospital of the University of Pennsylvania and Pennsylvania Hospital are also welcome to stay at the Chestnut St. House. Our House at Front St. and Erie Ave. is within close proximity to St. Christopher’s Hospital for Children and Shriners Hospital for Children.</li>
-        <li style="padding-top:1em">It is very important that you have a back-up plan in place for alternative housing arrangements in the event our house is full and we are unable to accommodate your family.</li>
-        <li style="padding-top:1em">On the day of your requested arrival, we will call you between 10 a.m. and 1 p.m. to inform you of the status of your room request.</li>
-        <li style="padding-top:1em">If we are unable to accommodate you, we may be able to assist you with hotel arrangements at one of our local hotel partners who offer our families discounted rates.</li>
-        <li style="padding-top:1em">If your date of arrival changes or you need to cancel your room request, please call us. For Chestnut Street, please call (215) 387-8406 and for Front & Erie, please call (215) 291-0907.</li>
-        <li style="padding-top:1em">The Philadelphia Ronald McDonald House is a communal living environment with children who may be immune suppressed, and it is extremely important that we ensure that there are safeguards in place to reduce the risk of infectious diseases spreading in the House. Therefore, medically eligible children need to be vaccinated to stay at House. With questions or for more information, please call (215) 387-8406 for Chestnut Street or (215) 291-0907 for Front & Erie.</li>
-        <li style="padding-top:1em"><b>Due to our expanding size, we are no longer able to provide on-site parking to our families and overnight guests at our Chestnut Street House.  We have partnered with Children’s Hospital of Philadelphia to provide free parking for all of our families. The new parking location is at the Buerger Building, 3500 Civic Center Blvd Philadelphia PA. The lot is approximately one mile from our House and within a block of CHOP’s main Hospital. Van transportation is available from the Buerger Building between 8:30 AM and 8:30 PM.</b></li>
-      </ul>
+        {{ page.render_inline_editor(editable_html_obj, current_user) }}
       </div>
     </div>
 
@@ -57,4 +47,5 @@
       });
     </script>
   </div>
+  <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
 {% endblock %}

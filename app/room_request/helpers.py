@@ -1,4 +1,4 @@
-from ..models import RoomRequest
+from ..models import RoomRequest, Guest
 from .forms import RoomRequestForm
 
 def get_room_request_from_form(form):

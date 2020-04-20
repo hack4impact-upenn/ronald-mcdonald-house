@@ -14,6 +14,8 @@ from app import db
 import os
 import datetime
 import urllib
+import logging
+import html2text
 
 import sqlalchemy
 from sqlalchemy import create_engine, not_, or_
@@ -25,9 +27,10 @@ from sqlalchemy import *
 from .forms import RoomRequestForm, ActivityForm, TransferForm
 from .helpers import get_room_request_from_form, get_form_from_room_request
 from ..decorators import admin_required
-from ..email import send_email
+from ..email import send_email, send_custom_email
 from ..models import Activity, EditableHTML, RoomRequest, Guest, User, Role
 
+logger = logging.getLogger('werkzeug')
 room_request = Blueprint('room_request', __name__)
 
 @room_request.route('/')
@@ -130,7 +133,7 @@ def edit(id):
     return render_template('room_request/manage.html', room_request=room_request, form=form)
 
 
-@room_request.route('<int:id>/delete', methods=['DELETE'])
+@room_request.route('<int:id>/delete', methods=['GET', 'DELETE'])
 @login_required
 def delete(id):
     """Request deletion of a room request, but does not actually perform the action until user confirmation."""
@@ -140,7 +143,7 @@ def delete(id):
     return render_template('room_request/manage.html', room_request=room_request)
 
 
-@room_request.route('<int:id>/_delete', methods=['DELETE'])
+@room_request.route('<int:id>/_delete', methods=['GET', 'DELETE'])
 @login_required
 def _delete(id):
     """Delete a room request."""
@@ -151,35 +154,39 @@ def _delete(id):
         db.session.commit()
         # flash("Successfully deleted room request for " + room_request.first_name + " ", room_request.last_name + ".", 'success')
     if (current_user.role.name == 'Administrator'):
-        return render_template('admin/index.html', room_requests=room_requests)
+        return redirect(url_for('admin.index'))
     else:
-        return render_template('staff/index.html', room_requests=room_requests)
+        return redirect(url_for('staff.index'))
 
 
 @room_request.route('/new', methods=['GET', 'POST'])
 def new():
     """Room Request page."""
-    editable_html_obj = EditableHTML.get_editable_html('room_request')
+    editable_html_obj = EditableHTML.get_editable_html('form_instructions')
+    editable_html_obj_email = EditableHTML.get_editable_html('email_confirmation')
+    email = editable_html_obj_email.value
     form = RoomRequestForm(request.form)
-    if form.is_submitted() and not form.validate_on_submit():
-        flash('Please check the reCaptcha at the bottom of the page.', 'form-error')
-    elif form.validate_on_submit():
-        room_request = get_room_request_from_form(form)
+    if form.validate_on_submit():
         try:
+            room_request = get_room_request_from_form(form)
             db.session.add(room_request)
             db.session.commit()
+            greeting = "<p>Dear " + room_request.last_name + " Family,</p>\n\n"
+            info = ('''<p>Thank you for contacting us to request a room at the Philadelphia Ronald McDonald House.
+            You have requested an arrival date of ''' + room_request.patient_check_in.strftime("%m/%d/%Y") +
+            " and a departure date of " + room_request.patient_check_out.strftime("%m/%d/%Y") + ".</p>\n\n")
+            email = greeting + info + email
             get_queue().enqueue(
-                send_email,
+                send_custom_email,
                 recipient=room_request.email,
                 subject='PRMH Room Request Submitted',
-                template='room_request/email/confirmation',
-                num_guests=len(room_request.guests),
-                roomreq=room_request
+                custom_html=email
             )
-            flash('Successfully submitted form', 'form-success')
+            return render_template('room_request/success.html')
         except IntegrityError:
             db.session.rollback()
             flash('Unable to save changes. Please try again.', 'form-error')
+
     return render_template('room_request/new.html', form=form, editable_html_obj=editable_html_obj)
 
 

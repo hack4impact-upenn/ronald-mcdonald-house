@@ -54,7 +54,7 @@ class Config:
     STAFF_PASSWORD = os.environ.get('STAFF_PASSWORD', 'password')
     STAFF_EMAIL = os.environ.get('STAFF_EMAIL', 'staff@prmh.org')
 
-    #recCptchaV3
+    # reCaptchaV2
     RECAPTCHA_PUBLIC_KEY = os.environ.get('RC_SITE_KEY')
     RECAPTCHA_PRIVATE_KEY = os.environ.get('RC_SECRET_KEY')
 

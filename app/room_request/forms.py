@@ -3,9 +3,9 @@ from wtforms import ValidationError
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields import (PasswordField, StringField, SubmitField,
                             IntegerField, BooleanField, FormField, TextAreaField,
-                            HiddenField)
+                            HiddenField, SelectField)
 from wtforms.fields.html5 import EmailField, TelField, DateField
-from wtforms.validators import Email, EqualTo, InputRequired, Length, NumberRange, Optional, Required
+from wtforms.validators import Email, EqualTo, InputRequired, Length, NumberRange, Optional, Required, AnyOf
 
 class RoomRequestForm(FlaskForm):
     # Personal information of requester
@@ -24,7 +24,7 @@ class RoomRequestForm(FlaskForm):
     state = StringField(
         'State', validators=[InputRequired()])
     zipcode = StringField(
-        'Zipcode', validators=[InputRequired()])
+        'Zip Code', validators=[InputRequired()])
     country = StringField(
         'Country', validators=[InputRequired()])
     phone_number = TelField(
@@ -47,8 +47,10 @@ class RoomRequestForm(FlaskForm):
         'First name', validators=[InputRequired(), Length(1, 128)])
     patient_dob = DateField(
         'Date of Birth', validators=[InputRequired()])
-    patient_gender = StringField(
-        'Gender', validators=[InputRequired(), Length(1, 64)])
+    patient_gender = SelectField('Gender', choices=[
+        ('', ''), ('Male', 'Male'), ('Female', 'Female'),
+        ('Unborn', 'Unborn'), ('Other', 'Other')
+    ], validators=[AnyOf(['Male', 'Female', 'Unborn', 'Other'])])
     hospital = StringField(
         'Hospital in Philadelphia', validators=[InputRequired(), Length(1, 128)])
     hospital_department = StringField(

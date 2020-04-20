@@ -135,21 +135,20 @@
     {{ f.render_form_field(form.full_bathroom) }}
     {{ f.render_form_field(form.pack_n_play) }}
 
-    <p>
+    <!-- <p>
         <div id="populate-room-request-form" class="ui button">
             Populate form with fake data
         </div>
-    </p>
+    </p> -->
 
-    <p>  {{ form.recaptcha }} 
-    </p>
+    <p>{{ form.recaptcha }}</p>
     {% for field in form | selectattr('type', 'equalto', 'SubmitField') %}
         {{ f.render_form_field(field) }}
     {% endfor %}
 
     {{ f.end_form() }}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.js" crossorigin="anonymous"></script>
     <script>
         $(document).ready(() => {
             function randomChoice(choices) {
@@ -219,6 +218,6 @@
                 $('#pack_n_play').val(randomChoice(['y', 'n']));
             });
         })
-    </script>
+    </script> -->
 
 {% endmacro %}
