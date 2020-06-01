@@ -62,8 +62,8 @@ Other useful variables include:
 
 | Variable        | Default   | Discussion  |
 | --------------- |-------------| -----|
-| `ADMIN_EMAIL`   | `admin@prmh.org` | email for your first admin account |
-| `ADMIN_PASSWORD`| `password`                     | password for your first admin account |
+| `ADMIN_EMAIL`   | `test@test.com` | email for your first admin account |
+| `ADMIN_PASSWORD`| `test`                     | password for your first admin account |
 | `DATABASE_URL`  | `data-dev.sqlite`              | Database URL. Can be Postgres, sqlite, etc. |
 | `REDISTOGO_URL` | `http://localhost:6379`        | [Redis To Go](https://redistogo.com) URL or any redis server url |
 | `RAYGUN_APIKEY` | `None`                         | API key for [Raygun](https://raygun.com/raygun-providers/python), a crash and performance monitoring service |
