@@ -128,7 +128,7 @@ python manage.py recreate_db
 python manage.py setup_dev
 ```
 
-Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables. If not specified, they are both `admin@prmh.org` and `password` respectively.
+Note that this will create an admin user with email and password specified by the `ADMIN_EMAIL` and `ADMIN_PASSWORD` config variables.
 
 ##### [Optional] Add fake data to the database
 
