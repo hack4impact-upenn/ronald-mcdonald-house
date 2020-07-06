@@ -16,6 +16,7 @@ import datetime
 import urllib
 import logging
 import html2text
+import sys
 
 import sqlalchemy
 from sqlalchemy import create_engine, not_, or_
@@ -240,15 +241,16 @@ def transfer(id):
     room_request = RoomRequest.query.get(requestID)
     if room_request is None:
         return abort(404)
-
+    con = 'Yes'
     transferred = False
-    param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={}".format(
+    param_string = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={};MARS_Connection={}".format(
             os.getenv('SQL_SERVER') or "{ODBC Driver 17 for SQL Server}",
             os.getenv('AZURE_SERVER'),
             os.getenv('AZURE_DATABASE'),
             os.getenv('AZURE_USERNAME'),
-            os.getenv('AZURE_PASS'))
-    params = urllib.parse.quote_plus(param_string)
+            os.getenv('AZURE_PASS'),
+            con)
+    params = urllib.parse.quote_plus(param_string) 
     engine = sqlalchemy.engine.create_engine("mssql+pyodbc:///?odbc_connect=%s" % params)
     session = sessionmaker(bind=engine)()
     metadata = MetaData(bind=engine)
@@ -301,6 +303,9 @@ def transfer(id):
                 famEntry = family.select().execute().fetchall()
                 famID = famEntry[len(famEntry)-1].FamilyID
             except Exception as e:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)
                 session.rollback()
                 return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
     #create new family record
@@ -311,6 +316,9 @@ def transfer(id):
             famEntry = family.select().execute().fetchall()
             famID = famEntry[len(famEntry)-1].FamilyID
         except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
             session.rollback()
             return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
     
@@ -342,13 +350,20 @@ def transfer(id):
             try: 
                 lastName = str(guest.name.split(' ')[1])
                 firstName = str(guest.name.split(' ')[0])
-                relationshipID = session.query(supRelationship).filter_by(RelationshipDesc=guest.relationship_to_patient).first()[0]
+                relationshipID = session.query(supRelationship).filter_by(RelationshipDesc=guest.relationship_to_patient)
+                if relationshipID.first() is None:
+                    relationshipID = 1
+                else:
+                    relationshipID = relationshipID.first()[0]
                 insFamMember = familyMember.insert().values(FamilyID = famID, Surname = lastName, FirstName = firstName, MiddleNames = '', BirthDate = guest.dob, Gender = '', RelationshipID = relationshipID, DateCreated = room_request.created_at, CreatedBy = 'Web Form', DateModified = room_request.created_at, ModifiedBy = 'Web Form', Notes = '', FirstCaregiver = guard)
                 conn.execute(insFamMember)
                 famMemberEntry = familyMember.select().execute().fetchall()
                 famMemberID = famMemberEntry[len(famMemberEntry)-1].FamilyMemberID
                 famMemberIDs.append(famMemberID)
             except Exception as e:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)
                 session.rollback()
                 return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
     #create waitlist reocrd
@@ -384,6 +399,9 @@ def transfer(id):
         famWaitEntry = familyWaitList.select().execute().fetchall()
         waitlistID = famWaitEntry[len(famWaitEntry)-1].WaitListID
     except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
         session.rollback()
         return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
     #add family members to family waitlist
@@ -393,6 +411,9 @@ def transfer(id):
             insFamWaitListMember = familyWaitListMember.insert().values(WaitListID= waitlistID, FamilyMemberID=member, WillCheckIn=0)
             famWaitListMemberResult = conn.execute(insFamWaitListMember)    
     except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
         session.rollback()
         return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
 
