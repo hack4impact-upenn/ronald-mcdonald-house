@@ -256,43 +256,124 @@ def transfer(id):
     family = Table('Family', metadata, autoload=True)
     familyMember = Table('FamilyMember', metadata, autoload=True)
     familyWaitList = Table('FamilyWaitList', metadata, autoload=True)
+    familyWaitListMember = Table('FamilyWaitListMember', metadata, autoload=True)
     supRelationship = Table('supRelationship', metadata, autoload=True)
     supHospital = Table('supHospital', metadata, autoload=True)
     supWard = Table('supWard', metadata, autoload=True)
     supDiagnosis = Table('supDiagnosis', metadata, autoload=True)
     supReasonForVisit = Table('supReasonForVisit', metadata, autoload=True)
+    supLanguage = Table('supLanguage', metadata, autoload=True)
+    
     wheelchair = 0
     if room_request.wheelchair_access:
         wheelchair = 1
+
+    #Is family new? 
+    stayedBefore = room_request.previous_stay
+    conn = engine.connect()
+
+    primaryLangID = session.query(supLanguage).filter_by(LanguageDesc=room_request.primary_language)
+    if primaryLangID.first() is None:
+        primaryLangID = 1
+    else:
+        primaryLangID = primaryLangID.first()[0]
+
+    secondaryLangID = session.query(supLanguage).filter_by(LanguageDesc=room_request.secondary_language)
+    if secondaryLangID.first() is None:
+        secondaryLangID = 1
+    else:
+        secondaryLangID = secondaryLangID.first()[0]
+    
+    if stayedBefore:
+        famID = -1
+        selectNames = family.select()
+        result = conn.execute(selectNames)
+        for row in result:
+            #family found existing
+            if row['PatientSurname'] == room_request.patient_last_name and row['PatientFirstName'] == room_request.patient_first_name:
+                famID = row['FamilyID']
+                break
+        #family not found, create new record
+        if famID < 0:
+            try:
+                insFam = family.insert().values(PatientSurname= room_request.patient_last_name, PatientFirstName= room_request.patient_first_name, PatientGender= room_request.patient_gender[0], PatientBirthDate = room_request.patient_dob, Address = (room_request.address_line_one + " " + room_request.address_line_two), City = room_request.city, ProvinceCode = room_request.state[0:3], PostalCode = room_request.zip_code, Country = room_request.country, Phone1Desc = "Phone 1", Phone1 = room_request.primary_phone, Phone2Desc = "Phone 2", Phone2 = room_request.secondary_phone, Phone3Desc = "", Phone3 = "", Phone4Desc = "", Phone4 = "", EmailAddress = "",  EmailAddress2 = "", DateCreated = room_request.created_at, CreatedBy = "Web Form", DateModified = room_request.created_at, ModifiedBy = "Web Form", PrimaryLanguageID=primaryLangID, SecondaryLanguageID=secondaryLangID, PatientRequiresWheelchair = wheelchair)
+                famResult = conn.execute(insFam)
+                famEntry = family.select().execute().fetchall()
+                famID = famEntry[len(famEntry)-1].FamilyID
+            except Exception as e:
+                session.rollback()
+                return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
+    #create new family record
+    else: 
+        try:
+            insFam = family.insert().values(PatientSurname= room_request.patient_last_name, PatientFirstName= room_request.patient_first_name, PatientGender= room_request.patient_gender[0], PatientBirthDate = room_request.patient_dob, Address = (room_request.address_line_one + " " + room_request.address_line_two), City = room_request.city, ProvinceCode = room_request.state[0:3], PostalCode = room_request.zip_code, Country = room_request.country, Phone1Desc = "Phone 1", Phone1 = room_request.primary_phone, Phone2Desc = "Phone 2", Phone2 = room_request.secondary_phone, Phone3Desc = "", Phone3 = "", Phone4Desc = "", Phone4 = "", EmailAddress = "",  EmailAddress2 = "", DateCreated = room_request.created_at, CreatedBy = "Web Form", DateModified = room_request.created_at, ModifiedBy = "Web Form", PrimaryLanguageID=primaryLangID, SecondaryLanguageID=secondaryLangID,  PatientRequiresWheelchair = wheelchair)
+            famResult = conn.execute(insFam)
+            famEntry = family.select().execute().fetchall()
+            famID = famEntry[len(famEntry)-1].FamilyID
+        except Exception as e:
+            session.rollback()
+            return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
+    
+    #check for existing family 
+    existingFamMembers = []
+    #select all family members from table
+    familyMemberList = familyMember.select()
+    famMemberListResult = conn.execute(familyMemberList)
+    #for all of the family members found, add hem to existingFamlist
+    for row in famMemberListResult:
+        if row['FamilyID'] == famID:
+            existingFamMembers.append(row)
+    famMemberIDs = []
+    #iterate over guests
+    for guest in room_request.guests:
+        found = False
+        guard = 0
+        if guest.guardian:
+            guard = 1
+        lastName = str(guest.name.split(' ')[1])
+        firstName = str(guest.name.split(' ')[0])
+        #if a guest eixsits, add their id to the list
+        for existingMember in existingFamMembers:
+            if existingMember['Surname'] == lastName and existingMember['FirstName'] == firstName:
+                found = True
+                famMemberIDs.append(existingMember['FamilyMemberID'])
+            #else instert new members to FamilyMember    
+        if not found:
+            try: 
+                lastName = str(guest.name.split(' ')[1])
+                firstName = str(guest.name.split(' ')[0])
+                relationshipID = session.query(supRelationship).filter_by(RelationshipDesc=guest.relationship_to_patient).first()[0]
+                insFamMember = familyMember.insert().values(FamilyID = famID, Surname = lastName, FirstName = firstName, MiddleNames = '', BirthDate = guest.dob, Gender = '', RelationshipID = relationshipID, DateCreated = room_request.created_at, CreatedBy = 'Web Form', DateModified = room_request.created_at, ModifiedBy = 'Web Form', Notes = '', FirstCaregiver = guard)
+                conn.execute(insFamMember)
+                famMemberEntry = familyMember.select().execute().fetchall()
+                famMemberID = famMemberEntry[len(famMemberEntry)-1].FamilyMemberID
+                famMemberIDs.append(famMemberID)
+            except Exception as e:
+                session.rollback()
+                return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
+    #create waitlist reocrd
     try:
-        insFam = family.insert().values(PatientSurname= room_request.patient_last_name, PatientFirstName= room_request.patient_first_name, PatientGender= room_request.patient_gender[0], PatientBirthDate = room_request.patient_dob, Address = (room_request.address_line_one + " " + room_request.address_line_two), City = room_request.city, ProvinceCode = room_request.state[0:3], PostalCode = room_request.zip_code, Country = room_request.country, Phone1Desc = "Phone 1", Phone1 = room_request.primary_phone, Phone2Desc = "Phone 2", Phone2 = room_request.secondary_phone, Phone3Desc = "", Phone3 = "", Phone4Desc = "", Phone4 = "", EmailAddress = "",  EmailAddress2 = "", DateCreated = room_request.created_at, CreatedBy = "Web Form", DateModified = room_request.created_at, ModifiedBy = "Web Form",  PatientRequiresWheelchair = wheelchair)
-        conn = engine.connect()
-        famResult = conn.execute(insFam)
-        famEntry = family.select().execute().fetchall()
-        famID = famEntry[len(famEntry)-1].FamilyID
-        relationshipID = engine.execute(connectionString('Relationship', room_request.relationship_to_patient))
-        relationshipID = relationshipID.first()[0]
-        insFamMember = familyMember.insert().values(FamilyID = famID, Surname = room_request.last_name, FirstName = room_request.first_name, MiddleNames = '', BirthDate = '', Gender = '', RelationshipID = relationshipID, DateCreated = room_request.created_at, CreatedBy = 'Web Form', DateModified = room_request.created_at, ModifiedBy = 'Web Form', Notes = '')
-        famMemberResult = conn.execute(insFamMember)
-        for guest in room_request.guests:
-            guard = 0
-            if guest.guardian:
-                guard = 1
-            lastName = str(guest.name.split(' ')[1])
-            firstName = str(guest.name.split(' ')[0])
-            relationshipID = engine.execute(connectionString('Relationship', room_request.relationship_to_patient))
-            relationshipID = relationshipID.first()[0]
-            insFamMember = familyMember.insert().values(FamilyID = famID, Surname = lastName, FirstName = firstName, MiddleNames = '', BirthDate = guest.dob, Gender = '', RelationshipID = relationshipID, DateCreated = room_request.created_at, CreatedBy = 'Web Form', DateModified = room_request.created_at, ModifiedBy = 'Web Form', Notes = '', FirstCaregiver = guard)
-            conn.execute(insFamMember)
-        hospitalID = engine.execute(connectionString('Hospital', room_request.patient_hospital))
-        hospitalID = hospitalID.first()[0]
-        wardID = engine.execute(connectionString('Ward', room_request.patient_hospital_department))
-        wardID = wardID.first()[0]
-        reasonForVisitID = engine.execute(connectionString('ReasonForVisit', room_request.patient_treatment_description))
-        reasonForVisitID = reasonForVisitID.first()[0]
-        DiagnosisID = engine.execute(connectionString('Diagnosis', room_request.patient_diagnosis))
-        DiagnosisID = DiagnosisID.first()[0]
-        estimatedLengthOfStay = room_request.patient_check_out - room_request.patient_check_in
+        hospitalID = session.query(supHospital).filter_by(HospitalDesc=room_request.patient_hospital)
+        if hospitalID.first() is None:
+            hospitalID = 1
+        else:
+            hospitalID = hospitalID.first()[0]
+        wardID = session.query(supWard).filter_by(WardDesc=room_request.patient_hospital_department)
+        if wardID.first() is None:
+            wardID = 1
+        else:
+            wardID = wardID.first()[0]
+        reasonForVisitID = session.query(supReasonForVisit).filter_by(ReasonForVisitDesc=room_request.patient_treatment_description)
+        if reasonForVisitID.first() is None:
+            reasonForVisitID = 1
+        else:
+            reasonForVisitID = reasonForVisitID.first()[0]
+        DiagnosisID = session.query(supDiagnosis).filter_by(DiagnosisDesc=room_request.patient_diagnosis)
+        if DiagnosisID.first() is None:
+            DiagnosisID = 1
+        else:
+            DiagnosisID = DiagnosisID.first()[0]
+        estimatedLengthOfStay = room_request.patient_check_in - room_request.patient_check_out
         otherReq = ''
         if room_request.full_bathroom:
             otherReq += "Full bathroom requested. "
@@ -300,13 +381,26 @@ def transfer(id):
             otherReq += "Pack n play requested. "
         insFamWaitList = familyWaitList.insert().values(FamilyID = famID, StartDate = room_request.patient_check_in, EndDate = room_request.patient_check_out, EndReasonID = 1, DiagnosisID = DiagnosisID, WardID = wardID, TentativeRoomID = 6, EstimatedLengthOfStay = estimatedLengthOfStay.days, ReferralName = '', ReferralOrganization = '', ReferralPhone1Desc = '', ReferralPhone1 = '', ReferralPhone1Ext = '', ReferralPhone2Desc = '', ReferralPhone2 = '', ReferralPhone2Ext = '', ReminderToConfirmGiven = 0, AskedAboutDiseaseSymptoms = 0, OutsideAgencyName = '', OutsideAgencyAddress = '', OutsideAgencyCity = '', OutsideAgencyProvinceCode = '', OutsideAgencyPostalCode = '', OutsideAgencyCountry = '', OutsideAgencyPhone1Desc = '', OutsideAgencyPhone1 = '', OutsideAgencyPhone2Desc = '', OutsideAgencyPhone2 = '', DateCreated = room_request.created_at, CreatedBy = 'Web Form', DateModified = room_request.created_at, ModifiedBy = 'Web Form', DateRequested = room_request.created_at, OtherSpecialRequests = otherReq, HospitalID = hospitalID)
         famWaitListResult = conn.execute(insFamWaitList)
-        db.session.delete(room_request)
-        db.session.commit()
-        flash(f'Successfully transfered room request for {room_request.first_name} {room_request.last_name}.', 'success')
-        return redirect(url_for('admin.index'))
+        famWaitEntry = familyWaitList.select().execute().fetchall()
+        waitlistID = famWaitEntry[len(famWaitEntry)-1].WaitListID
     except Exception as e:
         session.rollback()
         return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
+    #add family members to family waitlist
+    try: 
+        for member in famMemberIDs:
+            print("Waitlist ID: "  + str(waitlistID) + " Family MemberID: " + str(member))
+            insFamWaitListMember = familyWaitListMember.insert().values(WaitListID= waitlistID, FamilyMemberID=member, WillCheckIn=0)
+            famWaitListMemberResult = conn.execute(insFamWaitListMember)    
+    except Exception as e:
+        session.rollback()
+        return render_template('room_request/transfer.html', id=id, transferred=transferred, error=e)
+
+
+    db.session.delete(room_request)
+    db.session.commit()
+    flash(f'Successfully transfered room request for {room_request.first_name} {room_request.last_name}.', 'success')
+    return redirect(url_for('admin.index'))
 
 
 @room_request.route('/<int:id>/duplicates', methods=['GET', 'POST'])

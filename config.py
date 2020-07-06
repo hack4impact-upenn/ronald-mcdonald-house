@@ -88,8 +88,19 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     ASSETS_DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL',
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite'))
+    params = urllib.parse.quote_plus(
+        'Driver=%s;' % '{ODBC Driver 17 for SQL Server}' +
+        'Server=tcp:%s,1433;' % os.getenv('ROOM_REQUEST_SERVER') +
+        'Database=%s;' % os.getenv('ROOM_REQUEST_DATABASE') +
+        'Uid=%s;' % os.getenv('ROOM_REQUEST_USER') +
+        'Pwd={%s};' % os.getenv('ROOM_REQUEST_PASS') +
+        'Encrypt=yes;' +
+        'TrustServerCertificate=no;' +
+        'Connection Timeout=30;')
+
+    conn_str = 'mssql+pyodbc:///?odbc_connect=' + params
+
+    SQLALCHEMY_DATABASE_URI = conn_str
 
     @classmethod
     def init_app(cls, app):
@@ -99,8 +110,19 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL',
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite'))
+    params = urllib.parse.quote_plus(
+        'Driver=%s;' % '{ODBC Driver 17 for SQL Server}' +
+        'Server=tcp:%s,1433;' % os.getenv('ROOM_REQUEST_SERVER') +
+        'Database=%s;' % os.getenv('ROOM_REQUEST_DATABASE') +
+        'Uid=%s;' % os.getenv('ROOM_REQUEST_USER') +
+        'Pwd={%s};' % os.getenv('ROOM_REQUEST_PASS') +
+        'Encrypt=yes;' +
+        'TrustServerCertificate=no;' +
+        'Connection Timeout=30;')
+
+    conn_str = 'mssql+pyodbc:///?odbc_connect=' + params
+
+    SQLALCHEMY_DATABASE_URI = conn_str
     WTF_CSRF_ENABLED = False
 
     @classmethod
@@ -110,8 +132,19 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('AZURE_DATABASE',
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite'))
+    params = urllib.parse.quote_plus(
+        'Driver=%s;' % '{ODBC Driver 17 for SQL Server}' +
+        'Server=tcp:%s,1433;' % os.getenv('ROOM_REQUEST_SERVER') +
+        'Database=%s;' % os.getenv('ROOM_REQUEST_DATABASE') +
+        'Uid=%s;' % os.getenv('ROOM_REQUEST_USER') +
+        'Pwd={%s};' % os.getenv('ROOM_REQUEST_PASS') +
+        'Encrypt=yes;' +
+        'TrustServerCertificate=no;' +
+        'Connection Timeout=30;')
+
+    conn_str = 'mssql+pyodbc:///?odbc_connect=' + params
+
+    SQLALCHEMY_DATABASE_URI = conn_str
     SSL_DISABLE = (os.environ.get('SSL_DISABLE', 'True') == 'True')
 
     @classmethod
