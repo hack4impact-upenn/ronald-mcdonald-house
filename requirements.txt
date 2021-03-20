@@ -22,7 +22,7 @@ html2text==2020.1.16
 honcho==1.0.1
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 jsmin==2.2.2
 jsonpickle==1.2
 Mako==1.1.0
